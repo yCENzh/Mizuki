@@ -35,8 +35,14 @@ export async function GET(context: APIContext) {
 			const src = img.getAttribute('src');
 			if (!src) continue;
 
-			// Handle content-relative images and convert them to built _astro paths
+			// Skip if already absolute URL
+			if (src.startsWith('http://') || src.startsWith('https://')) {
+				continue;
+			}
+
+			// Handle content-relative images and convert them to absolute URLs
 			if (src.startsWith('./') || src.startsWith('../')) {
+				let imageMod = null;
 				let importPath: string | null = null;
 
 				if (src.startsWith('./')) {
@@ -62,7 +68,6 @@ export async function GET(context: APIContext) {
 				}
 
 				// Try to find the image in the glob
-				let imageMod = null;
 				if (importPath && imagesGlob[importPath]) {
 					try {
 						const moduleResult = await imagesGlob[importPath]();
@@ -95,14 +100,25 @@ export async function GET(context: APIContext) {
 				if (imageMod) {
 					try {
 						const optimizedImg = await getImage({ src: imageMod });
+						// Convert to absolute URL for RSS
 						img.setAttribute('src', new URL(optimizedImg.src, context.site).href);
 					} catch (error) {
 						console.warn('Failed to optimize image:', error);
 					}
+				} else {
+					// Fallback: if we can't find the optimized image, use a fallback absolute URL
+					// This ensures RSS readers always get a valid URL even if image processing fails
+					console.warn(`Could not resolve image: ${src} for post: ${post.slug}`);
+					// Remove the img tag rather than having broken relative paths
+					img.remove();
 				}
 			} else if (src.startsWith('/')) {
-				// images starting with `/` are in public dir
+				// images starting with `/` are in public dir - convert to absolute URL
 				img.setAttribute('src', new URL(src, context.site).href);
+			} else if (!src.startsWith('http')) {
+				// Any other relative path should be converted to absolute URL
+				// Assume it's relative to the site root
+				img.setAttribute('src', new URL(`/${src}`, context.site).href);
 			}
 		}
 
@@ -123,10 +139,6 @@ export async function GET(context: APIContext) {
 		description: siteConfig.subtitle || 'No description',
 		site: context.site,
 		items: feed,
-		customData: `<language>${siteConfig.lang}</language>
-		<follow_challenge>
-			<feedId>184100848287736832</feedId>
-			<userId>177556222102647808</userId>
-		</follow_challenge>`,
+		customData: `<language>${siteConfig.lang}</language>,
 	});
 }
