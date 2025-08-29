@@ -5,8 +5,9 @@ import { getCollection } from 'astro:content';
 import { siteConfig } from '@/config';
 import { parse as htmlParser } from 'node-html-parser';
 import { getImage } from 'astro:assets';
-import type { APIContext } from 'astro';
+import type { APIContext, ImageMetadata } from 'astro';
 import type { RSSFeedItem } from '@astrojs/rss';
+import { getSortedPosts } from '@/utils/content-utils';
 
 const markdownParser = new MarkdownIt();
 
@@ -20,7 +21,8 @@ export async function GET(context: APIContext) {
 		throw Error('site not set');
 	}
 
-	const posts = await getCollection('posts');
+	// Use the same ordering as site listing (pinned first, then by published desc)
+	const posts = await getSortedPosts();
 	const feed: RSSFeedItem[] = [];
 
 	for (const post of posts) {
@@ -35,90 +37,28 @@ export async function GET(context: APIContext) {
 			const src = img.getAttribute('src');
 			if (!src) continue;
 
-			// Skip if already absolute URL
-			if (src.startsWith('http://') || src.startsWith('https://')) {
-				continue;
-			}
-
-			// Handle content-relative images and convert them to absolute URLs
+			// Handle content-relative images and convert them to built _astro paths
 			if (src.startsWith('./') || src.startsWith('../')) {
-				let imageMod = null;
 				let importPath: string | null = null;
 
 				if (src.startsWith('./')) {
 					// Path relative to the post file directory
 					const prefixRemoved = src.slice(2);
-					// Handle posts in subdirectories like bestimageapi/index.md
-					if (post.slug.includes('/')) {
-						// For posts like bestimageapi/index.md, the images are in the same folder
-						const postDir = post.slug.split('/')[0];
-						importPath = `/src/content/posts/${postDir}/${prefixRemoved}`;
-					} else {
-						// For posts like post.md directly in posts folder
-						importPath = `/src/content/posts/${prefixRemoved}`;
-					}
+					importPath = `/src/content/posts/${prefixRemoved}`;
 				} else {
 					// Path like ../assets/images/xxx -> relative to /src/content/
-					let cleaned = src;
-					// Remove ../ prefixes and build correct path
-					while (cleaned.startsWith('../')) {
-						cleaned = cleaned.slice(3);
-					}
+					const cleaned = src.replace(/^\.\.\//, '');
 					importPath = `/src/content/${cleaned}`;
 				}
 
-				// Try to find the image in the glob
-				if (importPath && imagesGlob[importPath]) {
-					try {
-						const moduleResult = await imagesGlob[importPath]();
-						imageMod = moduleResult.default;
-					} catch (error) {
-						console.warn(`Failed to load image: ${importPath}`, error);
-					}
-				}
-
-				// If direct path didn't work, try to find it in available images
-				if (!imageMod) {
-					// Extract just the filename to search for
-					const filename = src.split('/').pop();
-					if (filename) {
-						// Search through all available image paths
-						for (const [path, loader] of Object.entries(imagesGlob)) {
-							if (path.includes(filename)) {
-								try {
-									const moduleResult = await loader();
-									imageMod = moduleResult.default;
-									break;
-								} catch (error) {
-									console.warn(`Failed to load image: ${path}`, error);
-								}
-							}
-						}
-					}
-				}
-
+				const imageMod = await imagesGlob[importPath]?.()?.then((res) => res.default);
 				if (imageMod) {
-					try {
-						const optimizedImg = await getImage({ src: imageMod });
-						// Convert to absolute URL for RSS
-						img.setAttribute('src', new URL(optimizedImg.src, context.site).href);
-					} catch (error) {
-						console.warn('Failed to optimize image:', error);
-					}
-				} else {
-					// Fallback: if we can't find the optimized image, use a fallback absolute URL
-					// This ensures RSS readers always get a valid URL even if image processing fails
-					console.warn(`Could not resolve image: ${src} for post: ${post.slug}`);
-					// Remove the img tag rather than having broken relative paths
-					img.remove();
+					const optimizedImg = await getImage({ src: imageMod });
+					img.setAttribute('src', new URL(optimizedImg.src, context.site).href);
 				}
 			} else if (src.startsWith('/')) {
-				// images starting with `/` are in public dir - convert to absolute URL
+				// images starting with `/` are in public dir
 				img.setAttribute('src', new URL(src, context.site).href);
-			} else if (!src.startsWith('http')) {
-				// Any other relative path should be converted to absolute URL
-				// Assume it's relative to the site root
-				img.setAttribute('src', new URL(`/${src}`, context.site).href);
 			}
 		}
 
@@ -139,6 +79,6 @@ export async function GET(context: APIContext) {
 		description: siteConfig.subtitle || 'No description',
 		site: context.site,
 		items: feed,
-		customData: `<language>${siteConfig.lang}</language>`
+		customData: `<language>${siteConfig.lang}</language>`,
 	});
 }
