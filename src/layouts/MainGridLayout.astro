@@ -174,6 +174,28 @@ const transparentClass = shouldEnableTransparency
 <Layout title={title} banner={banner} description={description} lang={lang} setOGTypeArticle={setOGTypeArticle} postSlug={postSlug}>
 
 <script is:inline define:vars={{navbarTransparentMode: siteConfig.banner?.navbar?.transparentMode || "semi"}}>
+	// 立即执行，在页面渲染前应用壁纸模式，避免闪烁
+	(function() {
+		const wallpaperMode = localStorage.getItem('wallpaperMode') || 'banner';
+		const body = document.body;
+		
+		// 立即应用 body 类，确保首次渲染就是正确的状态
+		switch(wallpaperMode) {
+			case 'banner':
+				body.classList.add('enable-banner');
+				body.classList.remove('wallpaper-transparent', 'no-banner-mode');
+				break;
+			case 'fullscreen':
+				body.classList.remove('enable-banner');
+				body.classList.add('wallpaper-transparent', 'no-banner-mode');
+				break;
+			case 'none':
+				body.classList.remove('enable-banner', 'wallpaper-transparent');
+				body.classList.add('no-banner-mode');
+				break;
+		}
+	})();
+	
 	// 根据壁纸模式动态设置 banner 和全屏壁纸的显示
 	const wallpaperMode = localStorage.getItem('wallpaperMode') || 'banner';
 	
@@ -284,6 +306,16 @@ const transparentClass = shouldEnableTransparency
 
 <!-- Banner -->
 {siteConfig.banner.enable && <div id="banner-wrapper" class={`absolute z-10 w-full transition duration-700 overflow-hidden ${mobileNonHomeBannerClass}`} style={`top: -${BANNER_HEIGHT_EXTEND}vh`}>
+<script is:inline>
+// 根据 localStorage 立即设置 banner 初始显示状态，避免闪烁
+(function() {
+	const wallpaperMode = localStorage.getItem('wallpaperMode') || 'banner';
+	const bannerWrapper = document.currentScript.parentElement;
+	if (wallpaperMode === 'fullscreen' || wallpaperMode === 'none') {
+		bannerWrapper.style.display = 'none';
+	}
+})();
+</script>
     {(bannerImages.desktop && Array.isArray(bannerImages.desktop) && bannerImages.desktop.length > 1) || (bannerImages.mobile && Array.isArray(bannerImages.mobile) && bannerImages.mobile.length > 1) ? (
         <!-- Carousel mode for multiple images -->
         <div id="banner-carousel" class="relative h-full w-full">
@@ -860,7 +892,7 @@ body.no-banner-mode .absolute.w-full.z-30 {
 }
 
 /* 移动端导航栏与banner的协调 */
-@media (max-width: 1023px) {
+@media (max-width: 1279px) {
     #navbar-wrapper {
         /* 移除覆盖样式，让Navbar.astro的圆角和半透明效果生效 */
     }
@@ -872,7 +904,7 @@ body.no-banner-mode .absolute.w-full.z-30 {
 }
 
 /* 移动端banner性能优化 */
-@media (max-width: 1023px) {
+@media (max-width: 1279px) {
     .banner-container {
         /* 启用硬件加速 */
         transform: translateZ(0);
@@ -960,7 +992,7 @@ body.no-banner-mode .absolute.w-full.z-30 {
 }
 
 /* 移动端当banner被禁用时的布局样式 */
-@media (max-width: 1023px) {
+@media (max-width: 1279px) {
     .absolute.w-full.z-30.no-banner-layout {
         top: 5.5rem !important;
         min-height: calc(100vh - 5.5rem) !important;
@@ -978,7 +1010,7 @@ body.no-banner-mode .absolute.w-full.z-30 {
 }
 
 /* 平板设备当banner被禁用时的布局样式 */
-@media (min-width: 641px) and (max-width: 1023px) {
+@media (min-width: 641px) and (max-width: 1279px) {
     .absolute.w-full.z-30.no-banner-layout {
         top: 5.5rem !important;
         min-height: calc(100vh - 5.5rem) !important;
@@ -987,7 +1019,7 @@ body.no-banner-mode .absolute.w-full.z-30 {
 }
 
 /* 移动端横屏优化 */
-@media (max-width: 1023px) and (orientation: landscape) {
+@media (max-width: 1279px) and (orientation: landscape) {
     #banner-wrapper:not(.mobile-hide-banner) {
         top: 0 !important; /* 横屏模式从顶部开始，避免被导航栏覆盖 */
         height: 60vh !important;
@@ -1023,7 +1055,7 @@ body.no-banner-mode .absolute.w-full.z-30 {
 }
 
 /* 移动端暗色模式优化 */
-@media (max-width: 1023px) and (prefers-color-scheme: dark) {
+@media (max-width: 1279px) and (prefers-color-scheme: dark) {
     .banner-text-overlay {
         background: linear-gradient(
             to top,

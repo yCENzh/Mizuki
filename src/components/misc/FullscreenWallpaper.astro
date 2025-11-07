@@ -116,6 +116,16 @@ const positionClass = getPositionClass(position);
 	style={`z-index: ${zIndex}; opacity: ${opacity};`}
 	data-fullscreen-wallpaper
 >
+<script is:inline>
+// 根据 localStorage 立即设置全屏壁纸初始显示状态，避免闪烁
+(function() {
+	const wallpaperMode = localStorage.getItem('wallpaperMode') || 'banner';
+	const fullscreenWallpaper = document.currentScript.parentElement;
+	if (wallpaperMode !== 'fullscreen') {
+		fullscreenWallpaper.style.display = 'none';
+	}
+})();
+</script>
 	<!-- 桌面端壁纸 -->
 	{hasDesktopImages && (
 		<div class="hidden lg:block w-full h-full relative">
