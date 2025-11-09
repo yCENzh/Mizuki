@@ -10,18 +10,12 @@ interface Props {
 
 const { config, className } = Astro.props;
 
-// 如果全屏壁纸功能未启用，不渲染任何内容
-if (!config.enable) {
-	return null;
-}
-
 // 获取当前设备类型的图片源
 const getImageSources = async () => {
 	let srcConfig = config.src;
 
-	// 如果banner关闭且启用了图片API，使用API图片
+	// 如果启用了图片API，使用API图片
 	if (
-		!siteConfig.banner.enable &&
 		siteConfig.banner.imageApi?.enable &&
 		siteConfig.banner.imageApi?.url
 	) {

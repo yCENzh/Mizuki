@@ -94,7 +94,7 @@ if (!banner || typeof banner !== "string" || banner.trim() === "") {
 // TODO don't use post cover as banner for now
 banner = getDefaultBanner();
 
-const enableBanner = siteConfig.banner.enable;
+const enableBanner = siteConfig.wallpaperMode.defaultMode === "banner";
 
 let pageTitle: string;
 if (title) {
@@ -797,7 +797,7 @@ function initCustomScrollbar() {
 }
 
 function showBanner() {
-	if (!siteConfig.banner.enable) return;
+	if (siteConfig.wallpaperMode.defaultMode !== "banner") return;
 
 	// 使用requestAnimationFrame优化DOM操作
 	requestAnimationFrame(() => {
