@@ -44,6 +44,7 @@ export const zh_TW: Translation = {
 	[Key.license]: "許可協議",
 	[Key.anime]: "追番",
 	[Key.diary]: "日記",
+	[Key.gallery]: "相冊",
 
 	// 番劇頁面
 	[Key.animeTitle]: "我的追番記錄",
