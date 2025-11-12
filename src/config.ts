@@ -22,6 +22,7 @@ const SITE_TIMEZONE =8;//设置你的网站时区 from -12 to 12 default in UTC+
 export const siteConfig: SiteConfig = {
 	title: "Mizuki",
 	subtitle: "One demo website",
+	siteURL: "https://mizuki.mysqil.com/", // 请替换为你的站点URL，以斜杠结尾
 
 	timeZone: SITE_TIMEZONE,
 	
