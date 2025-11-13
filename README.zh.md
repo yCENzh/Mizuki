@@ -143,6 +143,7 @@
    - 编辑 `src/config.ts` 自定义博客设置
    - 更新站点信息、主题色彩、横幅图片和社交链接
    - 配置特色页面功能
+   - (可选) 配置内容仓库分离 - 见 [内容仓库配置](#-代码内容分离可选)
 
 4. **启动开发服务器：**
    ```bash
@@ -289,6 +290,46 @@ export const siteConfig: SiteConfig = {
 - **友链页面：** 在 `src/content/spec/friends.md` 中编辑朋友数据
 - **日记页面：** 在 `src/pages/diary.astro` 中编辑动态
 - **关于页面：** 在 `src/content/spec/about.md` 中编辑内容
+
+### 📦 代码内容分离 (可选)
+
+Mizuki 支持将代码和内容分成两个独立的仓库管理,适合团队协作和大型项目。
+
+**快速选择**:
+
+| 使用场景 | 配置方式 | 适合人群 |
+|---------|---------|---------|
+| 🆕 **本地模式** (默认) | 不配置,直接使用 | 新手、个人博客 |
+| 🔧 **分离模式** | 设置 `ENABLE_CONTENT_SYNC=true` | 团队协作、私有内容 |
+
+**一键启用/禁用**:
+
+```bash
+# 方式 1: 本地模式 (推荐新手)
+# 不创建 .env 文件,直接运行
+pnpm dev
+
+# 方式 2: 内容分离模式
+# 1. 复制配置文件
+cp .env.example .env
+
+# 2. 编辑 .env,启用内容分离
+ENABLE_CONTENT_SYNC=true
+CONTENT_REPO_URL=https://github.com/your-username/Mizuki-Content.git
+
+# 3. 同步内容
+pnpm run sync-content
+```
+
+**功能特性**:
+- ✅ 支持公开和私有仓库 🔐
+- ✅ 一键启用/禁用,无需修改代码
+- ✅ 自动同步,开发前自动拉取最新内容
+- ✅ Git Submodule 和独立仓库两种模式
+
+📖 **详细配置**: [内容分离完整指南](docs/CONTENT_SEPARATION.md)  
+🔄 **迁移教程**: [从单仓库迁移到分离模式](docs/MIGRATION_GUIDE.md)  
+📚 **更多文档**: [文档索引](docs/README.md)
 
 ## ✏️ 贡献
 

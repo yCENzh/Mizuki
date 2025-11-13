@@ -17,6 +17,10 @@ pnpm-debug.log*
 .env
 .env.production
 
+# content repository (if using independent mode)
+content/
+*.backup
+
 # macOS-specific files
 .DS_Store
 
