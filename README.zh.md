@@ -1,7 +1,7 @@
 # 🌸 Mizuki  
 ![Node.js >= 20](https://img.shields.io/badge/node.js-%3E%3D20-brightgreen) 
 ![pnpm >= 9](https://img.shields.io/badge/pnpm-%3E%3D9-blue) 
-![Astro](https://img.shields.io/badge/Astro-5.12.8-orange)
+![Astro](https://img.shields.io/badge/Astro-5.15.3-orange)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -166,9 +166,18 @@
 - **GitHub Pages：** 使用包含的 GitHub Actions 工作流
 - **Cloudflare Pages：** 连接您的仓库
 
-- **环境变量配置：** 如果你需要使用Umami统计，推荐在部署平台设置环境变量 `UMAMI_API_KEY` 为您的 Umami API 密钥，或者直接在配置文件中修改
+- **环境变量配置（可选）：** 在 `.env` 文件或部署平台配置
 
-部署前，请在 `astro.config.mjs` 中更新 `site` URL。
+```bash
+# Umami API 密钥，用于访问 Umami 统计数据
+# 如果在 config.ts 中启用了 Umami，建议在此配置 API 密钥
+UMAMI_API_KEY=your_umami_api_key_here
+# bcrypt 盐值轮数（10-14 推荐，默认 12）
+BCRYPT_SALT_ROUNDS=12
+```
+
+部署前，请在 `src/config.ts` 中更新 `siteURL`。
+**不建议**将 `.env` 文件提交到 Git，`.env` 应该仅在本地调试或构建使用。若要将项目在云平台部署，建议通过平台上的 `环境变量` 配置传入。
 
 ## 📝 文章前言格式
 
