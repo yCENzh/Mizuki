@@ -46,6 +46,23 @@ if (!ENABLE_CONTENT_SYNC) {
   process.exit(0);
 }
 
+// 检查 .gitignore 是否会阻止 submodule
+function checkGitignoreConflict() {
+  const gitignorePath = path.join(rootDir, '.gitignore');
+  if (fs.existsSync(gitignorePath)) {
+    const gitignoreContent = fs.readFileSync(gitignorePath, 'utf-8');
+    // 检查是否有未注释的 content/ 行
+    const lines = gitignoreContent.split('\n');
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (trimmed === 'content/' || trimmed === 'content') {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 // 检查内容目录是否存在
 if (!fs.existsSync(CONTENT_DIR)) {
   console.log(`📁 内容目录不存在: ${CONTENT_DIR}`);
@@ -58,20 +75,52 @@ if (!fs.existsSync(CONTENT_DIR)) {
       process.exit(1);
     }
     
-    try {
-      console.log(`📥 初始化 submodule: ${CONTENT_REPO_URL}`);
-      execSync(`git submodule add ${CONTENT_REPO_URL} content`, { 
-        stdio: 'inherit',
-        cwd: rootDir
-      });
-      execSync('git submodule update --init --recursive', { 
-        stdio: 'inherit',
-        cwd: rootDir
-      });
-      console.log('✅ Submodule 初始化成功');
-    } catch (error) {
-      console.error('❌ Submodule 初始化失败:', error.message);
-      process.exit(1);
+    // 检查 .gitignore 冲突
+    if (checkGitignoreConflict()) {
+      console.warn('⚠️  警告: .gitignore 中的 content/ 规则会阻止 submodule');
+      console.log('💡 解决方案: 使用独立仓库模式或注释掉 .gitignore 中的 content/ 行');
+      console.log('🔄 切换到独立仓库模式...\n');
+      
+      // 降级到独立仓库模式
+      try {
+        console.log(`📥 克隆内容仓库: ${CONTENT_REPO_URL}`);
+        execSync(`git clone ${CONTENT_REPO_URL} ${CONTENT_DIR}`, { 
+          stdio: 'inherit',
+          cwd: rootDir
+        });
+        console.log('✅ 内容仓库克隆成功');
+      } catch (error) {
+        console.error('❌ 克隆失败:', error.message);
+        process.exit(1);
+      }
+    } else {
+      try {
+        console.log(`📥 初始化 submodule: ${CONTENT_REPO_URL}`);
+        execSync(`git submodule add ${CONTENT_REPO_URL} content`, { 
+          stdio: 'inherit',
+          cwd: rootDir
+        });
+        execSync('git submodule update --init --recursive', { 
+          stdio: 'inherit',
+          cwd: rootDir
+        });
+        console.log('✅ Submodule 初始化成功');
+      } catch (error) {
+        console.error('❌ Submodule 初始化失败:', error.message);
+        console.log('🔄 尝试使用独立仓库模式...\n');
+        
+        // 如果 submodule 失败,尝试普通克隆
+        try {
+          execSync(`git clone ${CONTENT_REPO_URL} ${CONTENT_DIR}`, { 
+            stdio: 'inherit',
+            cwd: rootDir
+          });
+          console.log('✅ 内容仓库克隆成功');
+        } catch (cloneError) {
+          console.error('❌ 克隆也失败:', cloneError.message);
+          process.exit(1);
+        }
+      }
     }
   } else {
     console.log('📦 使用独立仓库模式');

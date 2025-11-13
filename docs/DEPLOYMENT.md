@@ -161,7 +161,9 @@ export default defineConfig({
 |-------|---|
 | `ENABLE_CONTENT_SYNC` | `true` |
 | `CONTENT_REPO_URL` | `https://github.com/your-username/Mizuki-Content.git` |
-| `USE_SUBMODULE` | `true` |
+| `USE_SUBMODULE` | `false` 或 `true` (推荐 `false`) |
+
+> ⚠️ **重要提示**: 如果使用 `USE_SUBMODULE=true`,请确保 `.gitignore` 中的 `content/` 行已被注释掉,否则会导致部署失败。推荐在 Vercel 上使用 `USE_SUBMODULE=false` (独立仓库模式)。
 
 #### 内容分离模式 - 私有仓库
 
@@ -314,14 +316,52 @@ USE_SUBMODULE=false  # ⚠️ Cloudflare Pages 默认不支持 submodule
 - 确保授权了私有仓库访问
 - 或使用 Token 方式: `https://TOKEN@github.com/user/repo.git`
 
-### 问题 3: Submodule 克隆失败
+### 问题 3: Submodule 与 .gitignore 冲突
+
+**错误信息**:
+```
+The following paths are ignored by one of your .gitignore files:
+content
+fatal: Failed to add submodule 'content'
+```
+
+**原因**: `.gitignore` 文件中的 `content/` 规则阻止了 Git 添加 submodule
+
+**解决方案 A: 修改 .gitignore (推荐)**
+
+编辑 `.gitignore` 文件,注释掉或删除 `content/` 行:
+
+```diff
+# content repository (if using independent mode)
+- content/
++ # content/  # 使用 submodule 时需要注释掉
+*.backup
+```
+
+然后重新部署。
+
+**解决方案 B: 使用独立仓库模式**
+
+如果不想修改 `.gitignore`,可以使用独立仓库模式:
+
+```
+ENABLE_CONTENT_SYNC=true
+CONTENT_REPO_URL=https://github.com/your-username/Mizuki-Content.git
+USE_SUBMODULE=false  # 改为 false
+```
+
+**解决方案 C: 自动降级 (v1.1+)**
+
+`sync-content.js` 会自动检测此冲突并降级到独立仓库模式,无需手动干预。
+
+### 问题 4: Submodule 克隆失败
 
 **检查**:
 1. 确认部署平台支持 Git Submodule
 2. 检查 SSH 密钥或 Token 配置
 3. 尝试使用独立仓库模式: `USE_SUBMODULE=false`
 
-### 问题 4: 构建成功但内容未更新
+### 问题 5: 构建成功但内容未更新
 
 **检查**:
 1. 查看构建日志，确认同步步骤执行
@@ -329,12 +369,32 @@ USE_SUBMODULE=false  # ⚠️ Cloudflare Pages 默认不支持 submodule
 3. 验证 `CONTENT_REPO_URL` 是否正确
 4. 清除部署平台的缓存并重新部署
 
-### 问题 5: 部署时间过长
+### 问题 6: 部署时间过长
 
 **优化建议**:
 - 使用 Git Submodule 模式 (更快)
 - 启用部署平台的缓存机制
 - 优化图片大小和数量
+
+### 问题 7: Vercel 部署时 submodule 权限问题
+
+**错误信息**:
+```
+fatal: could not read Username for 'https://github.com'
+```
+
+**原因**: 私有仓库需要认证
+
+**解决**:
+1. 在 Vercel 项目设置中添加 GitHub 集成权限
+2. 或使用 Token: `https://${GITHUB_TOKEN}@github.com/user/repo.git`
+3. 或切换到独立仓库模式: `USE_SUBMODULE=false`
+
+**检查**:
+1. 查看构建日志,确认同步步骤执行
+2. 检查 `ENABLE_CONTENT_SYNC` 是否设置为 `true`
+3. 验证 `CONTENT_REPO_URL` 是否正确
+4. 清除部署平台的缓存并重新部署
 
 ---
 
