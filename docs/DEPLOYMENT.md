@@ -441,3 +441,408 @@ fatal: could not read Username for 'https://github.com'
 ---
 
 💡 **建议**: 如果是第一次部署，推荐先使用本地模式熟悉流程，之后再根据需要启用内容分离功能。
+
+## 🔔 内容仓库更新触发构建
+
+### 问题说明
+
+当使用**内容代码分离**架构时，默认情况下：
+- ✅ 代码仓库 (Mizuki) 更新会触发自动构建
+- ❌ 内容仓库 (Mizuki-Content) 更新**不会**触发构建
+
+这意味着您在内容仓库中发布新文章后，需要手动触发代码仓库的重新部署才能看到更新。
+
+### 解决方案概览
+
+有以下几种方式实现内容仓库更新时自动触发构建：
+
+| 方案 | 难度 | 推荐度 | 适用平台 |
+|------|------|--------|----------|
+| **Repository Dispatch** | ⭐ 简单 | ⭐⭐⭐⭐⭐ | GitHub Pages, Vercel, Netlify, CF Pages |
+| **Webhook + Deploy Hook** | ⭐⭐ 中等 | ⭐⭐⭐⭐ | Vercel, Netlify, CF Pages |
+| **定时构建** | ⭐ 简单 | ⭐⭐⭐ | 所有平台 |
+
+---
+
+### 方案 1: Repository Dispatch (推荐)
+
+**原理**: 内容仓库推送时，通过 GitHub Actions 触发代码仓库的构建工作流。
+
+**优点**:
+- ✅ 实时触发，无延迟
+- ✅ 无需云平台特定配置
+- ✅ 适用于所有部署平台
+- ✅ 完全免费
+
+#### 配置步骤
+
+**Step 1: 创建 GitHub Personal Access Token (PAT)**
+
+1. 访问 [GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)](https://github.com/settings/tokens)
+2. 点击 **Generate new token (classic)**
+3. 配置 Token:
+   - Note: `Mizuki Content Trigger` (名称随意)
+   - Expiration: `No expiration` 或选择合适的期限
+   - Scopes: 勾选 `repo` (完整仓库访问权限)
+4. 点击 **Generate token**，复制生成的 Token (只显示一次！)
+
+**Step 2: 在内容仓库添加 Secret**
+
+1. 打开内容仓库 (Mizuki-Content): `https://github.com/your-username/Mizuki-Content`
+2. Settings → Secrets and variables → Actions → New repository secret
+3. 添加:
+   - Name: `DISPATCH_TOKEN`
+   - Value: 粘贴刚才创建的 PAT Token
+4. 点击 **Add secret**
+
+**Step 3: 在内容仓库创建 GitHub Actions 工作流**
+
+在内容仓库创建文件 `.github/workflows/trigger-build.yml`:
+
+```yaml
+name: Trigger Main Repo Build
+
+on:
+  push:
+    branches:
+      - main  # 或你使用的主分支名称
+    paths:
+      - 'posts/**'
+      - 'spec/**'
+      - 'data/**'
+      - 'images/**'
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger repository dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          repository: your-username/Mizuki  # 改为你的代码仓库
+          event-type: content-updated
+          client-payload: |
+            {
+              "ref": "${{ github.ref }}",
+              "sha": "${{ github.sha }}",
+              "message": "${{ github.event.head_commit.message }}"
+            }
+```
+
+**注意事项**:
+- 将 `your-username/Mizuki` 替换为你的代码仓库完整名称
+- 可以根据需要调整 `paths`，只在特定文件变化时触发
+
+**Step 4: 在代码仓库更新 GitHub Actions 工作流**
+
+编辑代码仓库的 `.github/workflows/deploy.yml`，添加 `repository_dispatch` 触发器:
+
+```yaml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  repository_dispatch:  # 添加这个触发器
+    types:
+      - content-updated
+
+# ...其余配置保持不变
+```
+
+**Step 5: 测试**
+
+1. 在内容仓库编辑一篇文章
+2. 提交并推送到 `main` 分支
+3. 查看内容仓库的 Actions 页面，确认 "Trigger Main Repo Build" 工作流运行
+4. 查看代码仓库的 Actions 页面，确认部署工作流被触发
+
+---
+
+### 方案 2: Webhook + Deploy Hook
+
+**原理**: 使用云平台提供的 Deploy Hook URL，在内容仓库更新时通过 webhook 触发构建。
+
+**优点**:
+- ✅ 实时触发
+- ✅ 与部署平台深度集成
+
+**缺点**:
+- ⚠️ 需要为每个部署平台单独配置
+- ⚠️ 不适用于 GitHub Pages
+
+#### Vercel 配置
+
+**Step 1: 获取 Deploy Hook URL**
+
+1. 打开 Vercel 项目设置
+2. Settings → Git → Deploy Hooks
+3. 创建新的 Hook:
+   - Name: `Content Update`
+   - Git Branch: `main` (或你的主分支)
+4. 点击 **Create Hook**，复制生成的 URL
+
+**Step 2: 在内容仓库配置 Webhook**
+
+在内容仓库创建 `.github/workflows/trigger-vercel.yml`:
+
+```yaml
+name: Trigger Vercel Deployment
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'posts/**'
+      - 'spec/**'
+      - 'data/**'
+      - 'images/**'
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Vercel Deploy Hook
+        run: |
+          curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
+```
+
+**Step 3: 添加 Secret**
+
+在内容仓库添加 Secret:
+- Name: `VERCEL_DEPLOY_HOOK`
+- Value: 粘贴 Vercel Deploy Hook URL
+
+#### Netlify 配置
+
+**Step 1: 获取 Build Hook URL**
+
+1. 打开 Netlify 站点设置
+2. Site settings → Build & deploy → Continuous deployment → Build hooks
+3. 点击 **Add build hook**:
+   - Build hook name: `Content Update`
+   - Branch to build: `main`
+4. 保存并复制生成的 URL
+
+**Step 2: 配置 GitHub Actions**
+
+在内容仓库创建 `.github/workflows/trigger-netlify.yml`:
+
+```yaml
+name: Trigger Netlify Deployment
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'posts/**'
+      - 'spec/**'
+      - 'data/**'
+      - 'images/**'
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Netlify Build Hook
+        run: |
+          curl -X POST -d '{}' "${{ secrets.NETLIFY_BUILD_HOOK }}"
+```
+
+**Step 3: 添加 Secret**
+
+- Name: `NETLIFY_BUILD_HOOK`
+- Value: 粘贴 Netlify Build Hook URL
+
+#### Cloudflare Pages 配置
+
+**Step 1: 获取 Deploy Hook URL**
+
+1. 打开 Cloudflare Pages 项目
+2. Settings → Builds & deployments → Deploy hooks
+3. 创建 Deploy Hook:
+   - Hook name: `Content Update`
+   - Branch: `main`
+4. 保存并复制 URL
+
+**Step 2: 配置类似于 Vercel/Netlify**
+
+配置方式与上述相同，只需修改 Secret 名称和 workflow 文件名。
+
+---
+
+### 方案 3: 定时构建 (fallback)
+
+**原理**: 设置定时任务，每天自动构建一次。
+
+**优点**:
+- ✅ 配置简单
+- ✅ 无需额外 Token 或 Webhook
+
+**缺点**:
+- ⚠️ 有延迟，不是实时更新
+- ⚠️ 可能造成不必要的构建
+
+#### GitHub Actions 配置
+
+在代码仓库的 `.github/workflows/deploy.yml` 中添加定时触发:
+
+```yaml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 2 * * *'  # 每天凌晨 2 点 (UTC 时间)
+  workflow_dispatch:  # 支持手动触发
+
+# ...其余配置
+```
+
+**Cron 表达式示例**:
+- `0 2 * * *` - 每天凌晨 2 点
+- `0 */6 * * *` - 每 6 小时一次
+- `0 0 * * 1` - 每周一凌晨
+
+#### Vercel/Netlify 配置
+
+这些平台也支持通过 webhook 设置定时构建:
+
+```yaml
+# 在内容仓库创建 .github/workflows/scheduled-build.yml
+name: Scheduled Build
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Deploy
+        run: |
+          curl -X POST "${{ secrets.DEPLOY_HOOK_URL }}"
+```
+
+---
+
+### 推荐配置组合
+
+#### 最佳实践 (推荐)
+
+结合多种方式，确保稳定性:
+
+```yaml
+# 代码仓库 .github/workflows/deploy.yml
+on:
+  push:
+    branches:
+      - main
+  repository_dispatch:    # 内容更新触发
+    types:
+      - content-updated
+  schedule:              # 兜底方案
+    - cron: '0 2 * * *'
+  workflow_dispatch:     # 手动触发
+```
+
+**优势**:
+- ✅ 内容更新实时触发 (repository_dispatch)
+- ✅ 每天自动同步，防止遗漏 (schedule)
+- ✅ 支持手动触发调试 (workflow_dispatch)
+
+---
+
+### 验证配置
+
+#### 检查清单
+
+- [ ] 创建了 PAT Token 或 Deploy Hook
+- [ ] 在内容仓库添加了对应的 Secret
+- [ ] 创建了内容仓库的触发工作流
+- [ ] 更新了代码仓库的部署工作流
+- [ ] 测试了一次提交，确认触发成功
+
+#### 测试步骤
+
+1. **在内容仓库修改文章**:
+   ```bash
+   cd /path/to/Mizuki-Content
+   # 编辑文章
+   git add .
+   git commit -m "test: trigger build"
+   git push
+   ```
+
+2. **查看内容仓库 Actions**:
+   - 访问 `https://github.com/your-username/Mizuki-Content/actions`
+   - 确认 "Trigger Build" 工作流运行成功
+
+3. **查看代码仓库 Actions**:
+   - 访问 `https://github.com/your-username/Mizuki/actions`
+   - 确认部署工作流被触发
+   - 查看日志确认内容同步成功
+
+4. **查看部署平台**:
+   - Vercel/Netlify/CF Pages: 查看部署历史
+   - GitHub Pages: 访问站点确认更新
+
+---
+
+### 故障排查
+
+#### 问题 1: 内容仓库推送后没有触发构建
+
+**检查**:
+1. 内容仓库的 Actions 是否运行?
+   - 查看 Actions 页面，确认工作流被触发
+2. PAT Token 权限是否正确?
+   - 需要 `repo` 完整权限
+3. 代码仓库名称是否正确?
+   - 格式: `owner/repo`
+
+**调试**:
+```yaml
+# 在内容仓库工作流中添加调试步骤
+- name: Debug
+  run: |
+    echo "Repository: your-username/Mizuki"
+    echo "Event type: content-updated"
+```
+
+#### 问题 2: Repository dispatch 触发成功但构建失败
+
+**检查**:
+1. 代码仓库的 Actions 是否启用?
+   - Settings → Actions → General → 确保启用
+2. 工作流文件是否包含 `repository_dispatch` 触发器?
+3. 环境变量是否正确配置?
+
+#### 问题 3: PAT Token 过期
+
+**现象**: 工作流运行失败，提示认证错误
+
+**解决**:
+1. 重新生成 PAT Token
+2. 更新内容仓库的 Secret
+3. 测试触发
+
+#### 问题 4: Deploy Hook 无效
+
+**检查**:
+1. Hook URL 是否正确复制?
+2. Secret 是否正确添加?
+3. 使用 curl 测试 Hook:
+   ```bash
+   curl -X POST "https://api.vercel.com/v1/integrations/deploy/..."
+   ```
+
+---

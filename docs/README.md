@@ -41,12 +41,13 @@
 ### 部署相关
 
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - 部署完整指南 ⭐
-  - GitHub Pages 自动部署
-  - Vercel 部署配置
-  - Netlify 部署配置
-  - Cloudflare Pages 部署
+  - 各平台部署配置 (GitHub Pages / Vercel / Netlify / Cloudflare Pages)
+  - 内容仓库更新自动触发构建
   - 私有仓库认证
   - 故障排查
+
+- **[AUTO_BUILD_TRIGGER.md](./AUTO_BUILD_TRIGGER.md)** - 自动构建触发快速参考 🆕
+  - 5 步快速配置，解决内容更新不触发部署的问题
 
 ## 🚀 快速查找
 
@@ -71,6 +72,9 @@
 ### 我遇到了内容同步错误
 → 阅读 [内容分离指南 - 故障排查](./CONTENT_SEPARATION.md#-故障排查)
 
+### 内容仓库更新后站点没有自动重新部署 🆕
+→ 阅读 [自动构建触发快速参考](./AUTO_BUILD_TRIGGER.md)
+
 ## 📖 文档架构
 
 ```
@@ -80,6 +84,7 @@ docs/
 ├── CONTENT_REPOSITORY.md        # 内容仓库结构
 ├── MIGRATION_GUIDE.md           # 迁移指南
 ├── DEPLOYMENT.md                # 部署完整指南
+├── AUTO_BUILD_TRIGGER.md        # 自动构建触发快速参考
 └── image/                       # 文档图片资源
 ```
 
