@@ -1,6 +1,6 @@
 ---
 import ImageWrapper from "../components/misc/ImageWrapper.astro";
-import { siteConfig, siteConfig } from "../config";
+import { siteConfig } from "../config";
 import localAnimeList from "../data/anime";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
@@ -125,9 +125,9 @@ async function processBangumiData(data: any, status: string) {
 				genre: item.subject?.tags
 					? item.subject.tags.slice(0, 3).map((tag: any) => tag.name)
 					: ["Unknown"],
-				studio: studio,
-				link: `https://bgm.tv/subject/${item.subject.id}` || "#",
-				progress: progress,
+        studio: studio,
+        link: item.subject?.id ? `https://bgm.tv/subject/${item.subject.id}` : "#",
+        progress: progress,
 				totalEpisodes: totalEpisodes,
 				startDate: item.subject?.date || "",
 				endDate: item.subject?.date || "",
@@ -138,7 +138,7 @@ async function processBangumiData(data: any, status: string) {
 }
 
 // 根据模式获取番剧列表
-let animeList = [];
+let animeList: typeof localAnimeList = [];
 if (ANIME_MODE === "local") {
 	// 使用本地配置
 	animeList = localAnimeList;
