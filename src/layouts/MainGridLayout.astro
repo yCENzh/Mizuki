@@ -619,18 +619,18 @@ body.no-banner-mode .absolute.w-full.z-30 {
 
 /* 移动端横幅优化 - 小屏手机 (320px - 480px) */
 @media (max-width: 480px) {
-    /* Banner wrapper 高度优化 - 优先保持banner显示 */
+    /* Banner wrapper 高度优化 - 增加高度以完整显示竖屏图片 */
     #banner-wrapper {
-        height: 70vh !important; /* 保持较大高度优先显示banner */
-        min-height: 450px;
+        height: 100vh !important; /* 使用全屏高度 */
+        min-height: 100vh;
         max-height: none; /* 移除最大高度限制 */
-        top: 0 !important; /* 移动端从顶部开始，避免被导航栏覆盖 */
+        top: 0 !important; /* 从顶部开始 */
     }
     
-    /* 主内容区域位置调整 - 确保在banner下面 */
-    .absolute.w-full.z-30 {
-        top: 70vh !important; /* 与banner高度对应 */
-        min-height: calc(100vh - 70vh) ;
+    /* 主内容区域位置调整 - 移到banner下方，确保图片完整显示 */
+    .absolute.w-full.z-30:not(.mobile-main-no-banner):not(.no-banner-layout) {
+        top: 100vh !important; /* 主内容从banner底部开始 */
+        min-height: 100vh;
     }
     
     /* 横幅文本覆盖层优化 */
@@ -673,18 +673,18 @@ body.no-banner-mode .absolute.w-full.z-30 {
 
 /* 移动端横幅优化 - 大屏手机 (481px - 640px) */
 @media (min-width: 481px) and (max-width: 640px) {
-    /* Banner wrapper 高度优化 - 优先保持banner显示 */
+    /* Banner wrapper 高度优化 - 使用全屏高度 */
     #banner-wrapper {
-        height: 75vh ;
-        min-height: 500px;
+        height: 100vh;
+        min-height: 100vh;
         max-height: none; /* 移除最大高度限制 */
-        top: 0 ; /* 移动端从顶部开始，避免被导航栏覆盖 */
+        top: 0; /* 从顶部开始 */
     }
     
-    /* 主内容区域位置调整 - 确保在banner下面 */
-    .absolute.w-full.z-30 {
-        top: 75vh ; /* 与banner高度对应 */
-        min-height: calc(100vh - 75vh) ;
+    /* 主内容区域位置调整 - 从banner底部开始 */
+    .absolute.w-full.z-30:not(.mobile-main-no-banner):not(.no-banner-layout) {
+        top: 100vh; /* 主内容从banner底部开始 */
+        min-height: 100vh;
     }
     
     /* 横幅文本覆盖层优化 */
@@ -729,15 +729,15 @@ body.no-banner-mode .absolute.w-full.z-30 {
 @media (min-width: 641px) and (max-width: 1023px) {
     /* Banner wrapper 高度优化 */
     #banner-wrapper {
-        height: 70vh ;
-        min-height: 500px;
-        top: 0 ; /* 移动端从顶部开始，避免被导航栏覆盖 */
+        height: 80vh;
+        min-height: 80vh;
+        top: 0; /* 从顶部开始 */
     }
     
-    /* 主内容区域位置调整 - 确保在banner下面 */
-    .absolute.w-full.z-30 {
-        top: 70vh ; /* 与banner高度对应 */
-        min-height: calc(100vh - 70vh) ;
+    /* 主内容区域位置调整 - 从banner底部开始 */
+    .absolute.w-full.z-30:not(.mobile-main-no-banner):not(.no-banner-layout) {
+        top: 80vh; /* 主内容从banner底部开始 */
+        min-height: calc(100vh - 80vh);
     }
     
     /* 横幅文本覆盖层优化 */
@@ -1051,14 +1051,14 @@ body.no-banner-mode .absolute.w-full.z-30 {
 /* 移动端横屏优化 */
 @media (max-width: 1279px) and (orientation: landscape) {
     #banner-wrapper:not(.mobile-hide-banner) {
-        top: 0 ; /* 横屏模式从顶部开始，避免被导航栏覆盖 */
-        height: 60vh ;
+        top: 0; /* 横屏模式从顶部开始 */
+        height: 70vh; /* 横屏使用70vh高度 */
     }
     
     /* 主内容区域位置调整 - 确保在banner下面，但不影响非首页 */
-    .absolute.w-full.z-30:not(.mobile-main-no-banner) {
-        top: 60vh ; /* 与banner高度对应 */
-        min-height: calc(100vh - 60vh) ;
+    .absolute.w-full.z-30:not(.mobile-main-no-banner):not(.no-banner-layout) {
+        top: 70vh; /* 与banner高度对应 */
+        min-height: calc(100vh - 70vh);
     }
     
     .banner-container {
