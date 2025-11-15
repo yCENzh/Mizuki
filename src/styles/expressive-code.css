@@ -128,6 +128,13 @@
     }
 }
 
+/* 触摸设备上让折叠按钮始终可见（不依赖 hover） */
+@media (hover: none) and (pointer: coarse) {
+    .expressive-code.collapsible .collapse-toggle-btn {
+        opacity: 1 !important;
+    }
+}
+
 /* 主题适配 - 确保文字可读 */
 @media (prefers-color-scheme: light) {
     /* 折叠按钮适配 */

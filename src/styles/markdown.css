@@ -102,6 +102,24 @@
         @apply opacity-100
     }
 
+    /* 移动端适配：缩小按钮 */
+    @media screen and (max-width: 768px) {
+        .copy-btn {
+            @apply h-7 w-7 top-2 right-2;
+        }
+        
+        .copy-btn-icon {
+            @apply w-3.5 h-3.5;
+        }
+    }
+
+    /* 触摸设备上让按钮始终可见（不依赖 hover） */
+    @media (hover: none) and (pointer: coarse) {
+        .copy-btn {
+            opacity: 1 !important;
+        }
+    }
+
 
     .expressive-code {
         @apply my-4;
