@@ -149,6 +149,14 @@ html {
         -webkit-backdrop-filter: blur(8px) !important;
     }
     
+    /* 确保嵌套的卡片元素在全屏壁纸模式下也应用半透明效果 */
+    .wallpaper-transparent .card-base .card-base,
+    body.wallpaper-transparent .card-base .card-base {
+        background: var(--card-bg-transparent) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+    }
+    
     .wallpaper-transparent .float-panel {
         @apply bg-[var(--card-bg-transparent)] backdrop-blur-sm;
     }

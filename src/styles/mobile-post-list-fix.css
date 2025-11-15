@@ -74,7 +74,10 @@ body.wallpaper-transparent .card-base,
 .wallpaper-transparent .card-base,
 body.wallpaper-transparent #post-list-container .card-base,
 body.wallpaper-transparent #post-list-container > * .card-base,
-body.wallpaper-transparent .post-card-item .card-base {
+body.wallpaper-transparent .post-card-item .card-base,
+/* 确保嵌套的卡片元素在全屏壁纸模式下也应用半透明效果 */
+body.wallpaper-transparent .card-base .card-base,
+.wallpaper-transparent .card-base .card-base {
   background: var(--card-bg-transparent) !important;
   background-color: var(--card-bg-transparent) !important;
   backdrop-filter: blur(8px) !important;
@@ -86,7 +89,10 @@ body.wallpaper-transparent .post-card-item .card-base {
 :root.dark .wallpaper-transparent .card-base,
 :root.dark body.wallpaper-transparent #post-list-container .card-base,
 :root.dark body.wallpaper-transparent #post-list-container > * .card-base,
-:root.dark body.wallpaper-transparent .post-card-item .card-base {
+:root.dark body.wallpaper-transparent .post-card-item .card-base,
+/* 确保嵌套的卡片元素在全屏壁纸模式下也应用半透明效果 */
+:root.dark body.wallpaper-transparent .card-base .card-base,
+:root.dark .wallpaper-transparent .card-base .card-base {
   background: var(--card-bg-transparent) !important;
   background-color: var(--card-bg-transparent) !important;
   backdrop-filter: blur(8px) !important;

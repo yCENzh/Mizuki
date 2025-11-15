@@ -32,6 +32,14 @@ A modern, feature-rich static blog template built with [Astro](https://astro.bui
 [**日本語**](./docs/README.ja.md) /
 [**中文繁体**](./docs/README.tw.md) /
 
+## 🆕 v6.5 Update
+- **Code Block Collapsible**: Added support for collapsible code blocks, improving code reading experience.
+- **Repository Separation**: Added support for separating code repository and content repository, making content updates more convenient.
+- **New Frontend Layout Management**: Implemented a brand new frontend layout management system for better control.
+- **Website URL Configuration**: Added website URL configuration to config.ts for easier management.
+- **Layout Switching Feature**: Added frontend layout switching functionality for more flexible display options.
+- **Performance and Bug Fixes**: Optimized website performance and fixed various bugs for better user experience.
+
 ## 🆕 v6.0 Update
 - **Page Refactoring**: Completely refactored anime, timeline, projects, skills, albums, friends, diary, and about pages for better performance and user experience.
 - **Page Toggle Feature**: Added page toggle functionality with SEO optimization modules, allowing control over feature page visibility.

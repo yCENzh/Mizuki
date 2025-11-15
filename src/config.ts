@@ -18,18 +18,18 @@ import { LinkPreset } from "./types/config";
 
 // 定义站点语言
 const SITE_LANG = "en"; // 语言代码，例如：'en', 'zh_CN', 'ja' 等。
-const SITE_TIMEZONE =8;//设置你的网站时区 from -12 to 12 default in UTC+8
+const SITE_TIMEZONE = 8; //设置你的网站时区 from -12 to 12 default in UTC+8
 export const siteConfig: SiteConfig = {
 	title: "Mizuki",
 	subtitle: "One demo website",
 	siteURL: "https://mizuki.mysqil.com/", // 请替换为你的站点URL，以斜杠结尾
 
 	timeZone: SITE_TIMEZONE,
-	
+
 	lang: SITE_LANG,
 
 	themeColor: {
-		hue: 35, // 主题色的默认色相，范围从 0 到 360。例如：红色：0，青色：200，蓝绿色：250，粉色：345
+		hue: 230, // 主题色的默认色相，范围从 0 到 360。例如：红色：0，青色：200，蓝绿色：250，粉色：345
 		fixed: false, // 对访问者隐藏主题色选择器
 	},
 
@@ -47,7 +47,7 @@ export const siteConfig: SiteConfig = {
 	// 顶栏标题配置
 	navbarTitle: {
 		// 顶栏标题文本
-		text: "MizukiUI",
+		text: "MizukiGUI",
 		// 顶栏标题图标路径，默认使用 public/assets/home/home.png
 		icon: "assets/home/home.png",
 	},
@@ -90,24 +90,16 @@ export const siteConfig: SiteConfig = {
 		// 支持单张图片或图片数组，当数组长度 > 1 时自动启用轮播
 		src: {
 			desktop: [
-				"/assets/desktop-banner/d1.webp",
-				"/assets/desktop-banner/d2.webp",
-				"/assets/desktop-banner/d3.webp",
-				"/assets/desktop-banner/d4.webp",
-				"/assets/desktop-banner/d5.webp",
-				"/assets/desktop-banner/d6.webp",
-				"/assets/desktop-banner/d7.webp",
-				"/assets/desktop-banner/d8.webp",
+				"/assets/desktop-banner/1.webp",
+				"/assets/desktop-banner/2.webp",
+				"/assets/desktop-banner/3.webp",
+				"/assets/desktop-banner/4.webp",
 			], // 桌面横幅图片
 			mobile: [
-				"/assets/mobile-banner/m1.webp",
-				"/assets/mobile-banner/m2.webp",
-				"/assets/mobile-banner/m3.webp",
-				"/assets/mobile-banner/m4.webp",
-				"/assets/mobile-banner/m5.webp",
-				"/assets/mobile-banner/m6.webp",
-				"/assets/mobile-banner/m7.webp",
-				"/assets/mobile-banner/m8.webp",
+				"/assets/mobile-banner/1.webp",
+				"/assets/mobile-banner/2.webp",
+				"/assets/mobile-banner/3.webp",
+				"/assets/mobile-banner/4.webp",
 			], // 移动横幅图片
 		}, // 使用本地横幅图片
 
@@ -136,13 +128,14 @@ export const siteConfig: SiteConfig = {
 
 		homeText: {
 			enable: true, // 在主页显示自定义文本
-			title: "Beautiful Mizuki!", // 主页横幅主标题
+			title: "美しいミズキ", // 主页横幅主标题
 
 			subtitle: [
-				"A Showcase Demo Site",
-				"Carousel Highlight: Innovation",
-				"Carousel Focus: User Experience",
-				"Carousel Spot: Core Advantages",
+				"特別なことはないけど、君がいると十分です",
+				"今でもあなたは私の光",
+				"君ってさ、知らないうちに私の毎日になってたよ",
+				"君と話すと、なんか毎日がちょっと楽しくなるんだ",
+				"今日はなんでもない日。でも、ちょっとだけいい日",
 			],
 			typewriter: {
 				enable: true, // 启用副标题打字机效果
@@ -181,10 +174,10 @@ export const siteConfig: SiteConfig = {
 	// 字体配置
 	font: {
 		zenMaruGothic: {
-			enable: true, // 启用全局圆体适合日语和英语，对中文适配一般
+			enable: false, // 启用全局圆体适合日语和英语，对中文适配一般
 		},
 		hanalei: {
-			enable: false, // 启用 Hanalei 字体作为全局字体，适合中文去使用
+			enable: true, // 启用 Hanalei 字体作为全局字体，适合中文去使用
 		},
 	},
 	showLastModified: true, // 控制“上次编辑”卡片显示的开关
@@ -192,30 +185,22 @@ export const siteConfig: SiteConfig = {
 export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
 	src: {
 		desktop: [
-			"/assets/desktop-banner/d1.webp",
-			"/assets/desktop-banner/d2.webp",
-			"/assets/desktop-banner/d3.webp",
-			"/assets/desktop-banner/d4.webp",
-			"/assets/desktop-banner/d5.webp",
-			"/assets/desktop-banner/d6.webp",
-			"/assets/desktop-banner/d7.webp",
-			"/assets/desktop-banner/d8.webp",
+			"/assets/desktop-banner/1.webp",
+			"/assets/desktop-banner/2.webp",
+			"/assets/desktop-banner/3.webp",
+			"/assets/desktop-banner/4.webp",
 		], // 桌面横幅图片
 		mobile: [
-			"/assets/mobile-banner/m1.webp",
-			"/assets/mobile-banner/m2.webp",
-			"/assets/mobile-banner/m3.webp",
-			"/assets/mobile-banner/m4.webp",
-			"/assets/mobile-banner/m5.webp",
-			"/assets/mobile-banner/m6.webp",
-			"/assets/mobile-banner/m7.webp",
-			"/assets/mobile-banner/m8.webp",
+			"/assets/mobile-banner/1.webp",
+			"/assets/mobile-banner/2.webp",
+			"/assets/mobile-banner/3.webp",
+			"/assets/mobile-banner/4.webp",
 		], // 移动横幅图片
 	}, // 使用本地横幅图片
 	position: "center", // 壁纸位置，等同于 object-position
 	carousel: {
 		enable: true, // 启用轮播
-		interval: 1, // 轮播间隔时间（秒）
+		interval: 5, // 轮播间隔时间（秒）
 	},
 	zIndex: -1, // 层级，确保壁纸在背景层
 	opacity: 0.8, // 壁纸透明度

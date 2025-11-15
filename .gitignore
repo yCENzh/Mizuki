@@ -22,6 +22,9 @@ pnpm-debug.log*
 # content/
 *.backup
 
+# Large zip files
+*.zip
+
 # macOS-specific files
 .DS_Store
 
