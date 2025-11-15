@@ -216,7 +216,7 @@ if (typeof window !== "undefined") {
 	on:click={togglePanel} 
 	aria-label="Table of Contents" 
 	id="mobile-toc-switch"
-	class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 lg:!hidden"
+	class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 lg:!hidden theme-switch-btn"
 >
 	<Icon icon="material-symbols:format-list-bulleted" class="text-[1.25rem]" />
 </button>
@@ -232,7 +232,7 @@ if (typeof window !== "undefined") {
 		<button 
 			on:click={togglePanel}
 			aria-label="Close TOC"
-			class="btn-plain rounded-lg h-8 w-8 active:scale-90"
+			class="btn-plain rounded-lg h-8 w-8 active:scale-90 theme-switch-btn"
 		>
 			<Icon icon="material-symbols:close" class="text-[1rem]" />
 		</button>
@@ -293,6 +293,11 @@ if (typeof window !== "undefined") {
 		background: var(--card-bg);
 		border: 1px solid var(--line-color);
 		backdrop-filter: blur(10px);
+	}
+
+	/* 确保主题切换按钮的背景色即时更新 */
+	:global(.theme-switch-btn)::before {
+		transition: transform 75ms ease-out, background-color 0ms !important;
 	}
 
 	.toc-content {

@@ -66,11 +66,74 @@ html {
 }
 
 @layer components {
-    /* 主题过渡保护类 - 临时禁用所有过渡动画 */
-    .is-theme-transitioning *,
-    .is-theme-transitioning *::before,
-    .is-theme-transitioning *::after {
+    /* View Transitions API 主题切换动画 */
+    /* 为整个文档根元素设置视图过渡 */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation-duration: 0.4s;
+        animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+        /* 使用混合模式使颜色过渡更平滑 */
+        mix-blend-mode: normal;
+    }
+    
+    /* 视图过渡组 - 使用交叉淡化效果 */
+    ::view-transition-group(root) {
+        animation-duration: 0.4s;
+        animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    
+    /* 淡出旧视图 - 使用更平滑的曲线 */
+    ::view-transition-old(root) {
+        animation-name: theme-fade-out;
+    }
+    
+    /* 淡入新视图 - 使用更平滑的曲线 */
+    ::view-transition-new(root) {
+        animation-name: theme-fade-in;
+    }
+    
+    /* 定义淡出动画 - 使用贝塞尔曲线使过渡更自然 */
+    @keyframes theme-fade-out {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+    
+    /* 定义淡入动画 - 使用贝塞尔曲线使过渡更自然 */
+    @keyframes theme-fade-in {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+    
+    /* 确保边框和分隔线元素在主题切换时有更明确的过渡时长 */
+    .transition,
+    [class*="border"],
+    [class*="transition"] {
+        transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        transition-duration: 0.2s;
+    }
+    
+    /* 主题过渡保护类 - 仅在非 View Transitions 模式下使用 */
+    /* 当使用 View Transitions API 时，浏览器会自动处理过渡，不需要禁用 transition */
+    .is-theme-transitioning:not(.use-view-transition) *,
+    .is-theme-transitioning:not(.use-view-transition) *::before,
+    .is-theme-transitioning:not(.use-view-transition) *::after {
         transition: none !important;
+    }
+    
+    /* 为了让 View Transitions 更流畅，允许颜色相关属性保持过渡 */
+    .is-theme-transitioning.use-view-transition * {
+        transition-property: color, background-color, border-color, text-decoration-color, fill, stroke !important;
+        transition-duration: 0.25s !important;
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
     
     /* 波浪效果精确同步处理 */
@@ -185,8 +248,15 @@ html {
         @apply drop-shadow-[0_2px_4px_rgba(0,0,0,0.005)]
     }
     .expand-animation {
-        @apply relative before:ease-out before:transition active:bg-none hover:before:bg-[var(--btn-plain-bg-hover)] active:before:bg-[var(--btn-plain-bg-active)] z-0
+        @apply relative before:ease-out before:duration-75 before:transition-all active:bg-none hover:before:bg-[var(--btn-plain-bg-hover)] active:before:bg-[var(--btn-plain-bg-active)] z-0
         before:absolute before:rounded-[inherit] before:inset-0 before:scale-[0.85] hover:before:scale-100 before:-z-10
+    }
+    /* 主题切换时禁用按钮背景色过渡，确保立即更新 */
+    .is-theme-transitioning .expand-animation::before {
+        transition: transform 75ms ease-out !important;
+    }
+    .is-theme-transitioning .btn-plain {
+        transition: color 75ms ease-out !important;
     }
     .link {
         @apply transition-colors duration-150 rounded-md p-1 -m-1 expand-animation;

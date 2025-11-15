@@ -59,13 +59,8 @@ export function applyThemeToDocument(theme: LIGHT_DARK_MODE) {
 		return;
 	}
 
-	// 只在需要主题切换时添加过渡保护
-	if (needsThemeChange) {
-		document.documentElement.classList.add("is-theme-transitioning");
-	}
-
-	// 使用 requestAnimationFrame 确保在下一帧执行，避免闪屏
-	requestAnimationFrame(() => {
+	// 定义实际执行主题切换的函数
+	const performThemeChange = () => {
 		// 应用主题变化
 		if (needsThemeChange) {
 			if (targetIsDark) {
@@ -81,23 +76,40 @@ export function applyThemeToDocument(theme: LIGHT_DARK_MODE) {
 			"data-theme",
 			expressiveTheme,
 		);
+	};
 
-		// 强制重新渲染代码块 - 解决从首页进入文章页面时的渲染问题
-		if (needsCodeThemeUpdate) {
-			// 触发 expressice code 重新渲染
-			setTimeout(() => {
-				window.dispatchEvent(new CustomEvent('theme-change'));
-			}, 0);
+	// 检查浏览器是否支持 View Transitions API
+	// @ts-ignore
+	if (needsThemeChange && document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+		// 添加标记类，表示正在使用 View Transitions
+		document.documentElement.classList.add("is-theme-transitioning", "use-view-transition");
+		
+		// 使用 View Transitions API 实现平滑过渡
+		// @ts-ignore
+		const transition = document.startViewTransition(() => {
+			performThemeChange();
+		});
+		
+		// 在过渡完成后移除标记类
+		transition.finished.finally(() => {
+			document.documentElement.classList.remove("is-theme-transitioning", "use-view-transition");
+		});
+	} else {
+		// 不支持 View Transitions API 或用户偏好减少动画，使用传统方式
+		// 只在需要主题切换时添加过渡保护
+		if (needsThemeChange) {
+			document.documentElement.classList.add("is-theme-transitioning");
 		}
 
-		// 在下一帧快速移除保护类，使用微任务确保DOM更新完成
+		performThemeChange();
+
+		// 使用 requestAnimationFrame 确保在下一帧移除过渡保护类
 		if (needsThemeChange) {
-			// 使用 requestAnimationFrame 确保在下一帧移除过渡保护类
 			requestAnimationFrame(() => {
 				document.documentElement.classList.remove("is-theme-transitioning");
 			});
 		}
-	});
+	}
 }
 
 export function setTheme(theme: LIGHT_DARK_MODE): void {

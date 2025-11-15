@@ -130,7 +130,7 @@ onMount(() => {
 {#if mounted && siteConfig.postListLayout.allowSwitch && !isSmallScreen}
   <button 
     aria-label="切换文章列表布局" 
-    class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 flex items-center justify-center" 
+    class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 flex items-center justify-center theme-switch-btn" 
     on:click={switchLayout}
     title={currentLayout === 'list' ? '切换到网格模式' : '切换到列表模式'}
   >
@@ -147,3 +147,10 @@ onMount(() => {
     {/if}
   </button>
 {/if}
+
+<style>
+    /* 确保主题切换按钮的背景色即时更新 */
+    .theme-switch-btn::before {
+        transition: transform 75ms ease-out, background-color 0ms !important;
+    }
+</style>
