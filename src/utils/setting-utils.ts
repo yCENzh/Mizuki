@@ -93,8 +93,14 @@ export function applyThemeToDocument(theme: LIGHT_DARK_MODE) {
 			performThemeChange();
 		});
 		
-		// 在过渡完成后移除标记类
-		transition.finished.finally(() => {
+		// 在过渡完成后移除标记类（使用 finished promise 确保完全同步）
+		transition.finished.then(() => {
+			// 使用 microtask 确保在下一个事件循环前完成清理
+			queueMicrotask(() => {
+				document.documentElement.classList.remove("is-theme-transitioning", "use-view-transition");
+			});
+		}).catch(() => {
+			// 如果过渡被中断，也要清理状态
 			document.documentElement.classList.remove("is-theme-transitioning", "use-view-transition");
 		});
 	} else {

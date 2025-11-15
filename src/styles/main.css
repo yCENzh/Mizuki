@@ -70,29 +70,33 @@ html {
     /* 为整个文档根元素设置视图过渡 */
     ::view-transition-old(root),
     ::view-transition-new(root) {
-        animation-duration: 0.4s;
-        animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+        animation-duration: 0.5s;
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         /* 使用混合模式使颜色过渡更平滑 */
         mix-blend-mode: normal;
     }
     
     /* 视图过渡组 - 使用交叉淡化效果 */
     ::view-transition-group(root) {
-        animation-duration: 0.4s;
-        animation-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+        animation-duration: 0.5s;
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     /* 淡出旧视图 - 使用更平滑的曲线 */
     ::view-transition-old(root) {
         animation-name: theme-fade-out;
+        /* 确保背景色同步切换 */
+        z-index: 2;
     }
     
     /* 淡入新视图 - 使用更平滑的曲线 */
     ::view-transition-new(root) {
         animation-name: theme-fade-in;
+        /* 确保新视图在上层 */
+        z-index: 1;
     }
     
-    /* 定义淡出动画 - 使用贝塞尔曲线使过渡更自然 */
+    /* 定义淡出动画 - 使用更平滑的缓动函数 */
     @keyframes theme-fade-out {
         0% {
             opacity: 1;
@@ -102,7 +106,7 @@ html {
         }
     }
     
-    /* 定义淡入动画 - 使用贝塞尔曲线使过渡更自然 */
+    /* 定义淡入动画 - 从下层淡入 */
     @keyframes theme-fade-in {
         0% {
             opacity: 0;
@@ -131,6 +135,7 @@ html {
     }
     
     /* 在主题切换时禁用代码块的复杂效果以提升性能 */
+    /* 使用 View Transitions 时也需要禁用代码块动画，因为它们太多了 */
     .is-theme-transitioning .expressive-code,
     .is-theme-transitioning .expressive-code * {
         transition: none !important;
@@ -138,45 +143,45 @@ html {
         will-change: auto !important;
     }
     
-    /* 禁用复杂选择器元素的过渡 */
-    .is-theme-transitioning .float-panel,
-    .is-theme-transitioning .float-panel *,
-    .is-theme-transitioning .music-player,
-    .is-theme-transitioning .music-player *,
-    .is-theme-transitioning .widget,
-    .is-theme-transitioning .widget *,
-    .is-theme-transitioning .dropdown-content,
-    .is-theme-transitioning .dropdown-content * {
+    /* 禁用复杂选择器元素的过渡 - 仅在非 View Transitions 模式下 */
+    .is-theme-transitioning:not(.use-view-transition) .float-panel,
+    .is-theme-transitioning:not(.use-view-transition) .float-panel *,
+    .is-theme-transitioning:not(.use-view-transition) .music-player,
+    .is-theme-transitioning:not(.use-view-transition) .music-player *,
+    .is-theme-transitioning:not(.use-view-transition) .widget,
+    .is-theme-transitioning:not(.use-view-transition) .widget *,
+    .is-theme-transitioning:not(.use-view-transition) .dropdown-content,
+    .is-theme-transitioning:not(.use-view-transition) .dropdown-content * {
         transition: none !important;
         animation: none !important;
     }
     
-    /* 强制使用 contain 隔离渲染上下文 */
-    .is-theme-transitioning .post-card,
-    .is-theme-transitioning .widget,
-    .is-theme-transitioning .float-panel {
+    /* 强制使用 contain 隔离渲染上下文 - 仅在非 View Transitions 模式下 */
+    .is-theme-transitioning:not(.use-view-transition) .post-card,
+    .is-theme-transitioning:not(.use-view-transition) .widget,
+    .is-theme-transitioning:not(.use-view-transition) .float-panel {
         contain: layout style paint !important;
     }
     
-    /* 波浪效果精确同步处理 */
-    .is-theme-transitioning svg use {
+    /* 波浪效果精确同步处理 - 仅在非 View Transitions 模式下 */
+    .is-theme-transitioning:not(.use-view-transition) svg use {
         /* 禁用过渡但保持动画 */
         transition: none;
         /* 强制立即继承页面背景色 */
         fill: currentColor;
     }
     
-    /* 导航栏主题切换保护 - 完全禁用过渡以确保性能 */
-    .is-theme-transitioning #navbar > div,
-    .is-theme-transitioning #navbar[data-transparent-mode] > div,
-    .is-theme-transitioning #navbar[data-transparent-mode].scrolled > div,
-    .is-theme-transitioning body.wallpaper-transparent #navbar > div,
-    .is-theme-transitioning body.wallpaper-transparent #navbar[data-transparent-mode] > div,
-    .is-theme-transitioning body.wallpaper-transparent #navbar[data-transparent-mode].scrolled > div,
-    .is-theme-transitioning #banner-wrapper ~ * #navbar > div,
-    .is-theme-transitioning #banner-wrapper ~ * #navbar[data-transparent-mode] > div,
-    .is-theme-transitioning body:has(#banner-wrapper) #navbar > div,
-    .is-theme-transitioning body:has(#banner-wrapper) #navbar[data-transparent-mode] > div {
+    /* 导航栏主题切换保护 - 仅在非 View Transitions 模式下禁用过渡 */
+    .is-theme-transitioning:not(.use-view-transition) #navbar > div,
+    .is-theme-transitioning:not(.use-view-transition) #navbar[data-transparent-mode] > div,
+    .is-theme-transitioning:not(.use-view-transition) #navbar[data-transparent-mode].scrolled > div,
+    .is-theme-transitioning:not(.use-view-transition) body.wallpaper-transparent #navbar > div,
+    .is-theme-transitioning:not(.use-view-transition) body.wallpaper-transparent #navbar[data-transparent-mode] > div,
+    .is-theme-transitioning:not(.use-view-transition) body.wallpaper-transparent #navbar[data-transparent-mode].scrolled > div,
+    .is-theme-transitioning:not(.use-view-transition) #banner-wrapper ~ * #navbar > div,
+    .is-theme-transitioning:not(.use-view-transition) #banner-wrapper ~ * #navbar[data-transparent-mode] > div,
+    .is-theme-transitioning:not(.use-view-transition) body:has(#banner-wrapper) #navbar > div,
+    .is-theme-transitioning:not(.use-view-transition) body:has(#banner-wrapper) #navbar[data-transparent-mode] > div {
         transition: none !important;
         backdrop-filter: none !important;
     }

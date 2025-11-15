@@ -175,11 +175,12 @@ class ThemeOptimizer {
           
           const classList = document.documentElement.classList;
           const isTransitioning = classList.contains('is-theme-transitioning');
+          const useViewTransition = classList.contains('use-view-transition');
           
           if (isTransitioning && !this.isOptimizing) {
-            this.optimizeThemeSwitch();
+            this.optimizeThemeSwitch(useViewTransition);
           } else if (!isTransitioning && this.isOptimizing) {
-            this.restoreAfterThemeSwitch();
+            this.restoreAfterThemeSwitch(useViewTransition);
           }
         }
       }
@@ -191,8 +192,14 @@ class ThemeOptimizer {
     });
   }
 
-  optimizeThemeSwitch() {
+  optimizeThemeSwitch(useViewTransition = false) {
     this.isOptimizing = true;
+    this.useViewTransition = useViewTransition;
+    
+    // 如果使用 View Transitions，不需要额外的优化，让浏览器处理
+    if (useViewTransition) {
+      return;
+    }
     
     // 1. 临时禁用重型元素动画
     this.disableHeavyAnimations();
@@ -282,8 +289,14 @@ class ThemeOptimizer {
     });
   }
 
-  restoreAfterThemeSwitch() {
+  restoreAfterThemeSwitch(useViewTransition = false) {
     this.isOptimizing = false;
+    
+    // 如果使用 View Transitions，直接清理即可
+    if (useViewTransition) {
+      this.useViewTransition = false;
+      return;
+    }
     
     // 延迟恢复，确保主题切换完全完成
     requestAnimationFrame(() => {
