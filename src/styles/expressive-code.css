@@ -29,16 +29,14 @@
 .expressive-code.collapsible .collapse-toggle-btn {
     all: initial;
     opacity: 0;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
     position: absolute;
-    active:scale-90;
     height: 2rem;
     width: 2rem;
     top: 0.75rem;
     right: 3.5rem;
     font-size: 0.875rem;
     border-radius: 0.5rem;
-    transition: opacity 0.15s ease-in-out, background-color 0.15s ease-in-out;
+    transition: opacity 0.15s ease-in-out, background-color 0.15s ease-in-out, transform 0.15s ease-in-out;
     z-index: 20;
     cursor: pointer;
     background: var(--btn-regular-bg);
@@ -46,6 +44,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .expressive-code.collapsible .collapse-toggle-btn:hover {
@@ -123,8 +122,13 @@
     .expressive-code.collapsible .collapse-toggle-btn {
         top: 0.5rem;
         right: 2.5rem;
-        width: 1.8rem;
-        height: 1.8rem;
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+    
+    .expressive-code.collapsible .collapse-toggle-btn svg {
+        width: 0.875rem;
+        height: 0.875rem;
     }
 }
 
@@ -139,22 +143,22 @@
 @media (prefers-color-scheme: light) {
     /* 折叠按钮适配 */
     .expressive-code.collapsible .collapse-toggle-btn {
-        box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
     }
     
     /* 复制按钮适配 */
     .custom-md .copy-btn {
-        box-shadow: 0 0 8px rgba(0, 0, 0, 0.1) !important;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1) !important;
     }
 }
 
 /* 暗色模式下折叠按钮样式 */
 :root:not(.dark) .expressive-code.collapsible .collapse-toggle-btn {
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
 }
 
 :root:not(.dark) .custom-md .copy-btn {
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* 优化代码块的重绘性能 */
