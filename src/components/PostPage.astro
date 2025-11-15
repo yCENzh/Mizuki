@@ -40,9 +40,9 @@ const interval = 50;
     setTimeout(() => {
       const postListContainer = document.getElementById("post-list-container");
       if (!postListContainer) {
-        console.warn("post-list-container not found, retrying...");
-        // 如果找不到容器，延迟重试
-        setTimeout(initLayout, 100);
+        // 如果找不到容器，说明当前页面不是文章列表页面
+        console.debug("post-list-container not found, skipping layout initialization (not a post list page)");
+        // setTimeout(initLayout, 100);
         return;
       }
 
@@ -51,7 +51,7 @@ const interval = 50;
       const defaultLayout = postListContainer.getAttribute("data-default-layout") || "list";
       const currentLayout = savedLayout || defaultLayout;
 
-      console.log("Initializing layout:", { savedLayout, defaultLayout, currentLayout });
+      console.debug("Initializing layout:", { savedLayout, defaultLayout, currentLayout });
 
       // 移动端由CSS处理，桌面端才需要JavaScript初始化
       const isDesktop = window.innerWidth >= 769;
@@ -136,7 +136,7 @@ const interval = 50;
         // 页面内容替换后重新初始化布局
         swup.hooks.on("content:replace", () => {
           setTimeout(() => {
-            console.log("Swup content:replace - reinitializing layout");
+            console.debug("Swup content:replace - reinitializing layout");
             initLayout();
           }, 100);
         });
@@ -144,7 +144,7 @@ const interval = 50;
         // 页面视图切换后重新初始化布局
         swup.hooks.on("page:view", () => {
           setTimeout(() => {
-            console.log("Swup page:view - reinitializing layout");
+            console.debug("Swup page:view - reinitializing layout");
             initLayout();
           }, 100);
         });
@@ -152,12 +152,12 @@ const interval = 50;
         // 动画进入结束后重新初始化布局
         swup.hooks.on("animation:in:end", () => {
           setTimeout(() => {
-            console.log("Swup animation:in:end - reinitializing layout");
+            console.debug("Swup animation:in:end - reinitializing layout");
             initLayout();
           }, 50);
         });
         
-        console.log("Swup layout listeners registered");
+        console.debug("Swup layout listeners registered");
         return true;
       }
       return false;
@@ -176,7 +176,7 @@ const interval = 50;
           // 降级处理：监听普通页面切换事件
           window.addEventListener("popstate", () => {
             setTimeout(() => {
-              console.log("Popstate - reinitializing layout");
+              console.debug("Popstate - reinitializing layout");
               initLayout();
             }, 100);
           });
@@ -189,7 +189,7 @@ const interval = 50;
             history.pushState = function(...args) {
               originalPushState.apply(this, args);
               setTimeout(() => {
-                console.log("PushState - reinitializing layout");
+                console.debug("PushState - reinitializing layout");
                 initLayout();
               }, 100);
             };
@@ -197,13 +197,13 @@ const interval = 50;
             history.replaceState = function(...args) {
               originalReplaceState.apply(this, args);
               setTimeout(() => {
-                console.log("ReplaceState - reinitializing layout");
+                console.debug("ReplaceState - reinitializing layout");
                 initLayout();
               }, 100);
             };
           }
           
-          console.log("Fallback layout listeners registered");
+          console.debug("Fallback layout listeners registered");
         }
       }, 100);
     }
