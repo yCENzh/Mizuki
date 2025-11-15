@@ -94,21 +94,22 @@
     max-height: none;
 }
 
-/* 平滑过渡 */
 .expressive-code.collapsible .frame pre {
     transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
 }
 
-/* 响应式优化 - 移动端适配 */
 @media (max-width: 768px) {
     .expressive-code.collapsible .collapse-toggle-btn {
         right: 3rem;
-        opacity: 1;
     }
     
     .expressive-code.collapsed .frame pre {
         max-height: 4.5rem;
+    }
+    
+    .expressive-code [data-language]::before {
+        display: none !important;
     }
 }
 
