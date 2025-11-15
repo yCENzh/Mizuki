@@ -114,13 +114,6 @@
         }
     }
 
-    /* 触摸设备上让按钮始终可见（不依赖 hover） */
-    @media (hover: none) and (pointer: coarse) {
-        .copy-btn {
-            opacity: 1 !important;
-        }
-    }
-
 
     .expressive-code {
         @apply my-4;

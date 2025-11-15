@@ -407,10 +407,3 @@
     display: none !important;
   }
 }
-
-/* 触摸设备优化 - 复制按钮始终可见 */
-@media (hover: none) and (pointer: coarse) {
-  #decrypted-content .copy-btn {
-    opacity: 1;
-  }
-}
