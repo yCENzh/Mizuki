@@ -1,6 +1,10 @@
 .expressive-code {
     @apply relative;
     
+    /* 性能优化：使用 content-visibility 来跳过屏幕外的代码块渲染 */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+    
     .frame {
         @apply !shadow-none;
     }
@@ -114,6 +118,16 @@
     }
 }
 
+/* 小屏幕折叠按钮 */
+@media screen and (max-width: 768px) {
+    .expressive-code.collapsible .collapse-toggle-btn {
+        top: 0.5rem;
+        right: 2.5rem;
+        width: 1.8rem;
+        height: 1.8rem;
+    }
+}
+
 /* 主题适配 - 确保文字可读 */
 @media (prefers-color-scheme: light) {
     /* 折叠按钮适配 */
@@ -127,13 +141,26 @@
     }
 }
 
-/* 支持 Astro 的主题切换（非 dark 类时） */
+/* 暗色模式下折叠按钮样式 */
 :root:not(.dark) .expressive-code.collapsible .collapse-toggle-btn {
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
 }
 
 :root:not(.dark) .custom-md .copy-btn {
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 优化代码块的重绘性能 */
+.expressive-code pre,
+.expressive-code code {
+    transform: translateZ(0);
+    will-change: auto;
+}
+
+/* 减少不必要的重排和重绘 */
+.expressive-code .frame {
+    /* 使用 contain 属性隔离渲染上下文 */
+    contain: layout style paint;
 }
 
 /* 打印样式 - 自动展开所有代码块 */
@@ -149,4 +176,25 @@
     .expressive-code.collapsible .collapse-toggle-btn {
         display: none !important;
     }
+}
+
+/* 主题切换性能优化：在主题过渡期间禁用代码块的所有过渡效果 */
+.is-theme-transitioning .expressive-code,
+.is-theme-transitioning .expressive-code *,
+.is-theme-transitioning .expressive-code *::before,
+.is-theme-transitioning .expressive-code *::after {
+    transition: none !important;
+    animation: none !important;
+}
+
+/* 主题切换性能优化：在主题过渡期间完全隐藏代码块渲染 */
+.is-theme-transitioning .expressive-code {
+    content-visibility: hidden !important;
+    /* 避免闪烁 */
+    opacity: 0.99;
+}
+
+/* 主题切换时的平滑过渡 */
+:root:not(.is-theme-transitioning) .expressive-code {
+    transition: opacity 0.1s ease-out;
 }

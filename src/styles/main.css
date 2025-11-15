@@ -138,11 +138,24 @@ html {
         will-change: auto !important;
     }
     
-    /* 为了让 View Transitions 更流畅，允许颜色相关属性保持过渡 */
-    .is-theme-transitioning.use-view-transition * {
-        transition-property: color, background-color, border-color, text-decoration-color, fill, stroke !important;
-        transition-duration: 0.2s !important;
-        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+    /* 禁用复杂选择器元素的过渡 */
+    .is-theme-transitioning .float-panel,
+    .is-theme-transitioning .float-panel *,
+    .is-theme-transitioning .music-player,
+    .is-theme-transitioning .music-player *,
+    .is-theme-transitioning .widget,
+    .is-theme-transitioning .widget *,
+    .is-theme-transitioning .dropdown-content,
+    .is-theme-transitioning .dropdown-content * {
+        transition: none !important;
+        animation: none !important;
+    }
+    
+    /* 强制使用 contain 隔离渲染上下文 */
+    .is-theme-transitioning .post-card,
+    .is-theme-transitioning .widget,
+    .is-theme-transitioning .float-panel {
+        contain: layout style paint !important;
     }
     
     /* 波浪效果精确同步处理 */

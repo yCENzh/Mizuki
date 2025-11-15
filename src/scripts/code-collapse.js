@@ -17,23 +17,41 @@ class CodeBlockCollapser {
   }
 
   setupThemeChangeListener() {
-    // 监听主题切换，在切换期间暂停 observer
+    // 监听主题切换，在切换期间暂停 observer 和优化性能
     const themeObserver = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         if (mutation.type === 'attributes' && 
             (mutation.attributeName === 'class' || mutation.attributeName === 'data-theme')) {
           const isTransitioning = document.documentElement.classList.contains('is-theme-transitioning');
+          
           if (isTransitioning && !this.isThemeChanging) {
             this.isThemeChanging = true;
+            
+            // 断开 observer 以避免在主题切换时进行不必要的检查
             if (this.observer) {
               this.observer.disconnect();
             }
+            
+            // 性能优化：临时禁用代码块的动画和过渡
+            document.querySelectorAll('.expressive-code').forEach(block => {
+              block.style.transition = 'none';
+            });
+            
           } else if (!isTransitioning && this.isThemeChanging) {
             this.isThemeChanging = false;
-            // 等待主题切换完全结束后重新连接 observer
-            setTimeout(() => {
-              this.observePageChanges();
-            }, 50);
+            
+            // 等待主题切换完全结束后再恢复
+            requestAnimationFrame(() => {
+              // 恢复代码块的过渡效果
+              document.querySelectorAll('.expressive-code').forEach(block => {
+                block.style.transition = '';
+              });
+              
+              // 重新连接 observer
+              setTimeout(() => {
+                this.observePageChanges();
+              }, 50);
+            });
           }
           break;
         }

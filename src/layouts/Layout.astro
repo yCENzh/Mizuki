@@ -209,16 +209,12 @@ const umamiScripts = umamiConfig.scripts || ""; // 获取Umami scripts配置
 			
 			// Set the theme for Expressive Code based on current mode
 			const expressiveTheme = isDark ? "github-dark" : "github-light";
-			document.documentElement.setAttribute("data-theme", expressiveTheme);
+			const currentTheme = document.documentElement.getAttribute("data-theme");
 			
-			// 确保主题正确应用 - 解决代码块渲染问题
-			// 使用 requestAnimationFrame 确保在下一帧检查主题状态
-			requestAnimationFrame(() => {
-				const currentTheme = document.documentElement.getAttribute('data-theme');
-				if (currentTheme !== expressiveTheme) {
-					document.documentElement.setAttribute('data-theme', expressiveTheme);
-				}
-			});
+			// 只在主题不同时才更新，避免触发不必要的重绘
+			if (currentTheme !== expressiveTheme) {
+				document.documentElement.setAttribute("data-theme", expressiveTheme);
+			}
 
 			// Load the hue from local storage
 			const hue = localStorage.getItem('hue') || configHue;
@@ -1148,13 +1144,12 @@ const setup = () => {
 		const expectedTheme = isDark ? 'github-dark' : 'github-light';
 		const currentTheme = document.documentElement.getAttribute('data-theme');
 		
-		// 如果主题不匹配，强制重新应用
+		// 如果主题不匹配，使用批量更新减少重绘
 		if (currentTheme !== expectedTheme) {
-			document.documentElement.setAttribute('data-theme', expectedTheme);
-			// 触发代码块重新渲染
-			setTimeout(() => {
-				window.dispatchEvent(new CustomEvent('theme-change'));
-			}, 50);
+			// 使用 requestAnimationFrame 批量更新，减少重绘
+			requestAnimationFrame(() => {
+				document.documentElement.setAttribute('data-theme', expectedTheme);
+			});
 		}
 		
 		// 检查当前页面是否为文章页面，如果是则触发自定义事件用于初始化评论系统
@@ -1287,6 +1282,11 @@ if (document.readyState === 'loading') {
 <!-- 代码块折叠功能 -->
 <script>
 import '../scripts/code-collapse.js';
+</script>
+
+<!-- 主题切换综合性能优化器（包含代码块优化、重型元素优化、性能诊断） -->
+<script>
+import '../scripts/theme-optimizer.js';
 </script>
 
 <script>

@@ -71,11 +71,14 @@ export function applyThemeToDocument(theme: LIGHT_DARK_MODE) {
 		}
 
 		// Set the theme for Expressive Code based on current mode
-		const expressiveTheme = targetIsDark ? "github-dark" : "github-light";
-		document.documentElement.setAttribute(
-			"data-theme",
-			expressiveTheme,
-		);
+		// 只在必要时更新 data-theme 属性以减少重绘
+		if (needsCodeThemeUpdate) {
+			const expressiveTheme = targetIsDark ? "github-dark" : "github-light";
+			document.documentElement.setAttribute(
+				"data-theme",
+				expressiveTheme,
+			);
+		}
 	};
 
 	// 检查浏览器是否支持 View Transitions API
