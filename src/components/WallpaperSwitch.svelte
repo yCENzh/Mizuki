@@ -8,6 +8,7 @@ import {
 import type { WALLPAPER_MODE } from "@/types/config.ts";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
+import { panelManager } from "../utils/panel-manager.js";
 
 const seq: WALLPAPER_MODE[] = [WALLPAPER_BANNER, WALLPAPER_FULLSCREEN, WALLPAPER_NONE];
 let mode: WALLPAPER_MODE = $state(getStoredWallpaperMode());
@@ -27,14 +28,14 @@ function toggleWallpaperMode() {
 	switchWallpaperMode(seq[(i + 1) % seq.length]);
 }
 
-function showPanel() {
-	const panel = document.querySelector("#wallpaper-mode-panel");
-	panel?.classList.remove("float-panel-closed");
+async function showPanel() {
+	// 关闭其他面板，但保留壁纸面板本身
+	await panelManager.closeAllPanelsExcept('wallpaper-mode-panel');
+	await panelManager.togglePanel('wallpaper-mode-panel', true);
 }
 
-function hidePanel() {
-	const panel = document.querySelector("#wallpaper-mode-panel");
-	panel?.classList.add("float-panel-closed");
+async function hidePanel() {
+	await panelManager.closePanel('wallpaper-mode-panel');
 }
 </script>
 

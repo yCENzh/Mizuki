@@ -27,6 +27,7 @@ import "../styles/mobile-navbar.css";
 import "../styles/wallpaper-navbar-transparent.css";
 import "../styles/fancybox-custom.css";
 import "../styles/expressive-code.css";
+import "../styles/panel-animations.css";
 
 interface Props {
 	title?: string;
@@ -714,23 +715,38 @@ function disableAnimation() {
 
 const bannerEnabled = !!document.getElementById('banner-wrapper')
 
-function setClickOutsideToClose(panel: string, ignores: string[]) {
-	document.addEventListener("click", event => {
-		let panelDom = document.getElementById(panel);
-		let tDom = event.target;
-		if (!(tDom instanceof Node)) return;		// Ensure the event target is an HTML Node
-		for (let ig of ignores) {
-			let ie = document.getElementById(ig)
-			if (ie == tDom || (ie?.contains(tDom))) {
-				return;
-			}
+// 导入面板管理器
+async function initializePanelManager() {
+	try {
+		const { panelManager } = await import('../utils/panel-manager.js');
+		
+		function setClickOutsideToClose(panel: string, ignores: string[]) {
+			document.addEventListener("click", async event => {
+				let panelDom = document.getElementById(panel);
+				let tDom = event.target;
+				if (!(tDom instanceof Node)) return;		// Ensure the event target is an HTML Node
+				for (let ig of ignores) {
+					let ie = document.getElementById(ig)
+					if (ie == tDom || (ie?.contains(tDom))) {
+						return;
+					}
+				}
+				await panelManager.closePanel(panel as any);
+			});
 		}
-		panelDom!.classList.add("float-panel-closed");
-	});
+		setClickOutsideToClose("display-setting", ["display-setting", "display-settings-switch"])
+		setClickOutsideToClose("nav-menu-panel", ["nav-menu-panel", "nav-menu-switch"])
+		setClickOutsideToClose("search-panel", ["search-panel", "search-bar", "search-switch"])
+		setClickOutsideToClose("mobile-toc-panel", ["mobile-toc-panel", "mobile-toc-switch"])
+		
+		return panelManager;
+	} catch (error) {
+		console.error('Failed to initialize panel manager:', error);
+		return null;
+	}
 }
-setClickOutsideToClose("display-setting", ["display-setting", "display-settings-switch"])
-setClickOutsideToClose("nav-menu-panel", ["nav-menu-panel", "nav-menu-switch"])
-setClickOutsideToClose("search-panel", ["search-panel", "search-bar", "search-switch"])
+
+initializePanelManager();
 
 
 function loadTheme() {
@@ -1243,11 +1259,27 @@ window.onresize = () => {
 
 // 页面加载完成后初始化banner和轮播图
 if (document.readyState === 'loading') {
-	document.addEventListener('DOMContentLoaded', () => {
+	document.addEventListener('DOMContentLoaded', async () => {
 		showBanner();
+		// 初始化面板管理器
+		try {
+			const { panelManager } = await import('../utils/panel-manager.js');
+			console.log('Panel manager initialized');
+		} catch (error) {
+			console.error('Failed to initialize panel manager:', error);
+		}
 	});
 } else {
 	showBanner();
+	// 页面已经加载完成，立即初始化面板管理器
+	(async () => {
+		try {
+			const { panelManager } = await import('../utils/panel-manager.js');
+			console.log('Panel manager initialized');
+		} catch (error) {
+			console.error('Failed to initialize panel manager:', error);
+		}
+	})();
 }
 
 </script>

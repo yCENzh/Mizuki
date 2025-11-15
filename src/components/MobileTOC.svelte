@@ -4,6 +4,7 @@ import { onMount } from "svelte";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import { navigateToPage } from "../utils/navigation-utils";
+import { panelManager } from "../utils/panel-manager.js";
 
 let tocItems: Array<{ id: string; text: string; level: number }> = [];
 let postItems: Array<{
@@ -17,20 +18,12 @@ let observer: IntersectionObserver;
 let isHomePage = false;
 let swupReady = false;
 
-const togglePanel = () => {
-	const panel = document.getElementById("mobile-toc-panel");
-	panel?.classList.toggle("float-panel-closed");
+const togglePanel = async () => {
+	await panelManager.togglePanel('mobile-toc-panel');
 };
 
-const setPanelVisibility = (show: boolean): void => {
-	const panel = document.getElementById("mobile-toc-panel");
-	if (!panel) return;
-
-	if (show) {
-		panel.classList.remove("float-panel-closed");
-	} else {
-		panel.classList.add("float-panel-closed");
-	}
+const setPanelVisibility = async (show: boolean): Promise<void> => {
+	await panelManager.togglePanel('mobile-toc-panel', show);
 };
 
 const generateTOC = () => {
