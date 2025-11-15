@@ -2,6 +2,7 @@ class CodeBlockCollapser {
   constructor() {
     this.processedBlocks = new WeakSet();
     this.observer = null;
+    this.isThemeChanging = false;
     this.init();
   }
 
@@ -12,6 +13,37 @@ class CodeBlockCollapser {
       this.setupCodeBlocks();
     }
     this.observePageChanges();
+    this.setupThemeChangeListener();
+  }
+
+  setupThemeChangeListener() {
+    // 监听主题切换，在切换期间暂停 observer
+    const themeObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'attributes' && 
+            (mutation.attributeName === 'class' || mutation.attributeName === 'data-theme')) {
+          const isTransitioning = document.documentElement.classList.contains('is-theme-transitioning');
+          if (isTransitioning && !this.isThemeChanging) {
+            this.isThemeChanging = true;
+            if (this.observer) {
+              this.observer.disconnect();
+            }
+          } else if (!isTransitioning && this.isThemeChanging) {
+            this.isThemeChanging = false;
+            // 等待主题切换完全结束后重新连接 observer
+            setTimeout(() => {
+              this.observePageChanges();
+            }, 50);
+          }
+          break;
+        }
+      }
+    });
+
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme']
+    });
   }
 
   setupCodeBlocks() {
@@ -96,24 +128,46 @@ class CodeBlockCollapser {
   }
 
   observePageChanges() {
-    if (this.observer) return;
+    // 如果正在主题切换，不要重新连接
+    if (this.isThemeChanging) return;
+    
+    // 断开现有的 observer
+    if (this.observer) {
+      this.observer.disconnect();
+    }
     
     let debounceTimer = null;
     
     this.observer = new MutationObserver((mutations) => {
+      // 如果正在主题切换，忽略所有变化
+      if (this.isThemeChanging) return;
+      
       let shouldReinit = false;
       
-      mutations.forEach((mutation) => {
+      for (const mutation of mutations) {
         if (mutation.type === 'childList') {
-          mutation.addedNodes.forEach((node) => {
-            if (node.nodeType === Node.ELEMENT_NODE && 
-                node.querySelector && 
-                node.querySelector('.expressive-code')) {
-              shouldReinit = true;
+          for (const node of mutation.addedNodes) {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              // 只检查添加的节点本身或其直接子节点
+              if (node.classList && node.classList.contains('expressive-code')) {
+                shouldReinit = true;
+                break;
+              }
+              // 避免深度查询，只检查一层
+              if (node.children && node.children.length > 0) {
+                for (let i = 0; i < Math.min(node.children.length, 10); i++) {
+                  if (node.children[i].classList && node.children[i].classList.contains('expressive-code')) {
+                    shouldReinit = true;
+                    break;
+                  }
+                }
+              }
             }
-          });
+            if (shouldReinit) break;
+          }
         }
-      });
+        if (shouldReinit) break;
+      }
       
       if (shouldReinit) {
         clearTimeout(debounceTimer);

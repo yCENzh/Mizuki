@@ -118,7 +118,7 @@ html {
     [class*="transition"] {
         transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
         transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-        transition-duration: 0.2s;
+        transition-duration: 0.15s;
     }
     
     /* 主题过渡保护类 - 仅在非 View Transitions 模式下使用 */
@@ -127,12 +127,21 @@ html {
     .is-theme-transitioning:not(.use-view-transition) *::before,
     .is-theme-transitioning:not(.use-view-transition) *::after {
         transition: none !important;
+        animation: none !important;
+    }
+    
+    /* 在主题切换时禁用代码块的复杂效果以提升性能 */
+    .is-theme-transitioning .expressive-code,
+    .is-theme-transitioning .expressive-code * {
+        transition: none !important;
+        animation: none !important;
+        will-change: auto !important;
     }
     
     /* 为了让 View Transitions 更流畅，允许颜色相关属性保持过渡 */
     .is-theme-transitioning.use-view-transition * {
         transition-property: color, background-color, border-color, text-decoration-color, fill, stroke !important;
-        transition-duration: 0.25s !important;
+        transition-duration: 0.2s !important;
         transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
     

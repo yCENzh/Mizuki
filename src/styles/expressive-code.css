@@ -13,7 +13,7 @@
 /* 代码块折叠功能 - frame作为折叠按钮 */
 .expressive-code.collapsible .frame {
     user-select: none;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.15s ease;
     position: relative;
 }
 
@@ -34,7 +34,7 @@
     right: 3.5rem;
     font-size: 0.875rem;
     border-radius: 0.5rem;
-    transition: all 0.15s ease-in-out;
+    transition: opacity 0.15s ease-in-out, background-color 0.15s ease-in-out;
     z-index: 20;
     cursor: pointer;
     background: var(--btn-regular-bg);
@@ -61,7 +61,7 @@
     width: 1rem;
     height: 1rem;
     fill: var(--btn-content);
-    transition: transform 0.3s ease;
+    transition: transform 0.25s ease;
     pointer-events: none;
 }
 
@@ -95,8 +95,9 @@
 }
 
 .expressive-code.collapsible .frame pre {
-    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    will-change: max-height;
 }
 
 @media (max-width: 768px) {
