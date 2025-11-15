@@ -28,14 +28,10 @@ function toggleWallpaperMode() {
 	switchWallpaperMode(seq[(i + 1) % seq.length]);
 }
 
-async function showPanel() {
-	// 关闭其他面板，但保留壁纸面板本身
+async function togglePanel() {
+	// 关闭其他面板,但保留壁纸面板本身
 	await panelManager.closeAllPanelsExcept('wallpaper-mode-panel');
-	await panelManager.togglePanel('wallpaper-mode-panel', true);
-}
-
-async function hidePanel() {
-	await panelManager.closePanel('wallpaper-mode-panel');
+	await panelManager.togglePanel('wallpaper-mode-panel');
 }
 </script>
 
@@ -52,8 +48,8 @@ async function hidePanel() {
 </style>
 
 <!-- z-50 make the panel higher than other float panels -->
-<div class="relative z-50" role="menu" tabindex="-1" onmouseleave={hidePanel}>
-    <button aria-label="Wallpaper Mode" role="menuitem" class="relative btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 theme-switch-btn" id="wallpaper-mode-switch" onclick={toggleWallpaperMode} onmouseenter={showPanel}>
+<div class="relative z-50" role="menu" tabindex="-1">
+    <button aria-label="Wallpaper Mode" role="menuitem" class="relative btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 theme-switch-btn" id="wallpaper-mode-switch" onclick={togglePanel}>
         <div class="absolute" class:opacity-0={mode !== WALLPAPER_BANNER}>
             <Icon icon="material-symbols:image-outline" class="text-[1.25rem]"></Icon>
         </div>
