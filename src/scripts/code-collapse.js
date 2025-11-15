@@ -3,13 +3,25 @@ class CodeBlockCollapser {
     this.processedBlocks = new WeakSet();
     this.observer = null;
     this.isThemeChanging = false;
+    this.debug = false; // 设置为 true 启用调试日志
     this.init();
   }
 
+  log(...args) {
+    if (this.debug) {
+      console.log('[CodeBlockCollapser]', ...args);
+    }
+  }
+
   init() {
+    this.log('Initializing...');
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => this.setupCodeBlocks());
+      document.addEventListener('DOMContentLoaded', () => {
+        this.log('DOMContentLoaded - setting up code blocks');
+        this.setupCodeBlocks();
+      });
     } else {
+      this.log('Document already loaded - setting up code blocks');
       this.setupCodeBlocks();
     }
     this.observePageChanges();
@@ -67,11 +79,15 @@ class CodeBlockCollapser {
   setupCodeBlocks() {
     requestAnimationFrame(() => {
       const codeBlocks = document.querySelectorAll('.expressive-code');
+      this.log(`Found ${codeBlocks.length} code blocks to process`);
       
-      codeBlocks.forEach((codeBlock) => {
+      codeBlocks.forEach((codeBlock, index) => {
         if (!this.processedBlocks.has(codeBlock)) {
+          this.log(`Enhancing code block ${index + 1}`);
           this.enhanceCodeBlock(codeBlock);
           this.processedBlocks.add(codeBlock);
+        } else {
+          this.log(`Code block ${index + 1} already processed`);
         }
       });
     });
@@ -79,12 +95,17 @@ class CodeBlockCollapser {
 
   enhanceCodeBlock(codeBlock) {
     const frame = codeBlock.querySelector('.frame');
-    if (!frame) return;
-    
-    if (frame.classList.contains('has-title')) {
+    if (!frame) {
+      this.log('No frame found in code block, skipping');
       return;
     }
     
+    if (frame.classList.contains('has-title')) {
+      this.log('Code block has title, skipping collapse feature');
+      return;
+    }
+    
+    this.log('Adding collapse feature to code block');
     codeBlock.classList.add('collapsible', 'expanded');
     
     const toggleBtn = this.createToggleButton();
@@ -228,10 +249,57 @@ const codeBlockCollapser = new CodeBlockCollapser();
 window.CodeBlockCollapser = CodeBlockCollapser;
 window.codeBlockCollapser = codeBlockCollapser;
 
-if (window.swup) {
-  window.swup.hooks.on('page:view', () => {
-    setTimeout(() => {
-      codeBlockCollapser.setupCodeBlocks();
-    }, 100);
+// 设置 Swup 钩子的函数
+function setupSwupHooks() {
+  if (window.swup) {
+    codeBlockCollapser.log('Setting up Swup hooks');
+    
+    // 监听 page:view 事件
+    window.swup.hooks.on('page:view', () => {
+      codeBlockCollapser.log('Swup page:view event - reinitializing code blocks');
+      // 页面切换后重置 processedBlocks，确保新页面的代码块被处理
+      codeBlockCollapser.processedBlocks = new WeakSet();
+      setTimeout(() => {
+        codeBlockCollapser.setupCodeBlocks();
+      }, 100);
+    });
+    
+    // 监听 content:replace 事件（更早触发）
+    window.swup.hooks.on('content:replace', () => {
+      codeBlockCollapser.log('Swup content:replace event - preparing for reinitialization');
+      // 内容替换时也重置，确保不会因为缓存而跳过处理
+      codeBlockCollapser.processedBlocks = new WeakSet();
+      setTimeout(() => {
+        codeBlockCollapser.setupCodeBlocks();
+      }, 50);
+    });
+    
+    return true;
+  }
+  return false;
+}
+
+// 尝试立即设置 Swup 钩子
+if (!setupSwupHooks()) {
+  // 如果 Swup 尚未初始化，等待它加载
+  codeBlockCollapser.log('Swup not ready, waiting for initialization');
+  
+  // 监听 swup:enable 事件
+  document.addEventListener('swup:enable', () => {
+    codeBlockCollapser.log('Swup enabled, setting up hooks');
+    setupSwupHooks();
   });
+  
+  // 额外的延迟重试机制，确保捕获到 Swup
+  const retryInterval = setInterval(() => {
+    if (setupSwupHooks()) {
+      codeBlockCollapser.log('Swup hooks set up successfully via retry');
+      clearInterval(retryInterval);
+    }
+  }, 100);
+  
+  // 最多重试 20 次（2 秒）
+  setTimeout(() => {
+    clearInterval(retryInterval);
+  }, 2000);
 }
