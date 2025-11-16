@@ -350,7 +350,8 @@ body:has(#navbar[data-dynamic-transparent="none"]) #search-panel {
 
 /* 移动端暗色主题下的完全透明模式 - 仅在有壁纸且为首页时启用 */
 @media (max-width: 1279px) {
-    :root.dark body.wallpaper-transparent #navbar[data-is-home="true"] > div {
+    :root.dark body.wallpaper-transparent #navbar[data-transparent-mode="full"][data-is-home="true"] > div,
+    :root.dark body.wallpaper-transparent #navbar[data-transparent-mode="semifull"][data-is-home="true"] > div {
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
