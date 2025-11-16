@@ -173,11 +173,19 @@ export const siteConfig: SiteConfig = {
 
 	// 字体配置
 	font: {
-		zenMaruGothic: {
-			enable: false, // 启用全局圆体适合日语和英语，对中文适配一般
+		asciiFont: {
+			// 英文字体 - 优先级最高
+			fontFamily: "ZenMaruGothic-Medium",
+			fontWeight: "400",
+			localFonts: ["ZenMaruGothic-Medium.ttf"],
+			enableCompress: true, // 启用字体子集优化，减少字体文件大小
 		},
-		hanalei: {
-			enable: true, // 启用 Hanalei 字体作为全局字体，适合中文去使用
+		cjkFont: {
+			// 中日韩字体 - 作为回退字体
+			fontFamily: "Hanalei",
+			fontWeight: "500",
+			localFonts: ["Hanalei.woff2"],
+			enableCompress: true, // 启用字体子集优化，减少字体文件大小
 		},
 	},
 	showLastModified: true, // 控制“上次编辑”卡片显示的开关
