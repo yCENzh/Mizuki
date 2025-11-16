@@ -333,7 +333,6 @@ pnpm run sync-content
 - ✅ 支持公开和私有仓库 🔐
 - ✅ 一键启用/禁用,无需修改代码
 - ✅ 自动同步,开发前自动拉取最新内容
-- ✅ Git Submodule 和独立仓库两种模式
 
 📖 **详细配置**: [内容分离完整指南](docs/CONTENT_SEPARATION.md)  
 🔄 **迁移教程**: [从单仓库迁移到分离模式](docs/MIGRATION_GUIDE.md)  

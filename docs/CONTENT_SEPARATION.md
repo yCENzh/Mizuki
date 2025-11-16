@@ -45,7 +45,6 @@ cp .env.example .env
 # 2. 编辑 .env,启用内容分离
 ENABLE_CONTENT_SYNC=true
 CONTENT_REPO_URL=https://github.com/your-username/Mizuki-Content.git
-USE_SUBMODULE=true
 
 # 3. 同步内容
 pnpm run sync-content
@@ -105,7 +104,7 @@ git commit -m "Update content"
 git push
 ```
 
-#### 场景 2: 分离模式
+#### 场景 2: 独立仓库（分离）模式
 
 **特点**:
 - ✅ 内容独立仓库管理
@@ -118,7 +117,6 @@ git push
 # .env
 ENABLE_CONTENT_SYNC=true
 CONTENT_REPO_URL=https://github.com/your-username/Mizuki-Content.git
-USE_SUBMODULE=true
 ```
 
 **工作流程**:
@@ -136,7 +134,7 @@ git push
 
 ### 模式切换
 
-#### 从本地切换到分离
+#### 从本地切换到独立仓库
 
 1. 创建内容仓库 (参考 [CONTENT_MIGRATION.md](./CONTENT_MIGRATION.md))
 2. 编辑 `.env`:
@@ -146,7 +144,7 @@ git push
    ```
 3. 同步内容: `pnpm run sync-content`
 
-#### 从分离切换回本地
+#### 从独立仓库切换回本地
 
 1. 编辑 `.env`:
    ```bash
@@ -183,12 +181,7 @@ ENABLE_CONTENT_SYNC=false
 # 私有仓库 (Token): https://TOKEN@github.com/username/repo.git
 CONTENT_REPO_URL=https://github.com/your-username/Mizuki-Content.git
 
-# 是否使用 Git Submodule 模式
-# true = Submodule 模式 (推荐,更稳定)
-# false = 独立仓库模式
-USE_SUBMODULE=true
-
-# 内容目录路径 (可选,默认 ./content)
+# 内容目录路径 (默认 ./content 一般无需改动)
 CONTENT_DIR=./content
 ```
 
@@ -209,7 +202,6 @@ ENABLE_CONTENT_SYNC=false
 # .env
 ENABLE_CONTENT_SYNC=true
 CONTENT_REPO_URL=https://github.com/your-username/Mizuki-Content.git
-USE_SUBMODULE=true
 ```
 
 #### 示例 3: 私有仓库 (SSH)
@@ -218,7 +210,6 @@ USE_SUBMODULE=true
 # .env
 ENABLE_CONTENT_SYNC=true
 CONTENT_REPO_URL=git@github.com:your-username/Mizuki-Content-Private.git
-USE_SUBMODULE=true
 ```
 
 ---
@@ -285,7 +276,6 @@ Get-Content ~/.ssh/id_ed25519.pub
 ```bash
 ENABLE_CONTENT_SYNC=true
 CONTENT_REPO_URL=git@github.com:your-username/Mizuki-Content-Private.git
-USE_SUBMODULE=true
 ```
 
 #### 4. 测试连接
@@ -322,7 +312,6 @@ pnpm run sync-content
 ```bash
 ENABLE_CONTENT_SYNC=true
 CONTENT_REPO_URL=https://YOUR_TOKEN@github.com/your-username/Mizuki-Content-Private.git
-USE_SUBMODULE=true
 ```
 
 ⚠️ **安全提示**:
@@ -350,14 +339,13 @@ USE_SUBMODULE=true
 |-------|---|------|
 | `ENABLE_CONTENT_SYNC` | `true` | 启用内容分离 |
 | `CONTENT_REPO_URL` | 仓库地址 | 内容仓库的 URL |
-| `USE_SUBMODULE` | `true` | 使用 Submodule 模式 |
 
 ### 支持的平台
 
 - ✅ **GitHub Pages** - 使用 GitHub Actions
 - ✅ **Vercel** - 环境变量配置
 - ✅ **Netlify** - 环境变量配置
-- ✅ **Cloudflare Pages** - 注意 Submodule 支持
+- ✅ **Cloudflare Pages** - 环境变量配置
 
 ### 详细配置指南
 
@@ -471,19 +459,17 @@ ssh -T git@github.com
    pnpm run check-env
    ```
 
-### 问题 5: Submodule 同步失败
+### 问题 5: 内容同步失败
 
 ```bash
-# 检查 submodule 状态
-git submodule status
+# 手动同步内容
+pnpm run sync-content
 
-# 手动初始化
-git submodule update --init --recursive
+# 检查内容目录
+ls -la content/
 
-# 拉取最新内容
-cd content
-git pull origin main
-cd ..
+# 手动克隆内容仓库
+git clone https://github.com/your-username/Mizuki-Content.git content
 ```
 
 ### 问题 6: 部署时内容未同步
@@ -510,7 +496,7 @@ cd ..
 
 ### 进阶用户
 
-1. **使用 Submodule 模式** - 更稳定,版本控制更清晰
+1. **使用独立仓库模式** - 清晰的版本控制
 2. **内容仓库添加 CI** - 自动检查文章格式、图片优化等
 3. **分支管理** - main 分支用于生产,develop 用于预览
 
