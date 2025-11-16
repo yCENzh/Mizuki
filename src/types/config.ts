@@ -50,11 +50,17 @@ export type SiteConfig = {
 
 	// 添加字体配置
 	font: {
-		zenMaruGothic: {
-			enable: boolean; // 是否使用 ZenMaruGothic-Black 作为全局字体
+		asciiFont: {
+			fontFamily: string;
+			fontWeight: string | number;
+			localFonts: string[];
+			enableCompress: boolean;
 		};
-		hanalei: {
-			enable: boolean; // 是否使用 Hanalei 作为全局字体
+		cjkFont: {
+			fontFamily: string;
+			fontWeight: string | number;
+			localFonts: string[];
+			enableCompress: boolean;
 		};
 	};
 
