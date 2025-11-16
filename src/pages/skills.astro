@@ -167,9 +167,8 @@ let animated = false;
                       </div>
                       <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div 
-                            class="h-2 rounded-full skill-progress-bar-animate"
-                            style={`width: 0%; background-color: ${skill.color || 'rgb(99 102 241)'};`}
-                            data-final-width={getLevelWidth(skill.level)}
+                            class="h-2 rounded-full transition-all duration-300"
+                            style={`width: ${getLevelWidth(skill.level)}; background-color: ${skill.color || 'rgb(99 102 241)'};`}
                           ></div>
                       </div>
                     </div>
@@ -243,9 +242,8 @@ let animated = false;
                         </div>
                         <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mt-2">
                           <div 
-                              class="h-2 rounded-full skill-progress-bar-animate"
-                              style={`width: 0%; background-color: ${skill.color || 'rgb(99 102 241)'};`}
-                              data-final-width={getLevelWidth(skill.level)}
+                              class="h-2 rounded-full transition-all duration-300"
+                              style={`width: ${getLevelWidth(skill.level)}; background-color: ${skill.color || 'rgb(99 102 241)'};`}
                             ></div>
                         </div>
                       </div>
@@ -260,55 +258,5 @@ let animated = false;
     </div>
   </div>
   
-  <!-- 添加CSS样式 -->
-  <style>
-    .skill-progress-bar-animate {
-      animation: skillProgressBarLoad 1s ease-out forwards;
-    }
-    
-    .category-progress-bar-animate {
-      animation: skillProgressBarLoad 1s ease-out forwards;
-    }
-    
-    @keyframes skillProgressBarLoad {
-      from {
-        width: 0%;
-      }
-      to {
-        width: var(--final-width);
-      }
-    }
-  </style>
 
-  <!-- 添加脚本触发动画 -->
-  <script>
-    // 当元素进入视口时设置进度条宽度
-    document.addEventListener('DOMContentLoaded', () => {
-      const progressBars = document.querySelectorAll('.skill-progress-bar-animate');
-      
-      // 设置进度条宽度
-      progressBars.forEach(bar => {
-        const finalWidth = bar.getAttribute('data-final-width');
-        if (finalWidth) {
-          bar.style.setProperty('--final-width', finalWidth);
-        }
-      });
-      
-      // 监听元素进入视口的情况（处理延迟加载）
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const finalWidth = entry.target.getAttribute('data-final-width');
-            if (finalWidth) {
-              entry.target.style.setProperty('--final-width', finalWidth);
-            }
-          }
-        });
-      });
-      
-      progressBars.forEach(bar => {
-        observer.observe(bar);
-      });
-    });
-  </script>
 </MainGridLayout>

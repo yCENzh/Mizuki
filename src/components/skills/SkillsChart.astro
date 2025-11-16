@@ -275,9 +275,8 @@ const calculatePercentage = (value: number, total: number) => {
             </div>
             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
               <div 
-                class="h-3 rounded-full category-progress-bar-animate"
-                style={`width: 0%; background-color: ${item.color};`}
-                data-final-width={`${percentage}%`}
+                class="h-3 rounded-full transition-all duration-300"
+                style={`width: ${percentage}%; background-color: ${item.color};`}
               ></div>
             </div>
           </div>
@@ -317,51 +316,3 @@ const calculatePercentage = (value: number, total: number) => {
 </div>
 
 <!-- 添加CSS样式 -->
-<style>
-  .skill-progress-bar-animate {
-    animation: skillProgressBarLoad 1s ease-out forwards;
-  }
-  
-  .category-progress-bar-animate {
-    animation: skillProgressBarLoad 1s ease-out forwards;
-  }
-  
-  @keyframes skillProgressBarLoad {
-    from {
-      width: 0%;
-    }
-    to {
-      width: var(--final-width);
-    }
-  }
-</style>
-
-<!-- 添加脚本触发动画 -->
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    // 使用Intersection Observer确保元素可见时才触发动画
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const bar = entry.target;
-          const finalWidth = bar.getAttribute('data-final-width');
-          if (finalWidth) {
-            bar.style.setProperty('--final-width', finalWidth);
-            bar.classList.add('category-progress-bar-animate');
-          }
-          observer.unobserve(bar);
-        }
-      });
-    }, {
-      threshold: 0.1 // 当元素10%可见时触发
-    });
-    
-    // 延迟观察所有进度条元素，确保它们已正确渲染
-    setTimeout(() => {
-      const progressBars = document.querySelectorAll('.category-progress-bar-animate');
-      progressBars.forEach(bar => {
-        observer.observe(bar);
-      });
-    }, 100);
-  });
-</script>
