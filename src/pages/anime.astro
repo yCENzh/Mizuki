@@ -144,18 +144,30 @@ if (ANIME_MODE === "local") {
 	animeList = localAnimeList;
 } else {
 	// 使用Bangumi API（默认模式）
-	// 获取与处理在看列表（type=3）看过列表（type=2）
+	// 获取与处理在看列表（type=3）想看列表（type=1）看过列表（type=2）搁置列表（type=4）抛弃列表（type=5）
 	const watchingData = await fetchBangumiCollection(BANGUMI_USER_ID, 2, 3);
+	const plannedData = await fetchBangumiCollection(BANGUMI_USER_ID, 2, 1);
 	const completedData = await fetchBangumiCollection(BANGUMI_USER_ID, 2, 2);
+	const onHoldData = await fetchBangumiCollection(BANGUMI_USER_ID, 2, 4);
+	const droppedData = await fetchBangumiCollection(BANGUMI_USER_ID, 2, 5);
 
 	const watchingList = watchingData
 		? await processBangumiData(watchingData, "watching")
 		: [];
+	const plannedList = plannedData
+		? await processBangumiData(plannedData, "planned")
+		: [];
 	const completedList = completedData
 		? await processBangumiData(completedData, "completed")
 		: [];
+	const onHoldList = onHoldData
+		? await processBangumiData(onHoldData, "onhold")
+		: [];
+	const droppedList = droppedData
+		? await processBangumiData(droppedData, "dropped")
+		: [];
 
-	animeList = [...watchingList, ...completedList];
+	animeList = [...watchingList, ...plannedList, ...completedList, ...onHoldList, ...droppedList];
 }
 
 // 获取状态的翻译文本和样式
@@ -181,6 +193,20 @@ function getStatusInfo(status: string) {
 				class:
 					"bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
 				icon: "⏰",
+			};
+		case "onhold":
+			return {
+				text: i18n(I18nKey.animeStatusOnHold),
+				class:
+					"bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+				icon: "⏸",
+			};
+		case "dropped":
+			return {
+				text: i18n(I18nKey.animeStatusDropped),
+				class:
+					"bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
+				icon: "✗",
 			};
 		default:
 			return {
@@ -226,8 +252,8 @@ const stats = {
           <div class="filter-container flex flex-wrap gap-2">
             <button class="filter-tag active" data-status="all">{i18n(I18nKey.animeFilterAll)}</button>
             <button class="filter-tag" data-status="watching">{i18n(I18nKey.animeStatusWatching)}</button>
-            <button class="filter-tag" data-status="completed">{i18n(I18nKey.animeStatusCompleted)}</button>
             <button class="filter-tag" data-status="planned">{i18n(I18nKey.animeStatusPlanned)}</button>
+            <button class="filter-tag" data-status="completed">{i18n(I18nKey.animeStatusCompleted)}</button>
             {ANIME_MODE === 'bangumi' && (
               <>
                 <button class="filter-tag" data-status="onhold">{i18n(I18nKey.animeStatusOnHold)}</button>
