@@ -260,6 +260,12 @@ export const navBarConfig: NavBarConfig = {
 					url: "/albums/",
 					icon: "material-symbols:photo-library",
 				},
+				{
+					name: "Devices",
+					url: "devices/",
+					icon: "material-symbols:devices",
+					external: false,
+				},
 			],
 		},
 		{
