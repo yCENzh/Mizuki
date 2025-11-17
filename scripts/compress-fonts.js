@@ -134,7 +134,6 @@ function getAsciiCharset() {
   }
   
   const text = Array.from(chars).sort().join('');
-  console.log(`✓ ASCII charset contains ${chars.size} characters`);
   
   return text;
 }
@@ -142,12 +141,10 @@ function getAsciiCharset() {
 // 收集所有使用的文字（用于 CJK 字体）
 async function collectText() {
   const { lang } = await getConfig();
-  console.log(`Detected language setting: ${lang}`);
   
   const textSet = new Set();
   
   // 1. 读取 src/data 目录
-  console.log('Scanning src/data directory...');
   const dataDir = path.join(__dirname, '../src/data');
   const dataFiles = readFilesRecursively(dataDir);
   
@@ -168,7 +165,6 @@ async function collectText() {
   });
   
   // 2. 读取 src/config.ts 文件
-  console.log('Scanning src/config.ts file...');
   const configFile = path.join(__dirname, '../src/config.ts');
   if (fs.existsSync(configFile)) {
     const content = fs.readFileSync(configFile, 'utf-8');
@@ -189,7 +185,6 @@ async function collectText() {
   }
 
   // 3. 读取对应语言的 i18n 文件
-  console.log(`Scanning i18n/${lang} file...`);
   const i18nFile = path.join(__dirname, `../src/i18n/languages/${lang}.ts`);
   if (fs.existsSync(i18nFile)) {
     const content = fs.readFileSync(i18nFile, 'utf-8');
@@ -205,7 +200,6 @@ async function collectText() {
   }
   
   // 4. 读取 src/content 目录
-  console.log('Scanning src/content directory...');
   const contentDir = path.join(__dirname, '../src/content');
   const contentFiles = readFilesRecursively(contentDir);
   
@@ -236,7 +230,6 @@ async function collectText() {
   }
   
   const allText = Array.from(textSet).sort().join('');
-  console.log(`✓ Collected ${textSet.size} unique characters`);
   
   return allText;
 }
@@ -252,16 +245,12 @@ async function compressFonts() {
       return;
     }
     
-    console.log(`\nFound ${fonts.length} font configs to compress:`);
-    fonts.forEach(f => {
-      console.log(`  - ${f.type}: ${f.files.join(', ')}`);
-    });
+    console.log(`Found ${fonts.length} font configs to compress`);
     
     // 检查 dist 目录是否存在
     const distDir = path.join(__dirname, '../dist');
     if (!fs.existsSync(distDir)) {
-      console.log('\n⚠ dist directory does not exist, please run astro build first');
-      console.log('Font compression will run automatically after build is complete');
+      console.log('⚠ dist directory does not exist, please run astro build first');
       return;
     }
     
@@ -275,7 +264,7 @@ async function compressFonts() {
     const cjkText = await collectText(); // CJK 字体使用完整字符集
     const asciiText = getAsciiCharset(); // ASCII 字体只使用 ASCII 字符集
     
-    console.log('\nStarting font compression...');
+    console.log('Starting font compression...');
     
     let totalOriginalSize = 0;
     let totalCompressedSize = 0;
@@ -288,10 +277,6 @@ async function compressFonts() {
     for (const fontConfig of fonts) {
       // 根据字体类型选择字符集
       const text = fontConfig.type === 'asciiFont' ? asciiText : cjkText;
-      const fontTypeLabel = fontConfig.type === 'asciiFont' ? 'ASCII Fonts' : 
-                           fontConfig.type === 'cjkFont' ? 'CJK Fonts' : fontConfig.type;
-      
-      console.log(`\n--- Processing ${fontTypeLabel} ---`);
       
       for (const fontFile of fontConfig.files) {
         const fontSrc = path.join(__dirname, '../public/assets/font', fontFile);
@@ -312,10 +297,7 @@ async function compressFonts() {
         // 根据文件类型决定处理方式
         if (ext === '.woff2' || ext === '.woff') {
           // woff/woff2 已经是 Web 优化格式，不支持进一步子集化压缩
-          console.log(`⚠ Skipping ${fontFile}`);
-          console.log('  Reason: woff/woff2 is already a web-optimized format, subsetting is not supported');
-          console.log('  Tip: If you want to compress, use .ttf or .otf source files in localFonts');
-          console.log(`  Current file size: ${(originalSize / 1024).toFixed(2)} KB\n`);
+          console.log(`⚠ Skipping ${fontFile} (already web-optimized format)`);
           
           // 直接复制到 dist
           const destFile = path.join(distFontDir, fontFile);
@@ -324,10 +306,7 @@ async function compressFonts() {
           // 不计入处理数量
         } else if (ext === '.ttf' || ext === '.otf') {
           // TTF/OTF 需要压缩为 woff2
-          const charsetInfo = fontConfig.type === 'asciiFont' ? 
-            `ASCII charset (${asciiText.length} chars)` : 
-            `Full charset (${text.length} chars)`;
-          console.log(`Compressing ${fontFile} [${charsetInfo}]...`);
+          console.log(`Compressing ${fontFile}...`);
           
           const fontmin = new Fontmin()
             .src(fontSrc)
@@ -358,9 +337,7 @@ async function compressFonts() {
             totalCompressedSize += compressedSize;
             const reduction = ((1 - compressedSize / originalSize) * 100).toFixed(2);
             
-            console.log(`✓ ${fontFile} → ${baseName}.woff2`);
-            console.log(`  Original: ${(originalSize / 1024 / 1024).toFixed(2)} MB | Compressed: ${(compressedSize / 1024).toFixed(2)} KB | Reduced: ${reduction}%`);
-            console.log(`  Charset: ${charsetInfo}`);
+            console.log(`✓ ${fontFile} → ${baseName}.woff2 (${(compressedSize / 1024).toFixed(2)} KB, reduced ${reduction}%)`);
             processedCount++;
           }
         } else {
@@ -371,10 +348,8 @@ async function compressFonts() {
     
     // 输出总结
     if (errors.length > 0) {
-      console.log('\n' + '='.repeat(60));
-      console.log('❌ Font compression encountered errors!');
-      console.log(`\n${errors.length} errors, please fix and retry.\n`);
-      console.log('Tip: Available font files:');
+      console.log('\n❌ Font compression encountered errors!');
+      console.log(`${errors.length} errors, please fix and retry.\n`);
       
       // 列出实际存在的字体文件
       const fontDir = path.join(__dirname, '../public/assets/font');
@@ -383,26 +358,20 @@ async function compressFonts() {
           .filter(f => ['.ttf', '.otf', '.woff', '.woff2'].includes(path.extname(f).toLowerCase()));
         
         if (actualFiles.length > 0) {
+          console.log('Available font files:');
           actualFiles.forEach(f => console.log(`  - ${f}`));
         } else {
-          console.log('  (directory is empty)');
+          console.log('  (font directory is empty)');
         }
       }
       
-      console.log('='.repeat(60));
       process.exit(1);
     }
     
     if (processedCount > 0) {
       const totalReduction = ((1 - totalCompressedSize / totalOriginalSize) * 100).toFixed(2);
-      console.log('\n' + '='.repeat(60));
-      console.log('✓ Font optimization complete!');
-      console.log(`  Files processed: ${processedCount}`);
-      console.log(`  Total original size: ${(totalOriginalSize / 1024 / 1024).toFixed(2)} MB`);
-      console.log(`  Total compressed size: ${(totalCompressedSize / 1024).toFixed(2)} KB`);
-      console.log(`  Overall reduction: ${totalReduction}%`);
-      console.log('  Output directory: dist/assets/font/');
-      console.log('='.repeat(60));
+      console.log('\n✓ Font optimization complete!');
+      console.log(`  Files processed: ${processedCount}, Overall reduction: ${totalReduction}%`);
     } else {
       console.log('\n⚠ No font files processed');
     }
