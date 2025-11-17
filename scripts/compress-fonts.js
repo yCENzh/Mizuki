@@ -167,7 +167,28 @@ async function collectText() {
     }
   });
   
-  // 2. 读取对应语言的 i18n 文件
+  // 2. 读取 src/config.ts 文件
+  console.log('Scanning src/config.ts file...');
+  const configFile = path.join(__dirname, '../src/config.ts');
+  if (fs.existsSync(configFile)) {
+    const content = fs.readFileSync(configFile, 'utf-8');
+    const stringMatches = content.match(/["'`]([^"'`]+)["'`]/g);
+    if (stringMatches) {
+      stringMatches.forEach(match => {
+        const text = match.slice(1, -1);
+        // 过滤掉 URL、路径、技术性字符串等
+        if (!text.match(/^(https?:\/\/|\/|assets\/|@|#|material-symbols|fa6-brands|mdi:|simple-icons:|\.|\w+\.\w+)/) && 
+            text.length > 0 && 
+            !text.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) { // 排除变量名
+          for (const char of text) {
+            textSet.add(char);
+          }
+        }
+      });
+    }
+  }
+
+  // 3. 读取对应语言的 i18n 文件
   console.log(`Scanning i18n/${lang} file...`);
   const i18nFile = path.join(__dirname, `../src/i18n/languages/${lang}.ts`);
   if (fs.existsSync(i18nFile)) {
@@ -183,7 +204,7 @@ async function collectText() {
     }
   }
   
-  // 3. 读取 src/content 目录
+  // 4. 读取 src/content 目录
   console.log('Scanning src/content directory...');
   const contentDir = path.join(__dirname, '../src/content');
   const contentFiles = readFilesRecursively(contentDir);
