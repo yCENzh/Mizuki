@@ -243,6 +243,11 @@ export type AnnouncementConfig = {
 
 export type MusicPlayerConfig = {
 	enable: boolean; // 是否启用音乐播放器功能
+	mode: "meting" | "local"; // 音乐播放器模式
+	meting_api: string; // Meting API 地址
+	id: string; // 歌单ID或其他标识符
+	server: string; // 音乐源服务器
+	type: string; // 音乐类型
 };
 
 export type FooterConfig = {
