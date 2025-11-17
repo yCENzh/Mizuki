@@ -3,6 +3,7 @@ import BackToTop from "@components/control/BackToTop.astro";
 import Footer from "@components/Footer.astro";
 import Navbar from "@components/Navbar.astro";
 import SideBar from "@components/widget/SideBar.astro";
+import RightSideBar from "@components/layout/RightSideBar.astro";
 import type { MarkdownHeading } from "astro";
 import { Icon } from "astro-icon/components";
 import FullscreenWallpaper from "../components/misc/FullscreenWallpaper.astro";
@@ -122,43 +123,56 @@ const mobileNonHomeMainTop = !isHomePage ? "5.5rem" : mainPanelTop;
 const finalMainPanelTop = siteConfig.wallpaperMode.defaultMode === "banner" ? mainPanelTop : "5.5rem";
 
 // 检查侧边栏是否启用，动态调整网格布局
-// 全局启用状态
-const globalSidebarEnabled = sidebarLayoutConfig.enable;
-// 侧边栏位置配置
-const sidebarPosition = sidebarLayoutConfig.position || "left";
 // 响应式配置：不同设备上的侧边栏显示状态
-const mobileShowSidebar =
-	globalSidebarEnabled && widgetManager.shouldShowSidebar("mobile");
-const tabletShowSidebar =
-	globalSidebarEnabled && widgetManager.shouldShowSidebar("tablet");
-const desktopShowSidebar =
-	globalSidebarEnabled && widgetManager.shouldShowSidebar("desktop");
+const mobileShowSidebar = widgetManager.shouldShowSidebar("mobile");
+const tabletShowSidebar = widgetManager.shouldShowSidebar("tablet");
+const desktopShowSidebar = widgetManager.shouldShowSidebar("desktop");
 
-// 动态网格布局类名 - 根据侧边栏位置调整列宽
+// 检查是否为双侧边栏模式
+const isBothSidebarMode = sidebarLayoutConfig.position === "both";
+
+// 检查右侧边栏是否有组件
+const hasRightSidebarComponents = isBothSidebarMode && widgetManager.getComponentsByPosition("top", "right").length > 0 || widgetManager.getComponentsByPosition("sticky", "right").length > 0;
+
+// 动态网格布局类名 - 根据侧边栏模式调整列宽
 const gridCols = `
 	${mobileShowSidebar ? "grid-cols-1" : "grid-cols-1"}
-	${tabletShowSidebar ? (sidebarPosition === "right" ? "md:grid-cols-[1fr_17.5rem]" : "md:grid-cols-[17.5rem_1fr]") : "md:grid-cols-1"}
-	${desktopShowSidebar ? (sidebarPosition === "right" ? "lg:grid-cols-[1fr_17.5rem]" : "lg:grid-cols-[17.5rem_1fr]") : "lg:grid-cols-1"}
+	${tabletShowSidebar ? "md:grid-cols-[17.5rem_1fr]" : "md:grid-cols-1"}
+	${desktopShowSidebar ? "lg:grid-cols-[17.5rem_1fr]" : "lg:grid-cols-1"}
+	${isBothSidebarMode ? "lg:grid-cols-[17.5rem_1fr_17.5rem]" : ""}
 `
 	.trim()
 	.replace(/\s+/g, " ");
 
-// 侧边栏容器类名 - 根据位置调整grid-column
+// 侧边栏容器类名 - 始终在左侧
 const sidebarClass = `
-	mb-4 row-start-2 row-end-3 col-span-2 onload-animation
+	mb-4 row-start-2 row-end-3 col-span-1 onload-animation
 	${mobileShowSidebar ? "block" : "hidden"}
-	${tabletShowSidebar ? `md:block md:row-start-1 md:row-end-2 md:max-w-[17.5rem] ${sidebarPosition === "right" ? "md:col-start-2 md:col-end-3" : "md:col-start-1 md:col-end-2"}` : "md:hidden"}
-	${desktopShowSidebar ? `lg:block lg:row-start-1 lg:row-end-2 lg:max-w-[17.5rem] ${sidebarPosition === "right" ? "lg:col-start-2 lg:col-end-3" : "lg:col-start-1 lg:col-end-2"}` : "lg:hidden"}
+	${tabletShowSidebar ? "md:block md:row-start-1 md:row-end-2 md:max-w-[17.5rem] md:col-start-1 md:col-end-2" : "md:hidden"}
+	${desktopShowSidebar ? "lg:block lg:row-start-1 lg:row-end-2 lg:max-w-[17.5rem] lg:col-start-1 lg:col-end-2" : "lg:hidden"}
 `
 	.trim()
 	.replace(/\s+/g, " ");
 
-// 主内容区域类名 - 根据侧边栏位置调整grid-column
+// 右侧边栏容器类名
+// 手机端：显示在左侧栏下方（row-start-3），全宽
+// 桌面端：定位到网格第3列（右侧）
+const rightSidebarClass = `
+	mb-4 col-span-1 onload-animation
+	${isBothSidebarMode && mobileShowSidebar ? "block row-start-3 row-end-4" : "hidden"}
+	${isBothSidebarMode ? "lg:block lg:row-start-1 lg:row-end-2 lg:max-w-[17.5rem] lg:col-start-3 lg:col-end-4" : "lg:hidden"}
+`
+	.trim()
+	.replace(/\s+/g, " ");
+
+// 主内容区域类名 - 根据侧边栏模式调整grid-column
+// 手机端：主内容在最上方row-1，侧边栏在下方
 const mainContentClass = `
 	transition-swup-fade overflow-hidden w-full
-	${mobileShowSidebar ? "col-span-2" : "col-span-1"}
-	${tabletShowSidebar ? `${sidebarPosition === "right" ? "md:col-start-1 md:col-end-2" : "md:col-start-2 md:col-end-3"}` : "md:col-span-1"}
-	${desktopShowSidebar ? `${sidebarPosition === "right" ? "lg:col-start-1 lg:col-end-2" : "lg:col-start-2 lg:col-end-3"}` : "lg:col-span-1"}
+	col-span-1 row-start-1 row-end-2
+	${tabletShowSidebar ? "md:col-start-2 md:col-end-3" : "md:col-span-1"}
+	${desktopShowSidebar ? "lg:col-start-2 lg:col-end-3" : "lg:col-span-1"}
+	${isBothSidebarMode ? "lg:col-start-2 lg:col-end-3" : ""}
 `
 	.trim()
 	.replace(/\s+/g, " ");
@@ -521,7 +535,10 @@ const transparentClass = shouldEnableTransparency
             </a>}
 
 
-            {(mobileShowSidebar || tabletShowSidebar || desktopShowSidebar) && <SideBar class={`${sidebarClass} ${transparentClass}`} headings={headings}></SideBar>}
+            {(mobileShowSidebar || tabletShowSidebar || desktopShowSidebar) && <SideBar class={`${sidebarClass} ${transparentClass}`} headings={headings} isBothSidebarMode={isBothSidebarMode}></SideBar>}
+            
+            {/* 右侧边栏 - 在双侧边栏模式下渲染，CSS控制显示隐藏 */}
+            {isBothSidebarMode && hasRightSidebarComponents && <div class={`right-sidebar-container ${rightSidebarClass} ${transparentClass}`}><RightSideBar headings={headings}></RightSideBar></div>}
 
             <main id="swup-container" class={`${mainContentClass} transition-main`}>
                 <div id="content-wrapper" class="onload-animation transition-leaving">
@@ -548,7 +565,7 @@ const transparentClass = shouldEnableTransparency
     <div class="relative max-w-[var(--page-width)] mx-auto">
         <!-- TOC component -->
         {siteConfig.toc.enable && <div id="toc-wrapper" class:list={["hidden lg:block transition absolute top-0 w-[var(--toc-width)] items-center",
-            sidebarLayoutConfig.position === "right" ? "-left-[var(--toc-width)]" : "-right-[var(--toc-width)]",
+            "-right-[var(--toc-width)]",
             {"toc-hide": siteConfig.wallpaperMode.defaultMode === "banner"}]}
         >
             <div id="toc-inner-wrapper" class="fixed top-14 w-[var(--toc-width)] h-[calc(100vh_-_20rem)] overflow-y-scroll overflow-x-hidden hide-scrollbar">
@@ -1019,6 +1036,33 @@ body.no-banner-mode .absolute.w-full.z-30 {
 .no-banner-layout {
     top: 5.5rem !important;
     min-height: calc(100vh - 5.5rem) !important;
+}
+
+/* Grid 模式下隐藏右侧边栏 */
+.right-sidebar-container.hidden-in-grid-mode {
+    display: none !important;
+}
+
+/* Grid 模式下调整主网格布局 */
+#main-grid[data-layout-mode="grid"] {
+    /* 在桌面端只显示左侧边栏和主内容 */
+}
+
+@media (min-width: 768px) {
+    #main-grid[data-layout-mode="grid"] {
+        grid-template-columns: 17.5rem 1fr !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    #main-grid[data-layout-mode="grid"] {
+        grid-template-columns: 17.5rem 1fr !important;
+    }
+}
+
+/* Grid 模式下主内容区域的列位置调整 */
+#main-grid[data-layout-mode="grid"] #swup-container {
+    grid-column: 2 / 3;
 }
 
 /* 移动端当banner被禁用时的布局样式 */

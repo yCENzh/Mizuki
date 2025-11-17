@@ -234,6 +234,38 @@ enum I18nKey {
 	wallpaperBanner = "wallpaperBanner",
 	wallpaperFullscreen = "wallpaperFullscreen",
 	wallpaperNone = "wallpaperNone",
+
+	// 站点统计
+	siteStats = "siteStats",
+	siteStatsPostCount = "siteStatsPostCount",
+	siteStatsCategoryCount = "siteStatsCategoryCount",
+	siteStatsTagCount = "siteStatsTagCount",
+	siteStatsTotalWords = "siteStatsTotalWords",
+	siteStatsRunningDays = "siteStatsRunningDays",
+	siteStatsLastUpdate = "siteStatsLastUpdate",
+	siteStatsDaysAgo = "siteStatsDaysAgo",
+	siteStatsDays = "siteStatsDays",
+
+	// 日历组件
+	calendarSunday = "calendarSunday",
+	calendarMonday = "calendarMonday",
+	calendarTuesday = "calendarTuesday",
+	calendarWednesday = "calendarWednesday",
+	calendarThursday = "calendarThursday",
+	calendarFriday = "calendarFriday",
+	calendarSaturday = "calendarSaturday",
+	calendarJanuary = "calendarJanuary",
+	calendarFebruary = "calendarFebruary",
+	calendarMarch = "calendarMarch",
+	calendarApril = "calendarApril",
+	calendarMay = "calendarMay",
+	calendarJune = "calendarJune",
+	calendarJuly = "calendarJuly",
+	calendarAugust = "calendarAugust",
+	calendarSeptember = "calendarSeptember",
+	calendarOctober = "calendarOctober",
+	calendarNovember = "calendarNovember",
+	calendarDecember = "calendarDecember",
 }
 
 export default I18nKey;
