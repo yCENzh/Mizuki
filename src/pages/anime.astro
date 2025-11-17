@@ -1,6 +1,6 @@
 ---
 import ImageWrapper from "../components/misc/ImageWrapper.astro";
-import { siteConfig } from "../config";
+import { sidebarLayoutConfig, siteConfig } from "../config";
 import localAnimeList from "../data/anime";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
@@ -15,6 +15,9 @@ if (!siteConfig.featurePages.anime) {
 if (!siteConfig.featurePages.anime) {
 	return Astro.redirect("/404/");
 }
+
+// 检查是否为双侧边栏模式
+const isBothSidebarMode = sidebarLayoutConfig.position === "both";
 
 // Bangumi API配置
 const BANGUMI_USER_ID = siteConfig.bangumi?.userId || "your-user-id"; // 用户ID
@@ -125,9 +128,11 @@ async function processBangumiData(data: any, status: string) {
 				genre: item.subject?.tags
 					? item.subject.tags.slice(0, 3).map((tag: any) => tag.name)
 					: ["Unknown"],
-        studio: studio,
-        link: item.subject?.id ? `https://bgm.tv/subject/${item.subject.id}` : "#",
-        progress: progress,
+				studio: studio,
+				link: item.subject?.id
+					? `https://bgm.tv/subject/${item.subject.id}`
+					: "#",
+				progress: progress,
 				totalEpisodes: totalEpisodes,
 				startDate: item.subject?.date || "",
 				endDate: item.subject?.date || "",
@@ -167,7 +172,13 @@ if (ANIME_MODE === "local") {
 		? await processBangumiData(droppedData, "dropped")
 		: [];
 
-	animeList = [...watchingList, ...plannedList, ...completedList, ...onHoldList, ...droppedList];
+	animeList = [
+		...watchingList,
+		...plannedList,
+		...completedList,
+		...onHoldList,
+		...droppedList,
+	];
 }
 
 // 获取状态的翻译文本和样式
@@ -204,8 +215,7 @@ function getStatusInfo(status: string) {
 		case "dropped":
 			return {
 				text: i18n(I18nKey.animeStatusDropped),
-				class:
-					"bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
+				class: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
 				icon: "✗",
 			};
 		default:
@@ -278,7 +288,11 @@ const stats = {
             </p>
           </div>
         ) : animeList.length > 0 ? (
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+          <div class={`grid gap-4 md:gap-6 ${
+            isBothSidebarMode 
+              ? "grid-cols-2 md:grid-cols-4 lg:grid-cols-4" 
+              : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+          }`}>
             {animeList.map(anime => {
               const statusInfo = getStatusInfo(anime.status);
               const progressPercent = anime.totalEpisodes > 0 ? (anime.progress / anime.totalEpisodes) * 100 : 0;
