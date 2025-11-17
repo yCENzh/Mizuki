@@ -377,6 +377,17 @@ async function collectText() {
   if (metingTextSet.size > 0) {
     console.log(`✓ Added ${metingTextSet.size} unique characters from music playlist`);
   }
+
+  // 漏网之鱼（如散落在各处未纳入统计的UI文本等）
+  const otherWords = [
+    '示例', '歌曲', '艺术家'
+  ];
+
+  for (const term of otherWords) {
+    for (const char of term) {
+      textSet.add(char);
+    }
+  }
   
   const allText = Array.from(textSet).sort().join('');
   

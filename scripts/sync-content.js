@@ -73,7 +73,7 @@ if (!fs.existsSync(CONTENT_DIR)) {
   if (fs.existsSync(path.join(CONTENT_DIR, '.git'))) {
     try {
       console.log('Pulling latest content...');
-      execSync('git pull', { 
+      execSync('git pull --allow-unrelated-histories', { 
         stdio: 'inherit',
         cwd: CONTENT_DIR
       });
