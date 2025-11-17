@@ -249,11 +249,13 @@ const transparentClass = shouldEnableTransparency
 				const currentLayout = savedLayout || defaultPostListLayout;
 				mainGrid.setAttribute('data-layout-mode', currentLayout);
 				
-				// 如果是grid模式，立即隐藏右侧边栏
-				if (currentLayout === 'grid') {
-					const rightSidebar = document.querySelector('.right-sidebar-container');
-					if (rightSidebar) {
+				// 根据布局模式显示或隐藏右侧边栏
+				const rightSidebar = document.querySelector('.right-sidebar-container');
+				if (rightSidebar) {
+					if (currentLayout === 'grid') {
 						rightSidebar.classList.add('hidden-in-grid-mode');
+					} else {
+						rightSidebar.classList.remove('hidden-in-grid-mode');
 					}
 				}
 				
