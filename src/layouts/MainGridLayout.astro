@@ -1,9 +1,9 @@
 ---
 import BackToTop from "@components/control/BackToTop.astro";
 import Footer from "@components/Footer.astro";
+import RightSideBar from "@components/layout/RightSideBar.astro";
 import Navbar from "@components/Navbar.astro";
 import SideBar from "@components/widget/SideBar.astro";
-import RightSideBar from "@components/layout/RightSideBar.astro";
 import type { MarkdownHeading } from "astro";
 import { Icon } from "astro-icon/components";
 import FullscreenWallpaper from "../components/misc/FullscreenWallpaper.astro";
@@ -114,13 +114,15 @@ const mobileNonHomeBannerClass = !isHomePage ? "mobile-hide-banner" : "";
 // 计算主内容区域位置，考虑手机端非首页时banner被隐藏
 // 当默认模式为 banner 时，使用banner高度；否则使用顶栏高度
 // 让主内容区域紧贴波浪线下方，波浪线高度约为10-15vh，所以主内容从banner顶部开始
-const mainPanelTop = siteConfig.wallpaperMode.defaultMode === "banner"
-	? `${BANNER_HEIGHT}vh`
-	: "5.5rem";
+const mainPanelTop =
+	siteConfig.wallpaperMode.defaultMode === "banner"
+		? `${BANNER_HEIGHT}vh`
+		: "5.5rem";
 const mobileNonHomeMainTop = !isHomePage ? "5.5rem" : mainPanelTop;
 
 // 当默认模式不是 banner 时，主内容区域应该始终从顶栏下面开始
-const finalMainPanelTop = siteConfig.wallpaperMode.defaultMode === "banner" ? mainPanelTop : "5.5rem";
+const finalMainPanelTop =
+	siteConfig.wallpaperMode.defaultMode === "banner" ? mainPanelTop : "5.5rem";
 
 // 检查侧边栏是否启用，动态调整网格布局
 // 响应式配置：不同设备上的侧边栏显示状态
@@ -132,7 +134,14 @@ const desktopShowSidebar = widgetManager.shouldShowSidebar("desktop");
 const isBothSidebarMode = sidebarLayoutConfig.position === "both";
 
 // 检查右侧边栏是否有组件
-const hasRightSidebarComponents = isBothSidebarMode && widgetManager.getComponentsByPosition("top", "right").length > 0 || widgetManager.getComponentsByPosition("sticky", "right").length > 0;
+const hasRightSidebarComponents =
+	(isBothSidebarMode &&
+		widgetManager.getComponentsByPosition("top", "right").length > 0) ||
+	widgetManager.getComponentsByPosition("sticky", "right").length > 0;
+
+// 检查默认布局模式，如果是 grid 模式，右侧边栏初始就应该隐藏
+const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
+const initialRightSidebarHidden = defaultPostListLayout === "grid";
 
 // 动态网格布局类名 - 根据侧边栏模式调整列宽
 const gridCols = `
@@ -157,10 +166,12 @@ const sidebarClass = `
 // 右侧边栏容器类名
 // 手机端：显示在左侧栏下方（row-start-3），全宽
 // 桌面端：定位到网格第3列（右侧）
+// 如果默认是 grid 模式，初始就隐藏
 const rightSidebarClass = `
 	mb-4 col-span-1 onload-animation
 	${isBothSidebarMode && mobileShowSidebar ? "block row-start-3 row-end-4" : "hidden"}
 	${isBothSidebarMode ? "lg:block lg:row-start-1 lg:row-end-2 lg:max-w-[17.5rem] lg:col-start-3 lg:col-end-4" : "lg:hidden"}
+	${initialRightSidebarHidden ? "hidden-in-grid-mode" : ""}
 `
 	.trim()
 	.replace(/\s+/g, " ");
@@ -178,7 +189,8 @@ const mainContentClass = `
 	.replace(/\s+/g, " ");
 
 // 检查是否应该启用半透明效果（当默认模式为 fullscreen 时）
-const shouldEnableTransparency = siteConfig.wallpaperMode.defaultMode === "fullscreen";
+const shouldEnableTransparency =
+	siteConfig.wallpaperMode.defaultMode === "fullscreen";
 
 // 为组件添加半透明效果的CSS类
 const transparentClass = shouldEnableTransparency
@@ -520,6 +532,7 @@ const transparentClass = shouldEnableTransparency
     <!-- The pointer-events-none here prevent blocking the click event of the TOC -->
     <div class="relative max-w-[var(--page-width)] mx-auto pointer-events-auto">
         <div id="main-grid" class={`transition duration-700 w-full left-0 right-0 grid ${gridCols} grid-rows-[auto_1fr_auto] lg:grid-rows-[auto] mx-auto gap-4 px-2 md:px-4 ${!mobileShowSidebar ? 'mobile-no-sidebar' : ''}`}
+             data-layout-mode={defaultPostListLayout}
         >
             <!-- Banner image credit -->
             {hasBannerCredit && <a href={siteConfig.banner.credit.url} id="banner-credit" target="_blank" rel="noopener" aria-label="Visit image source"
