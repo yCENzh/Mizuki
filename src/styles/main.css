@@ -21,8 +21,8 @@
 
 /* 导入 萝莉体 第二版 字体 */
 @font-face {
-	font-family: "'萝莉体 第二版'";
-	src: url("/assets/font/萝莉体 第二版.woff2") format("woff2");
+	font-family: "'loli'";
+	src: url("/assets/font/loli.woff2") format("woff2");
 	font-style: normal;
 	font-weight: 400;
 	font-display: swap;
@@ -133,6 +133,12 @@ html {
         will-change: auto !important;
     }
     
+    /* 主题切换时临时隐藏代码块以提升性能 */
+    .is-theme-transitioning .expressive-code {
+        content-visibility: hidden !important;
+        /* 避免闪烁 */
+        opacity: 0.99;
+    }    
     /* 禁用复杂选择器元素的过渡 - 仅在非 View Transitions 模式下 */
     .is-theme-transitioning:not(.use-view-transition) .float-panel,
     .is-theme-transitioning:not(.use-view-transition) .float-panel *,

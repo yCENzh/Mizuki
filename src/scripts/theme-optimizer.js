@@ -244,6 +244,13 @@ class ThemeOptimizer {
       .is-theme-transitioning .animation-element {
         visibility: hidden !important;
       }
+      
+      /* 在主题切换期间临时隐藏代码块以提升性能 */
+      .is-theme-transitioning .expressive-code {
+        content-visibility: hidden !important;
+        /* 避免闪烁 */
+        opacity: 0.99;
+      }
     `;
   }
 
