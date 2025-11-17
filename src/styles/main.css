@@ -21,8 +21,8 @@
 
 /* 导入 萝莉体 第二版 字体 */
 @font-face {
-	font-family: "'loli'";
-	src: url("/assets/font/loli.woff2") format("woff2");
+	font-family: "萝莉体 第二版";
+	src: url("/assets/font/萝莉体 第二版.woff2") format("woff2");
 	font-style: normal;
 	font-weight: 400;
 	font-display: swap;
