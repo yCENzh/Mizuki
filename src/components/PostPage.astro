@@ -66,6 +66,18 @@ const initialLayoutClass =
       let currentLayout = savedLayout || defaultLayout;
 
       console.debug("Initializing layout:", { savedLayout, defaultLayout, currentLayout, isBothSidebars });
+      
+      // 检查main-grid是否已经设置了正确的layout-mode，避免重复操作导致闪烁
+      const mainGrid = document.getElementById('main-grid');
+      if (mainGrid) {
+        const existingMode = mainGrid.getAttribute('data-layout-mode');
+        if (existingMode === currentLayout) {
+          console.debug("Layout already correct, skipping update to avoid flicker");
+          postListContainer.classList.add("js-initialized");
+          publishLayoutInit();
+          return;
+        }
+      }
 
       // 移动端由CSS处理，桌面端才需要JavaScript初始化
       const isDesktop = window.innerWidth >= 769;
