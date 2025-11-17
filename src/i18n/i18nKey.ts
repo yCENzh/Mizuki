@@ -86,6 +86,10 @@ enum I18nKey {
 	albumsPhotoCount = "albumsPhotoCount",
 	albumsPhotosCount = "albumsPhotosCount",
 
+	// 设备页面
+	devices = "devices",
+	devicesSubtitle = "devicesSubtitle",
+
 	// 项目展示页面
 	projects = "projects",
 	projectsSubtitle = "projectsSubtitle",
