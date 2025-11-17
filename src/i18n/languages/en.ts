@@ -92,6 +92,10 @@ export const en: Translation = {
 	[Key.albumsEmptyDesc]:
 		"No albums have been created yet. Go add some beautiful memories!",
 	[Key.albumsBackToList]: "Back to Albums",
+
+	// Devices Page
+	[Key.devices]: "My Devices",
+	[Key.devicesSubtitle]: "Here are the devices I use in my daily life",
 	[Key.albumsPhotoCount]: "photo",
 	[Key.albumsPhotosCount]: "photos",
 
