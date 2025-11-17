@@ -288,8 +288,8 @@ async function compressFonts() {
     for (const fontConfig of fonts) {
       // 根据字体类型选择字符集
       const text = fontConfig.type === 'asciiFont' ? asciiText : cjkText;
-      const fontTypeLabel = fontConfig.type === 'asciiFont' ? 'ASCII 字体' : 
-                           fontConfig.type === 'cjkFont' ? 'CJK 字体' : fontConfig.type;
+      const fontTypeLabel = fontConfig.type === 'asciiFont' ? 'ASCII Fonts' : 
+                           fontConfig.type === 'cjkFont' ? 'CJK Fonts' : fontConfig.type;
       
       console.log(`\n--- Processing ${fontTypeLabel} ---`);
       
