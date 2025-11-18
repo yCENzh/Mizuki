@@ -380,23 +380,38 @@ async function collectText() {
     }
   }
   
-  // 4. 读取 src/content 目录
-  const contentDir = path.join(__dirname, '../src/content');
-  const contentFiles = readFilesRecursively(contentDir);
+  // 4. 读取 content 目录（根据环境变量决定路径）
+  let contentDir;
+  if (process.env.ENABLE_CONTENT_SYNC === 'true' && process.env.CONTENT_DIR) {
+    // 使用环境变量指定的目录（以项目根目录为基准）
+    contentDir = path.join(__dirname, '..', process.env.CONTENT_DIR);
+    console.log(`ℹ Using external content directory: ${process.env.CONTENT_DIR}`);
+  } else {
+    // 使用默认的 src/content 目录
+    contentDir = path.join(__dirname, '../src/content');
+  }
   
-  contentFiles.forEach(file => {
-    const ext = path.extname(file);
-    if (['.md', '.mdx', '.ts', '.js'].includes(ext)) {
-      const content = fs.readFileSync(file, 'utf-8');
-      const text = extractText(content, ext);
-      for (const char of text) {
-        // 只保留中文、日文、韩文等 CJK 字符和常用标点
-        if (char.match(/[\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af\u3000-\u303f\uff00-\uffef]/)) {
-          textSet.add(char);
+  // 检查目录是否存在
+  if (!fs.existsSync(contentDir)) {
+    console.log(`⚠ Content directory does not exist: ${contentDir}`);
+    console.log('  Skipping content text collection');
+  } else {
+    const contentFiles = readFilesRecursively(contentDir);
+    
+    contentFiles.forEach(file => {
+      const ext = path.extname(file);
+      if (['.md', '.mdx', '.ts', '.js'].includes(ext)) {
+        const content = fs.readFileSync(file, 'utf-8');
+        const text = extractText(content, ext);
+        for (const char of text) {
+          // 只保留中文、日文、韩文等 CJK 字符和常用标点
+          if (char.match(/[\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af\u3000-\u303f\uff00-\uffef]/)) {
+            textSet.add(char);
+          }
         }
       }
-    }
-  });
+    });
+  }
   
   // 添加常用标点符号和数字
   const commonChars = '0123456789，。！？；：""\'\'（）【】《》、·—…「」『』';
