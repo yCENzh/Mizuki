@@ -969,6 +969,27 @@ body.no-banner-mode .absolute.w-full.z-30 {
         min-height: 80px !important;
         max-height: 120px !important;
     }
+    
+    /* 修复双侧边栏模式在平板端的布局问题 */
+    .mobile-both-sidebar {
+        /* 确保在平板端使用单列布局 */
+        grid-template-columns: 1fr !important;
+        /* 确保左右padding对称 */
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    /* 确保平板端主内容区域居中且全宽 */
+    .mobile-both-sidebar main {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+    }
+    
+    /* 平板端footer也要居中 */
+    .mobile-both-sidebar .footer {
+        grid-column: 1 / -1 !important;
+    }
 }
 
 /* 桌面端保持居中 (1024px+) */
