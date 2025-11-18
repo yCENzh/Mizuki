@@ -8,6 +8,12 @@ export const ja: Translation = {
 	[Key.search]: "検索",
 	[Key.other]: "その他",
 
+	// ナビゲーションバータイトル
+	[Key.navLinks]: "リンク",
+	[Key.navMy]: "私の",
+	[Key.navAbout]: "About",
+	[Key.navOthers]: "その他",
+
 	[Key.tags]: "タグ",
 	[Key.categories]: "カテゴリ",
 	[Key.recentPosts]: "最近の投稿",
@@ -20,6 +26,14 @@ export const ja: Translation = {
 
 	[Key.comments]: "コメント",
 	[Key.friends]: "友達",
+	[Key.friendsSubtitle]: "より優れたウェブサイトを見つける",
+	[Key.friendsSearchPlaceholder]: "友達の名前または説明を検索...",
+	[Key.friendsFilterAll]: "すべて",
+	[Key.friendsNoResults]: "一致する友達が見つかりません",
+	[Key.friendsVisit]: "訪問",
+	[Key.friendsCopyLink]: "リンクをコピー",
+	[Key.friendsCopySuccess]: "コピー済み",
+	[Key.friendsTags]: "タグ",
 	[Key.untitled]: "無題",
 	[Key.uncategorized]: "未分類",
 	[Key.noTags]: "タグなし",
@@ -45,6 +59,10 @@ export const ja: Translation = {
 	[Key.anime]: "アニメ",
 	[Key.diary]: "日記",
 	[Key.gallery]: "ギャラリー",
+
+	// デバイスページ
+	[Key.devices]: "私のデバイス",
+	[Key.devicesSubtitle]: "ここに私の日常で使用するデバイスを表示します",
 
 	// アニメページ
 	[Key.animeTitle]: "私のアニメリスト",

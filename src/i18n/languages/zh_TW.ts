@@ -8,6 +8,12 @@ export const zh_TW: Translation = {
 	[Key.search]: "搜尋",
 	[Key.other]: "其他",
 
+	// 導航欄標題
+	[Key.navLinks]: "連結",
+	[Key.navMy]: "我的",
+	[Key.navAbout]: "關於",
+	[Key.navOthers]: "其他",
+
 	[Key.tags]: "標籤",
 	[Key.categories]: "分類",
 	[Key.recentPosts]: "最新文章",
@@ -20,6 +26,14 @@ export const zh_TW: Translation = {
 
 	[Key.comments]: "評論",
 	[Key.friends]: "友鏈",
+	[Key.friendsSubtitle]: "發現更多優秀網站",
+	[Key.friendsSearchPlaceholder]: "搜索友鏈名稱或描述...",
+	[Key.friendsFilterAll]: "全部",
+	[Key.friendsNoResults]: "未找到匹配的友鏈",
+	[Key.friendsVisit]: "訪問",
+	[Key.friendsCopyLink]: "複製鏈接",
+	[Key.friendsCopySuccess]: "已複製",
+	[Key.friendsTags]: "標籤",
 	[Key.untitled]: "無標題",
 	[Key.uncategorized]: "未分類",
 	[Key.noTags]: "無標籤",
@@ -45,6 +59,10 @@ export const zh_TW: Translation = {
 	[Key.anime]: "追番",
 	[Key.diary]: "日記",
 	[Key.gallery]: "相冊",
+
+	// 設備頁面
+	[Key.devices]: "我的設備",
+	[Key.devicesSubtitle]: "這裡展示了我日常使用的各類設備",
 
 	// 番劇頁面
 	[Key.animeTitle]: "我的追番記錄",

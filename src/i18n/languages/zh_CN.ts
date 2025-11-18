@@ -8,6 +8,12 @@ export const zh_CN: Translation = {
 	[Key.search]: "搜索",
 	[Key.other]: "其他",
 
+	// 导航栏标题
+	[Key.navLinks]: "链接",
+	[Key.navMy]: "我的",
+	[Key.navAbout]: "关于",
+	[Key.navOthers]: "其他",
+
 	[Key.tags]: "标签",
 	[Key.categories]: "分类",
 	[Key.recentPosts]: "最新文章",
@@ -20,6 +26,14 @@ export const zh_CN: Translation = {
 
 	[Key.comments]: "评论",
 	[Key.friends]: "友链",
+	[Key.friendsSubtitle]: "发现更多优秀网站",
+	[Key.friendsSearchPlaceholder]: "搜索友链名称或描述...",
+	[Key.friendsFilterAll]: "全部",
+	[Key.friendsNoResults]: "未找到匹配的友链",
+	[Key.friendsVisit]: "访问",
+	[Key.friendsCopyLink]: "复制链接",
+	[Key.friendsCopySuccess]: "已复制",
+	[Key.friendsTags]: "标签",
 	[Key.untitled]: "无标题",
 	[Key.uncategorized]: "未分类",
 	[Key.noTags]: "无标签",

@@ -8,6 +8,12 @@ export const en: Translation = {
 	[Key.search]: "Search",
 	[Key.other]: "Other",
 
+	// Navigation bar titles
+	[Key.navLinks]: "Links",
+	[Key.navMy]: "My",
+	[Key.navAbout]: "About",
+	[Key.navOthers]: "Others",
+
 	[Key.tags]: "Tags",
 	[Key.categories]: "Categories",
 	[Key.recentPosts]: "Recent Posts",
@@ -20,6 +26,14 @@ export const en: Translation = {
 
 	[Key.comments]: "Comments",
 	[Key.friends]: "Friends",
+	[Key.friendsSubtitle]: "Discover more excellent websites",
+	[Key.friendsSearchPlaceholder]: "Search friend name or description...",
+	[Key.friendsFilterAll]: "All",
+	[Key.friendsNoResults]: "No matching friends found",
+	[Key.friendsVisit]: "Visit",
+	[Key.friendsCopyLink]: "Copy Link",
+	[Key.friendsCopySuccess]: "Copied",
+	[Key.friendsTags]: "Tags",
 	[Key.untitled]: "Untitled",
 	[Key.uncategorized]: "Uncategorized",
 	[Key.noTags]: "No Tags",

@@ -5,6 +5,12 @@ enum I18nKey {
 	search = "search",
 	other = "other",
 
+	// 导航栏标题
+	navLinks = "navLinks",
+	navMy = "navMy",
+	navAbout = "navAbout",
+	navOthers = "navOthers",
+
 	tags = "tags",
 	categories = "categories",
 	recentPosts = "recentPosts",
@@ -40,6 +46,14 @@ enum I18nKey {
 	publishedAt = "publishedAt",
 	license = "license",
 	friends = "friends",
+	friendsSubtitle = "friendsSubtitle",
+	friendsSearchPlaceholder = "friendsSearchPlaceholder",
+	friendsFilterAll = "friendsFilterAll",
+	friendsNoResults = "friendsNoResults",
+	friendsVisit = "friendsVisit",
+	friendsCopyLink = "friendsCopyLink",
+	friendsCopySuccess = "friendsCopySuccess",
+	friendsTags = "friendsTags",
 	anime = "anime",
 	diary = "diary",
 	gallery = "gallery",
