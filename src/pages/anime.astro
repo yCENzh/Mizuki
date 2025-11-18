@@ -288,10 +288,10 @@ const stats = {
             </p>
           </div>
         ) : animeList.length > 0 ? (
-          <div class={`grid gap-4 md:gap-6 ${
+          <div class={`anime-grid-container grid gap-4 md:gap-6 ${
             isBothSidebarMode 
-              ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" 
-              : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+              ? "both-sidebar" 
+              : "single-sidebar"
           }`}>
             {animeList.map(anime => {
               const statusInfo = getStatusInfo(anime.status);
@@ -388,6 +388,55 @@ const stats = {
 
   <!-- 过滤按钮样式 -->
   <style>
+    /* 容器查询支持 */
+    .card-base {
+      container-type: inline-size;
+    }
+    
+    /* 番剧网格容器 - 使用容器查询实现响应式列数 */
+    .anime-grid-container {
+      /* 基础配置 - 移动端 */
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* 单侧栏模式 - 所有情况下都显示5列 */
+    .anime-grid-container.single-sidebar {
+      @container (min-width: 900px) {
+        grid-template-columns: repeat(5, 1fr);
+      }
+      
+      @container (min-width: 600px) and (max-width: 899px) {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      @container (max-width: 599px) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    /* 双侧栏模式 */
+    /* list模式显示4列，grid模式显示5列 */
+    .anime-grid-container.both-sidebar {
+      /* grid模式：宽度足够大 - 显示5列 */
+      @container (min-width: 950px) {
+        grid-template-columns: repeat(5, 1fr);
+      }
+      
+      /* list模式：宽度中等 - 显示4列 */
+      @container (min-width: 650px) and (max-width: 949px) {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      @container (min-width: 480px) and (max-width: 649px) {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      @container (max-width: 479px) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
     .filter-container {
       display: flex;
       flex-wrap: wrap;
