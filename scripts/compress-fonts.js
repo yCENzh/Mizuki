@@ -332,7 +332,41 @@ async function collectText() {
   dataFiles.forEach(file => {
     if (file.endsWith('.ts') || file.endsWith('.js')) {
       const content = fs.readFileSync(file, 'utf-8');
-      // 提取字符串字面量中的文本
+      
+      // 改进的字符串匹配
+      const patterns = [
+        // 双引号字符串
+        /"([^"\\]|\\.|\\n|\\t)*"/g,
+        // 单引号字符串
+        /'([^'\\]|\\.|\\n|\\t)*'/g,
+        // 模板字符串
+        /`([^`\\]|\\.|\\n|\\t)*`/g,
+      ];
+      
+      patterns.forEach(pattern => {
+        const matches = content.match(pattern);
+        if (matches) {
+          matches.forEach(match => {
+            let text = match;
+            
+            // 清理引号
+            if ((text.startsWith('"') && text.endsWith('"')) ||
+                (text.startsWith("'") && text.endsWith("'")) ||
+                (text.startsWith('`') && text.endsWith('`'))) {
+              text = text.slice(1, -1);
+            }
+
+            // 处理转义字符
+            text = text.replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\"/g, '"').replace(/\\'/g, "'");
+            
+            for (const char of text) {
+              textSet.add(char);
+            }
+          });
+        }
+      });
+      
+      // 简单正则作为补充
       const stringMatches = content.match(/["'`]([^"'`]+)["'`]/g);
       if (stringMatches) {
         stringMatches.forEach(match => {
@@ -349,17 +383,49 @@ async function collectText() {
   const configFile = path.join(__dirname, '../src/config.ts');
   if (fs.existsSync(configFile)) {
     const content = fs.readFileSync(configFile, 'utf-8');
-    const stringMatches = content.match(/["'`]([^"'`]+)["'`]/g);
-    if (stringMatches) {
-      stringMatches.forEach(match => {
-        const text = match.slice(1, -1);
-        // 过滤掉 URL、路径、技术性字符串等
-        if (!text.match(/^(https?:\/\/|\/|assets\/|@|#|material-symbols|fa6-brands|mdi:|simple-icons:|\.|\w+\.\w+)/) && 
-            text.length > 0 && 
-            !text.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) { // 排除变量名
+    
+    // 改进的字符串匹配
+    const patterns = [
+      // 双引号字符串
+      /"([^"\\]|\\.|\\n|\\t)*"/g,
+      // 单引号字符串
+      /'([^'\\]|\\.|\\n|\\t)*'/g,
+      // 模板字符串
+      /`([^`\\]|\\.|\\n|\\t)*`/g,
+    ];
+    
+    patterns.forEach(pattern => {
+      const matches = content.match(pattern);
+      if (matches) {
+        matches.forEach(match => {
+          // 清理引号和注释标记
+          let text = match;
+          
+          // 移除字符串的引号
+          if ((text.startsWith('"') && text.endsWith('"')) ||
+              (text.startsWith("'") && text.endsWith("'")) ||
+              (text.startsWith('`') && text.endsWith('`'))) {
+            text = text.slice(1, -1);
+          }
+          
+          // 处理转义字符
+          text = text.replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\"/g, '"').replace(/\\'/g, "'");
+          
+          // 提取所有字符（包括中文）
           for (const char of text) {
             textSet.add(char);
           }
+        });
+      }
+    });
+    
+    // 作为补充，还用原来的简单正则再扫一遍，确保不遗漏
+    const simpleMatches = content.match(/["'`]([^"'`]+)["'`]/g);
+    if (simpleMatches) {
+      simpleMatches.forEach(match => {
+        const text = match.slice(1, -1);
+        for (const char of text) {
+          textSet.add(char);
         }
       });
     }
@@ -369,6 +435,37 @@ async function collectText() {
   const i18nFile = path.join(__dirname, `../src/i18n/languages/${lang}.ts`);
   if (fs.existsSync(i18nFile)) {
     const content = fs.readFileSync(i18nFile, 'utf-8');
+    
+    // 改进的字符串匹配
+    const patterns = [
+      /"([^"\\]|\\.|\\n|\\t)*"/g,
+      /'([^'\\]|\\.|\\n|\\t)*'/g,
+      /`([^`\\]|\\.|\\n|\\t)*`/g,
+    ];
+    
+    patterns.forEach(pattern => {
+      const matches = content.match(pattern);
+      if (matches) {
+        matches.forEach(match => {
+          let text = match;
+          
+          if ((text.startsWith('"') && text.endsWith('"')) ||
+              (text.startsWith("'") && text.endsWith("'")) ||
+              (text.startsWith('`') && text.endsWith('`'))) {
+            text = text.slice(1, -1);
+          }
+          
+          // 处理转义字符
+          text = text.replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\"/g, '"').replace(/\\'/g, "'");
+          
+          for (const char of text) {
+            textSet.add(char);
+          }
+        });
+      }
+    });
+    
+    // 简单正则作为补充
     const stringMatches = content.match(/["'`]([^"'`]+)["'`]/g);
     if (stringMatches) {
       stringMatches.forEach(match => {
