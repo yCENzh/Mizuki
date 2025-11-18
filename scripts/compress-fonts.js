@@ -85,15 +85,53 @@ function readFilesRecursively(dir, fileList = []) {
 // 提取文本内容
 function extractText(content, ext) {
   let text = content;
+  let frontmatterText = '';
   
-  // 移除代码块中的内容（通常不需要特殊字体）
+  // 提取并处理 frontmatter 中的文本
   if (ext === '.md' || ext === '.mdx') {
+    const frontmatterMatch = content.match(/^---[\s\S]*?---/m);
+    if (frontmatterMatch) {
+      const frontmatter = frontmatterMatch[0];
+      
+      // 提取 frontmatter 中的字符串值（包括有引号和无引号的）
+      // 匹配 key: value 格式（无引号）
+      const unquotedMatches = frontmatter.match(/^\s*\w+:\s*([^'"\n]+)$/gm);
+      if (unquotedMatches) {
+        unquotedMatches.forEach(match => {
+          const value = match.replace(/^\s*\w+:\s*/, '').trim();
+          // 排除布尔值、日期、数字等非文本内容
+          if (!value.match(/^(true|false|\d{4}-\d{2}-\d{2}|\d+)$/)) {
+            frontmatterText += value + ' ';
+          }
+        });
+      }
+      
+      // 提取带引号的字符串值
+      const quotedMatches = frontmatter.match(/:\s*['"]([^'"]+)['"]/g);
+      if (quotedMatches) {
+        quotedMatches.forEach(match => {
+          const value = match.replace(/:\s*['"]([^'"]+)['"]/, '$1');
+          frontmatterText += value + ' ';
+        });
+      }
+      
+      // 提取列表项中的文本（如 tags 列表）
+      const listMatches = frontmatter.match(/^\s*-\s*([^\n]+)$/gm);
+      if (listMatches) {
+        listMatches.forEach(match => {
+          const value = match.replace(/^\s*-\s*/, '').trim();
+          frontmatterText += value + ' ';
+        });
+      }
+    }
+    
+    // 移除 frontmatter 后继续处理正文
+    text = text.replace(/^---[\s\S]*?---\s*/m, '');
+    
+    // 移除代码块中的内容（通常不需要特殊字体）
     text = text.replace(/```[\s\S]*?```/g, '');
     text = text.replace(/`[^`]+`/g, '');
   }
-  
-  // 移除 frontmatter
-  text = text.replace(/^---[\s\S]*?---/m, '');
   
   // 移除 HTML 标签
   text = text.replace(/<[^>]*>/g, ' ');
@@ -104,7 +142,13 @@ function extractText(content, ext) {
   // 移除 URL
   text = text.replace(/https?:\/\/[^\s]+/g, '');
   
-  return text;
+  // 移除多余的空白字符
+  text = text.replace(/\s+/g, ' ').trim();
+  
+  // 合并 frontmatter 文本和正文
+  const finalText = (frontmatterText + ' ' + text).trim();
+  
+  return finalText;
 }
 
 // 获取 ASCII 字符集（用于 asciiFont）
