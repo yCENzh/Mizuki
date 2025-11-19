@@ -207,41 +207,29 @@ const setupIntersectionObserver = () => {
 	});
 };
 
+let swupListenersRegistered = false;
+
 const setupSwupListeners = () => {
-	if (typeof window !== "undefined" && (window as any).swup) {
+	if (typeof window !== "undefined" && (window as any).swup && !swupListenersRegistered) {
 		const swup = (window as any).swup;
 
-		// 监听页面内容替换事件
-		swup.hooks.on("content:replace", () => {
-			// 延迟执行，确保DOM已更新
-			setTimeout(() => {
-				init();
-			}, 100);
-		});
-
-		// 监听页面视图事件
+		// 只监听页面视图事件，避免重复触发
 		swup.hooks.on("page:view", () => {
 			// 延迟执行，确保页面已完全加载
 			setTimeout(() => {
 				init();
-			}, 100);
+			}, 200);
 		});
 
-		// 监听动画完成事件
-		swup.hooks.on("animation:in:end", () => {
-			// 延迟执行，确保动画已完成
-			setTimeout(() => {
-				init();
-			}, 50);
-		});
-
-		console.log("MobileTOC Swup listeners registered");
-	} else {
+		swupListenersRegistered = true;
+		console.log("MobileTOC Swup listener registered");
+	} else if (!swupListenersRegistered) {
 		// 降级处理：监听普通页面切换事件
 		window.addEventListener("popstate", () => {
-			setTimeout(init, 100);
+			setTimeout(init, 200);
 		});
-		console.log("MobileTOC fallback listeners registered");
+		swupListenersRegistered = true;
+		console.log("MobileTOC fallback listener registered");
 	}
 };
 
@@ -292,28 +280,30 @@ const init = () => {
 	}
 };
 
-onMount(() => {
-	// 延迟初始化，确保页面内容已加载
-	setTimeout(init, 100);
+	onMount(() => {
+		// 延迟初始化，确保页面内容已加载
+		setTimeout(init, 100);
 
-	// 监听滚动事件作为备用
-	window.addEventListener("scroll", updateActiveHeading);
+		// 监听滚动事件作为备用
+		window.addEventListener("scroll", updateActiveHeading);
 
-	return () => {
-		if (observer) {
-			observer.disconnect();
-		}
-		window.removeEventListener("scroll", updateActiveHeading);
+		return () => {
+			if (observer) {
+				observer.disconnect();
+			}
+			window.removeEventListener("scroll", updateActiveHeading);
 
-		// 清理Swup事件监听器
-		if (typeof window !== "undefined" && (window as any).swup) {
-			const swup = (window as any).swup;
-			swup.hooks.off("content:replace");
-			swup.hooks.off("page:view");
-			swup.hooks.off("animation:in:end");
-		}
-	};
-});
+			// 清理Swup事件监听器
+			if (typeof window !== "undefined" && (window as any).swup) {
+				const swup = (window as any).swup;
+				swup.hooks.off("page:view");
+			}
+			
+			// 清理popstate事件监听器
+			window.removeEventListener("popstate", init);
+			swupListenersRegistered = false;
+		};
+	});
 
 // 导出初始化函数供外部调用
 if (typeof window !== "undefined") {
