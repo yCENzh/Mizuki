@@ -5,6 +5,7 @@ description: This is an article for testing the page encryption feature
 encrypted: true
 pinned: true
 password: "123456"
+permalink: "encrypted-example"
 tags: ["Test", "Encryption"]
 category: "Technology"
 ---
@@ -38,6 +39,7 @@ draft: false
 | `image`       | The cover image path of the post.<br/>1. Start with `http://` or `https://`: Use web image<br/>2. Start with `/`: For image in `public` dir<br/>3. With none of the prefixes: Relative to the markdown file |
 | `tags`        | The tags of the post.                                                                                                                                                                                       |
 | `category`    | The category of the post.                                                                                                                                                                                   |
+| `permalink`   | Custom permalink for the post. The post will be accessible at `/posts/{permalink}/`. Example: `my-special-article` (will be available at `/posts/my-special-article/`)                                   |
 | `licenseName` | The license name for the post content.                                                                                                                                                                      |
 | `author`      | The author of the post.                                                                                                                                                                                     |
 | `sourceLink`  | The source link or reference for the post content.                                                                                                                                                          |
@@ -56,6 +58,33 @@ src/content/posts/
     ├── cover.png
     └── index.md
 ```
+
+## Custom Permalink
+
+You can set a custom permalink for any post by adding the `permalink` field to the front-matter:
+
+```yaml
+---
+title: My Special Article
+published: 2024-01-15
+permalink: "my-special-article"
+tags: ["Example"]
+category: "Technology"
+---
+```
+
+When a custom permalink is set:
+- The post will be accessible at the custom URL (e.g., `/posts/my-special-article/`)
+- The default `/posts/{slug}/` URL will still work
+- RSS/Atom feeds will use the custom permalink
+- All internal links will automatically use the custom permalink
+
+**Important Notes:**
+- Permalinks should NOT include `/posts/` prefix (it will be added automatically)
+- Avoid special characters and spaces in permalinks
+- Use lowercase letters and hyphens for best SEO practices
+- Make sure permalinks are unique across all posts
+- Don't include leading or trailing slashes
 
 
 ## How It Works
