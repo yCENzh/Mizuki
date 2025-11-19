@@ -6,7 +6,12 @@ import { i18n } from "../i18n/translation";
 import { navigateToPage } from "../utils/navigation-utils";
 import { panelManager } from "../utils/panel-manager.js";
 
-let tocItems: Array<{ id: string; text: string; level: number }> = [];
+let tocItems: Array<{
+	id: string;
+	text: string;
+	level: number;
+	badge?: string;
+}> = [];
 let postItems: Array<{
 	title: string;
 	url: string;
@@ -17,24 +22,76 @@ let activeId = "";
 let observer: IntersectionObserver;
 let isHomePage = false;
 let swupReady = false;
+let useJapaneseBadge = false;
+let tocDepth = 3;
 
 const togglePanel = async () => {
-	await panelManager.togglePanel('mobile-toc-panel');
+	await panelManager.togglePanel("mobile-toc-panel");
 };
 
 const setPanelVisibility = async (show: boolean): Promise<void> => {
-	await panelManager.togglePanel('mobile-toc-panel', show);
+	await panelManager.togglePanel("mobile-toc-panel", show);
 };
 
 const generateTOC = () => {
+	// 获取配置
+	useJapaneseBadge = (window as any).siteConfig?.toc?.useJapaneseBadge || false;
+	tocDepth = (window as any).siteConfig?.toc?.depth || 3;
+
 	const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
-	const items: Array<{ id: string; text: string; level: number }> = [];
+	const items: Array<{
+		id: string;
+		text: string;
+		level: number;
+		badge?: string;
+	}> = [];
+	const japaneseHiragana = [
+		"ア",
+		"イ",
+		"ウ",
+		"エ",
+		"オ",
+		"カ",
+		"キ",
+		"ク",
+		"ケ",
+		"コ",
+		"サ",
+		"シ",
+		"ス",
+		"セ",
+		"ソ",
+		"タ",
+		"チ",
+		"ツ",
+		"テ",
+		"ト",
+	];
+	let h1Count = 0;
 
 	headings.forEach((heading) => {
 		if (heading.id) {
-			const level = Number.parseInt(heading.tagName.charAt(1));
-			const text = (heading.textContent || '').replace(/#+\s*$/, '');
-			items.push({ id: heading.id, text, level });
+			const level = Number.parseInt(heading.tagName.charAt(1), 10);
+
+			// 根据depth配置过滤标题
+			if (level > tocDepth) {
+				return;
+			}
+
+			const text = (heading.textContent || "").replace(/#+\s*$/, "");
+			let badge = "";
+
+			// 只为H1标题生成badge
+			if (level === 1) {
+				h1Count++;
+				if (useJapaneseBadge && h1Count - 1 < japaneseHiragana.length) {
+					badge = japaneseHiragana[h1Count - 1];
+				} else {
+					badge = h1Count.toString();
+				}
+			}
+
+			items.push({ id: heading.id, text, level, badge });
 		}
 	});
 
@@ -150,6 +207,44 @@ const setupIntersectionObserver = () => {
 	});
 };
 
+const setupSwupListeners = () => {
+	if (typeof window !== "undefined" && (window as any).swup) {
+		const swup = (window as any).swup;
+
+		// 监听页面内容替换事件
+		swup.hooks.on("content:replace", () => {
+			// 延迟执行，确保DOM已更新
+			setTimeout(() => {
+				init();
+			}, 100);
+		});
+
+		// 监听页面视图事件
+		swup.hooks.on("page:view", () => {
+			// 延迟执行，确保页面已完全加载
+			setTimeout(() => {
+				init();
+			}, 100);
+		});
+
+		// 监听动画完成事件
+		swup.hooks.on("animation:in:end", () => {
+			// 延迟执行，确保动画已完成
+			setTimeout(() => {
+				init();
+			}, 50);
+		});
+
+		console.log("MobileTOC Swup listeners registered");
+	} else {
+		// 降级处理：监听普通页面切换事件
+		window.addEventListener("popstate", () => {
+			setTimeout(init, 100);
+		});
+		console.log("MobileTOC fallback listeners registered");
+	}
+};
+
 const checkSwupAvailability = () => {
 	if (typeof window !== "undefined") {
 		// 检查Swup是否已加载
@@ -161,6 +256,8 @@ const checkSwupAvailability = () => {
 				if ((window as any).swup) {
 					swupReady = true;
 					document.removeEventListener("swup:enable", checkSwup);
+					// Swup加载完成后设置监听器
+					setupSwupListeners();
 				}
 			};
 
@@ -172,8 +269,13 @@ const checkSwupAvailability = () => {
 				if ((window as any).swup) {
 					swupReady = true;
 					document.removeEventListener("swup:enable", checkSwup);
+					// Swup加载完成后设置监听器
+					setupSwupListeners();
 				}
 			}, 1000);
+		} else {
+			// Swup已经加载，直接设置监听器
+			setupSwupListeners();
 		}
 	}
 };
@@ -202,6 +304,14 @@ onMount(() => {
 			observer.disconnect();
 		}
 		window.removeEventListener("scroll", updateActiveHeading);
+
+		// 清理Swup事件监听器
+		if (typeof window !== "undefined" && (window as any).swup) {
+			const swup = (window as any).swup;
+			swup.hooks.off("content:replace");
+			swup.hooks.off("page:view");
+			swup.hooks.off("animation:in:end");
+		}
 	};
 });
 
@@ -277,6 +387,13 @@ if (typeof window !== "undefined") {
 						class="toc-item level-{item.level} {activeId === item.id ? 'active' : ''}"
 						class:active={activeId === item.id}
 					>
+						{#if item.level === 1}
+							<span class="badge">{item.badge}</span>
+						{:else if item.level === 2}
+							<span class="dot-square"></span>
+						{:else}
+							<span class="dot-small"></span>
+						{/if}
 						<span class="toc-text">{item.text}</span>
 					</button>
 				{/each}
@@ -312,7 +429,8 @@ if (typeof window !== "undefined") {
 	}
 
 	.toc-item {
-		display: block;
+		display: flex;
+		align-items: center;
 		width: 100%;
 		text-align: left;
 		padding: 8px 12px;
@@ -348,27 +466,32 @@ if (typeof window !== "undefined") {
 		padding-left: 12px;
 		font-weight: 600;
 		font-size: 1rem;
+		gap: 8px;
 	}
 
 	.toc-item.level-2 {
-		padding-left: 20px;
+		padding-left: 28px;
+		gap: 6px;
 	}
 
 	.toc-item.level-3 {
-		padding-left: 28px;
+		padding-left: 36px;
 		font-size: 0.85rem;
+		gap: 6px;
 	}
 
 	.toc-item.level-4 {
-		padding-left: 36px;
+		padding-left: 44px;
 		font-size: 0.8rem;
+		gap: 6px;
 	}
 
 	.toc-item.level-5,
 	.toc-item.level-6 {
-		padding-left: 44px;
+		padding-left: 52px;
 		font-size: 0.75rem;
 		color: rgba(0, 0, 0, 0.5);
+		gap: 6px;
 	}
 
 	:global(.dark) .toc-item.level-5,
@@ -381,20 +504,58 @@ if (typeof window !== "undefined") {
 	}
 
 	.toc-item.level-2.active {
-		padding-left: 17px;
-	}
-
-	.toc-item.level-3.active {
 		padding-left: 25px;
 	}
 
-	.toc-item.level-4.active {
+	.toc-item.level-3.active {
 		padding-left: 33px;
+	}
+
+	.toc-item.level-4.active {
+		padding-left: 41px;
 	}
 
 	.toc-item.level-5.active,
 	.toc-item.level-6.active {
-		padding-left: 41px;
+		padding-left: 49px;
+	}
+
+	.badge {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 20px;
+		height: 20px;
+		padding: 0 4px;
+		border-radius: 6px;
+		background: var(--toc-badge-bg);
+		color: var(--btn-content);
+		font-size: 0.8rem;
+		font-weight: 600;
+		flex-shrink: 0;
+		line-height: 1;
+	}
+
+	.dot-square {
+		display: inline-block;
+		width: 8px;
+		height: 8px;
+		border-radius: 2px;
+		background: var(--toc-badge-bg);
+		flex-shrink: 0;
+	}
+
+	.dot-small {
+		display: inline-block;
+		width: 6px;
+		height: 6px;
+		border-radius: 2px;
+		background: rgba(0, 0, 0, 0.05);
+		flex-shrink: 0;
+	}
+
+	:global(.dark) .dot-small {
+		background: rgba(255, 255, 255, 0.1);
 	}
 
 	.toc-text {
@@ -402,6 +563,7 @@ if (typeof window !== "undefined") {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		flex: 1;
 	}
 
 	.post-item {

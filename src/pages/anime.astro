@@ -693,18 +693,20 @@ const stats = {
   <!-- 过滤功能脚本 -->
   <script is:inline>
     // 事件监听器存储，用于防止重复绑定
-    let filterEventListeners = [];
+    if (typeof window.animeFilterEventListeners === 'undefined') {
+      window.animeFilterEventListeners = [];
+    }
     
     // 初始化过滤功能
     function initFilterButtons() {
       const filterTags = document.querySelectorAll('.filter-tag');
       
       // 移除之前的事件监听器
-      filterEventListeners.forEach(listener => {
+      window.animeFilterEventListeners.forEach(listener => {
         const [element, type, handler] = listener;
         element.removeEventListener(type, handler);
       });
-      filterEventListeners = [];
+      window.animeFilterEventListeners = [];
       
       // 过滤功能 - 使用 FLIP 技术实现洗牌动画
       filterTags.forEach(tag => {
@@ -846,7 +848,7 @@ const stats = {
         };
         
         tag.addEventListener('click', clickHandler);
-        filterEventListeners.push([tag, 'click', clickHandler]);
+        window.animeFilterEventListeners.push([tag, 'click', clickHandler]);
       });
       
       console.log('Filter buttons initialized with', filterTags.length, 'buttons');

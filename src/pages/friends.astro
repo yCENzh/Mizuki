@@ -27,22 +27,26 @@ const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
 ---
 
 <MainGridLayout title={i18n(I18nKey.friends)} description={i18n(I18nKey.friends)}>
-	<!-- 引入右侧边栏布局管理器 -->
+	<!-- 只在友情链接页面加载脚本 -->
+	<script is:inline>
+		// 标记当前页面为友情链接页面
+		window.isFriendsPage = true;
+	</script>
   <script>
     import('/src/scripts/right-sidebar-layout.js');
   </script>
 	<div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
-		<div class="card-base z-10 px-6 md:px-9 py-6 relative w-full">
-			<!-- 页面标题 -->
-			<div class="mb-6">
-				<h1 class="text-3xl md:text-4xl font-bold text-black/90 dark:text-white/90 mb-2 relative
-							before:w-1 before:h-8 before:rounded-md before:bg-[var(--primary)]
-							before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-4">
-					{i18n(I18nKey.friends)}
-				</h1>
-				<p class="text-base md:text-lg text-black/60 dark:text-white/60">
-					{i18n(I18nKey.friendsSubtitle)}
-				</p>
+		<div class="card-base z-10 px-9 py-6 relative w-full">
+      <!-- 页面标题 -->
+      <div class="flex flex-col items-start justify-center mb-8">
+        <h1 class="text-4xl font-bold text-black/90 dark:text-white/90 mb-2 relative
+                  before:w-1 before:h-8 before:rounded-md before:bg-[var(--primary)]
+                  before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-4">
+          {i18n(I18nKey.friends)}
+        </h1>
+        <p class="text-lg text-black/60 dark:text-white/60">
+          {i18n(I18nKey.friendsSubtitle)}
+        </p>
 			</div>
 
 			<!-- 搜索和筛选栏 -->
@@ -69,19 +73,16 @@ const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
 				</div>
 
 				<!-- 标签筛选 -->
-				<div class="flex flex-wrap gap-2">
+				<div class="filter-container flex flex-wrap gap-2">
 					<button 
-						class="tag-filter px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-								 bg-[var(--primary)] text-white shadow-sm"
+						class="filter-tag active"
 						data-tag="all"
 					>
 						{i18n(I18nKey.friendsFilterAll)}
 					</button>
 					{allTags.map(tag => (
 						<button 
-							class="tag-filter px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-									 bg-[var(--btn-regular-bg)] text-black/70 dark:text-white/70
-									 hover:bg-[var(--btn-regular-bg-hover)]"
+							class="filter-tag"
 							data-tag={tag}
 						>
 							{tag}
@@ -96,8 +97,7 @@ const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
 					<div 
 						class="friend-card group relative bg-transparent rounded-xl border border-black/10 dark:border-white/10
 								 overflow-hidden transition-all duration-300
-								 hover:shadow-xl hover:-translate-y-1
-								 hover:border-[var(--primary)]/50"
+								 hover:shadow-xl hover:-translate-y-1"
 						data-title={item.title.toLowerCase()}
 						data-desc={item.desc.toLowerCase()}
 						data-tags={item.tags.join(',')}
@@ -109,7 +109,7 @@ const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
 								<!-- 网站图标 -->
 								<div class="w-16 h-16 flex-shrink-0 rounded-xl overflow-hidden 
 												bg-[var(--btn-regular-bg)] 
-												ring-2 ring-transparent group-hover:ring-[var(--primary)]/30
+												ring-2 ring-transparent
 												transition-all duration-300">
 									<img 
 										src={item.imgurl} 
@@ -248,11 +248,43 @@ const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
 	#friend-search:focus {
 		box-shadow: 0 0 0 3px var(--primary) / 0.1;
 	}
-
-	/* 响应式优化 */
-	@media (max-width: 768px) {
-		.friend-card {
-			animation-delay: 0s !important;
-		}
+	
+	/* 标签筛选按钮样式 - 与番剧页面一致 */
+	.filter-container {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	
+	.filter-tag {
+		padding: 0.5rem 1rem;
+		border: 1px solid var(--line-divider);
+		border-radius: var(--radius-large);
+		background: var(--btn-regular-bg);
+		color: var(--btn-content);
+		font-size: 0.875rem;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		white-space: nowrap;
+	}
+	
+	.filter-tag:hover:not(.active) {
+		background: var(--btn-hover-bg);
+		border-color: var(--primary);
+		transform: translateY(-1px);
+	}
+	
+	.filter-tag.active {
+		background: var(--primary);
+		color: white;
+		border-color: var(--primary);
+	}
+	
+	.filter-tag.active:hover {
+		background: var(--primary) !important;
+		color: white !important;
+		border-color: var(--primary) !important;
+		transform: translateY(-1px);
 	}
 </style>

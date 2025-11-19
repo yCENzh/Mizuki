@@ -29,7 +29,7 @@
 			return false;
 		}
 		
-		var tagFilters = document.querySelectorAll('.tag-filter');
+		var tagFilters = document.querySelectorAll('.filter-tag');
 		var friendCards = document.querySelectorAll('.friend-card');
 		var copyButtons = document.querySelectorAll('.copy-link-btn');
 		
@@ -107,11 +107,9 @@
 					// 更新选中状态
 					for (var j = 0; j < tagFilters.length; j++) {
 						var btn = tagFilters[j];
-						btn.classList.remove('bg-[var(--primary)]', 'text-white', 'shadow-sm');
-						btn.classList.add('bg-[var(--btn-regular-bg)]', 'text-black/70', 'dark:text-white/70');
+						btn.classList.remove('active');
 					}
-					button.classList.remove('bg-[var(--btn-regular-bg)]', 'text-black/70', 'dark:text-white/70');
-					button.classList.add('bg-[var(--primary)]', 'text-white', 'shadow-sm');
+					button.classList.add('active');
 
 					currentTag = button.getAttribute('data-tag') || 'all';
 					filterFriends();
