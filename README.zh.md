@@ -3,7 +3,7 @@
 ![pnpm >= 9](https://img.shields.io/badge/pnpm-%3E%3D9-blue) 
 ![Astro](https://img.shields.io/badge/Astro-5.15.3-orange)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ![Mizuki Preview](./README.webp)
 
@@ -30,42 +30,6 @@
 [**中文**](./README.zh.md) /
 [**日本語**](./docs/README.ja.md) /
 [**中文繁体**](./docs/README.tw.md) /
-
-## 🆕 v6.5 版本更新
-- **代码块折叠功能**：代码块支持折叠了，改善代码阅读体验。
-- **代码仓库与内容仓库分离**：支持代码仓库和内容仓库的分离模式，更方便更新内容。
-- **全新的前端布局管理**：实现了全新的前端布局管理系统，提供更好的控制。
-- **网站地址配置**：网站地址配置加入到config.ts，便于管理。
-- **前端布局切换功能**：添加前端布局切换功能，提供更灵活的显示选项。
-- **性能优化和Bug修复**：优化网站性能并修复各种Bug，提升用户体验。
-
-## 🆕 v6.0 版本更新
-- **页面重构**：完全重构了番剧、时间线、项目、技能、相册、友情链接、日记、关于页面，提升性能和用户体验。
-- **页面开关功能**：添加了页面关闭功能和SEO优化模块，可以控制特色页面的显示与隐藏。
-- **新的网格布局**：添加了新的网格文章列表布局，改善内容展示效果。
-- **水波纹管理**：添加了水波纹管理模块，增强视觉交互效果。
-
-## 🆕 v5.0 版本更新
-- **Pio 看板娘集成**：集成了 Pio 看板娘，提供可爱的互动角色，增强用户互动体验。
-- **高度可配置**：支持在 `src/config.ts` 中进行详细配置，包括模型路径、位置、尺寸、对话内容等，满足个性化需求。
-- **无刷新跳转**：看板娘的返回首页功能现在使用主题自带的 Swup 无刷新跳转，提供更流畅、无缝的页面切换体验。
-
-## 🆕 v4.6 版本更新
-- **番剧页面：** 重构了更可爱好看的番剧页面，包括番剧列表、番剧详情和番剧时间轴。
-- **相册页面：** 重构了相册页面,使用分页+文件夹数据索引方案
-- **全新的动画：** 使用了全新的动画组件，使页面更加流畅和美观
-- **图片API的支持** 支持图片API，可以快速获取图片信息,使用(PicFlow API项目)[https://github.com/matsuzaka-yuki/PicFlow-API]
-
-## 🆕 v3.4 版本更新
-- **新增页面：** 添加了项目展示、技能展示和时间线专属页面，用于展示您的工作、专业技能和成长历程。
-- **下拉菜单修复：** 解决了下拉菜单点击时出现边框轮廓的问题，提升了界面一致性。
-- **搜索功能优化：** 增强了搜索功能的性能和准确性。
-- **底部HTML注入：** 引入了新功能，允许在页面底部注入自定义HTML内容，提供更大的灵活性。
-
-
-## 🆕 v3.3 版本更新
-- **Mermaid 语法支持：** 添加了对 Mermaid 图表语法的支持，现在可以在 Markdown 中直接嵌入流程图、序列图、甘特图等。
-- **Umami 访问统计：** 添加了对 Umami 访问统计的支持，可以轻松集成网站访问数据分析。
 
 ![Configuration](configuration.svg)
 
@@ -350,7 +314,11 @@ pnpm run sync-content
 
 ## 📄 许可证
 
-本项目基于 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+本项目基于 Apache 许可证 2.0 - 查看 [LICENSE](LICENSE) 文件了解详情。
+
+### 原始项目许可证
+
+本项目基于 [Fuwari](https://github.com/saicaca/fuwari) 开发，该项目使用 MIT 许可证。根据 MIT 许可证要求，原始版权声明和许可声明已包含在 LICENSE.MIT 文件中。
 
 ## 🙏 致谢
 
