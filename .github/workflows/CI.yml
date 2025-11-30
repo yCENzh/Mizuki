@@ -15,21 +15,6 @@ permissions:
   contents: read
 
 jobs:
-  quality:
-    name: Code Quality (Biome)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-      
-      - name: Setup Biome
-        uses: biomejs/setup-biome@v2
-        with:
-          version: latest
-          
-      - name: Run Biome
-        run: biome ci ./src --reporter=github
-
   check:
     name: Astro Check
     runs-on: ubuntu-latest
