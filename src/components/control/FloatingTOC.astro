@@ -90,6 +90,13 @@ const useJapaneseBadge = siteConfig.toc.useJapaneseBadge;
         display: none;
     }
 
+    /* 移动端隐藏，使用顶栏的MobileTOC */
+    @media (max-width: 1024px) {
+        .floating-toc-wrapper {
+            display: none;
+        }
+    }
+
     @media (max-width: 1560px) {
         .floating-toc-wrapper {
             box-shadow: 0 0 0 1px var(--btn-regular-bg), 0 0 1em var(--btn-regular-bg);
