@@ -39,9 +39,7 @@ export function initPostIdMap(
 export function getPostNumericId(postId: string): number {
 	if (!postIdMap) {
 		// 在客户端或未初始化时返回 0，使用默认 slug
-		console.warn(
-			"Post ID map not initialized. Returning 0 for post_id.",
-		);
+		console.warn("Post ID map not initialized. Returning 0 for post_id.");
 		return 0;
 	}
 	return postIdMap.get(postId) ?? 0;
@@ -60,9 +58,7 @@ export function clearPostIdMap(): void {
  * @param post 文章数据
  * @returns 生成的 slug（不包含 /posts/ 前缀）
  */
-export function generatePermalinkSlug(
-	post: CollectionEntry<"posts">,
-): string {
+export function generatePermalinkSlug(post: CollectionEntry<"posts">): string {
 	// 如果文章有自定义 permalink，优先使用（不在 /posts/ 下）
 	if (post.data.permalink) {
 		// 移除开头和结尾的斜杠
