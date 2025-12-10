@@ -7,6 +7,7 @@ import sanitizeHtml from "sanitize-html";
 import { profileConfig, siteConfig } from "@/config";
 import { getSortedPosts } from "@/utils/content-utils";
 import { getPostUrl } from "@/utils/url-utils";
+import { initPostIdMap } from "@/utils/permalink-utils";
 
 const markdownParser = new MarkdownIt();
 
@@ -25,6 +26,9 @@ export async function GET(context: APIContext) {
 	const posts = (await getSortedPosts()).filter(
 		(post) => !post.data.encrypted && post.data.draft !== true,
 	);
+
+	// 初始化文章 ID 映射（用于 permalink 功能）
+	initPostIdMap(posts);
 
 	// 创建Atom feed头部
 	let atomFeed = `<?xml version="1.0" encoding="utf-8"?>

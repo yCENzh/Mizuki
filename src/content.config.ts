@@ -26,6 +26,9 @@ const postsCollection = defineCollection({
 		/* Posts alias */
 		alias: z.string().optional(),
 
+		/* Custom permalink - 自定义固定链接，优先级高于 alias */
+		permalink: z.string().optional(),
+
 		/* For internal use */
 		prevTitle: z.string().default(""),
 		prevSlug: z.string().default(""),

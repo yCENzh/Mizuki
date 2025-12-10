@@ -9,6 +9,7 @@ import sanitizeHtml from "sanitize-html";
 import { siteConfig } from "@/config";
 import { getSortedPosts } from "@/utils/content-utils";
 import { getPostUrl } from "@/utils/url-utils";
+import { initPostIdMap } from "@/utils/permalink-utils";
 
 const markdownParser = new MarkdownIt();
 
@@ -24,6 +25,10 @@ export async function GET(context: APIContext) {
 
 	// Use the same ordering as site listing (pinned first, then by published desc)
 	const posts = (await getSortedPosts()).filter((post) => !post.data.encrypted);
+
+	// 初始化文章 ID 映射（用于 permalink 功能）
+	initPostIdMap(posts);
+
 	const feed: RSSFeedItem[] = [];
 
 	for (const post of posts) {
