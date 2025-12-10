@@ -27,18 +27,18 @@ export function getPostUrlBySlug(slug: string): string {
 	return url(`/posts/${slugWithoutExt}/`);
 }
 
-export function getPostUrlByPermalink(permalink: string): string {
+export function getPostUrlByAlias(alias: string): string {
 	// 移除开头的斜杠并确保固定链接在 /posts/ 路径下
-	const cleanPermalink = permalink.replace(/^\/+/, "");
-	return url(`/posts/${cleanPermalink}/`);
+	const cleanAlias = alias.replace(/^\/+/, "");
+	return url(`/posts/${cleanAlias}/`);
 }
 
 export function getPostUrl(post: CollectionEntry<"posts">): string;
-export function getPostUrl(post: { id: string; data: { permalink?: string } }): string;
+export function getPostUrl(post: { id: string; data: { alias?: string } }): string;
 export function getPostUrl(post: any): string {
 	// 如果文章有自定义固定链接，优先使用固定链接
-	if (post.data.permalink) {
-		return getPostUrlByPermalink(post.data.permalink);
+	if (post.data.alias) {
+		return getPostUrlByAlias(post.data.alias);
 	}
 	// 否则使用默认的 slug 路径
 	return getPostUrlBySlug(post.id);

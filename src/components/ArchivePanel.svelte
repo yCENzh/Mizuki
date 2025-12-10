@@ -21,7 +21,7 @@ interface Post {
 		tags: string[];
 		category?: string;
 		published: Date;
-		permalink?: string; // 添加 permalink 字段
+		alias?: string; // 添加 alias 字段
 	};
 }
 

@@ -45,17 +45,17 @@ export async function getStaticPaths() {
 		});
 
 		// 如果文章有自定义固定链接，也创建对应的路径
-		if (entry.data.permalink) {
+		if (entry.data.alias) {
 			// 移除开头的斜杠和结尾的斜杠
 			// 同时移除可能的 "posts/" 前缀，避免重复
-			let permalink = entry.data.permalink
+			let alias = entry.data.alias
 				.replace(/^\/+/, "")
 				.replace(/\/+$/, "");
-			if (permalink.startsWith("posts/")) {
-				permalink = permalink.replace(/^posts\//, "");
+			if (alias.startsWith("posts/")) {
+				alias = alias.replace(/^posts\//, "");
 			}
 			paths.push({
-				params: { slug: permalink },
+				params: { slug: alias },
 				props: { entry },
 			});
 		}
