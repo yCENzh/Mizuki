@@ -35,8 +35,8 @@ let showPlaylist = false;
 let currentTime = 0;
 // 歌曲总时长，默认为 0
 let duration = 0;
-// 音量，默认为 0.05
-let volume = 0.05;
+// 音量，默认为 0.7
+let volume = 0.7;
 // 是否静音，默认为 false
 let isMuted = false;
 // 是否正在加载，默认为 false
