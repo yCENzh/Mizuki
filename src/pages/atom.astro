@@ -101,9 +101,9 @@ const recentPosts = posts.slice(0, 6);
         </div>
     </div>
 
-    <script>
+    <script >
         // Copy button functionality
-        document.addEventListener('astro:page-load', function() {
+        const init = () => {
             const copyBtn = document.getElementById('copy-atom-btn');
             if(copyBtn) {
                 copyBtn.addEventListener('click', function() {
@@ -126,7 +126,9 @@ const recentPosts = posts.slice(0, 6);
                     }
                 });
             }
-        });
+        }
+        init();
+        document.addEventListener("astro:after-swap", init);
     </script>
 
 </MainGridLayout>
