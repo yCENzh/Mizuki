@@ -47,14 +47,16 @@ const yearSuffix = isChinese ? "年" : " ";
 	style={style}
 >
 	<div class="flex justify-between items-center mb-4 relative">
-		<div
-			id="calendar-title-container"
-			class="flex-1 flex justify-center items-center cursor-pointer hover:bg-[var(--btn-plain-bg-hover)] py-2 rounded-lg transition-colors"
-		>
-			<span
-				id="calendar-title"
-				class="text-base font-bold text-neutral-900 dark:text-neutral-100 select-none"
-			></span>
+		<div class="flex-1 flex justify-center items-center">
+			<div
+				id="calendar-title-container"
+				class="flex justify-center items-center cursor-pointer hover:bg-[var(--btn-plain-bg-hover)] px-2 py-2 rounded-lg transition-colors"
+			>
+				<span
+					id="calendar-title"
+					class="text-base font-bold text-neutral-900 dark:text-neutral-100 select-none"
+				></span>
+			</div>
 		</div>
 
 		<div class="flex items-center gap-1 shrink-0 ml-2">
@@ -68,31 +70,22 @@ const yearSuffix = isChinese ? "年" : " ";
 					class="text-xl"
 				/>
 			</button>
-
 			<button
 				id="prev-month-btn"
-				class="p-1.5 rounded-md hover:bg-[var(--btn-plain-bg-hover)] text-neutral-600 dark:text-neutral-400 hover:text-[var(--primary)] transition-colors"
+				class="p-1.5 rounded-md hover:bg-[var(--btn-plain-bg-hover)] text-neutral-600 dark:text-neutral-400 hover:text-[var(--primary)] transition-colors text-xl font-extrabold"
 				aria-label="Previous month"
 			>
-				<Icon
-					name="material-symbols:chevron-left-rounded"
-					class="text-2xl"
-				/>
+				＜
 			</button>
-
 			<button
 				id="next-month-btn"
-				class="p-1.5 rounded-md hover:bg-[var(--btn-plain-bg-hover)] text-neutral-600 dark:text-neutral-400 hover:text-[var(--primary)] transition-colors"
+				class="p-1.5 rounded-md hover:bg-[var(--btn-plain-bg-hover)] text-neutral-600 dark:text-neutral-400 hover:text-[var(--primary)] transition-colors text-xl font-extrabold"
 				aria-label="Next month"
 			>
-				<Icon
-					name="material-symbols:chevron-right-rounded"
-					class="text-2xl"
-				/>
+				＞
 			</button>
 		</div>
 	</div>
-
 	<div class="relative w-full overflow-hidden" style="min-height: 250px;">
 		<div id="calendar-view" class="w-full opacity-100">
 			<div class="grid grid-cols-7 gap-1 mb-2">
@@ -104,9 +97,7 @@ const yearSuffix = isChinese ? "年" : " ";
 					))
 				}
 			</div>
-
 			<div id="calendar-grid" class="grid grid-cols-7 gap-1"></div>
-
 			<div id="calendar-posts" class="mt-4">
 				<div
 					class="h-[1px] w-full bg-neutral-200 dark:bg-neutral-700 mb-2 hidden"
@@ -120,7 +111,6 @@ const yearSuffix = isChinese ? "年" : " ";
 				</div>
 			</div>
 		</div>
-
 		<div
 			id="selection-panel"
 			class="absolute inset-0 bg-[var(--card-bg)] z-10 flex flex-col hidden opacity-0 transition-opacity duration-200"
@@ -155,23 +145,20 @@ const yearSuffix = isChinese ? "年" : " ";
 		try {
 			const res = await fetch("/api/calendar-data.json");
 			const data = await res.json();
-
 			if (Array.isArray(data)) {
 				allPostsData = data;
 				processPostsData(allPostsData);
-
 				const currentPostId = getCurrentPostId();
 				if (currentPostId) {
 					const matchedPost = allPostsData.find(
 						(p) => p.id === currentPostId,
 					);
 					if (matchedPost) {
-						const [y, m, d] = matchedPost.date.split("-");
+						const [y, m] = matchedPost.date.split("-");
 						currentYear = parseInt(y);
 						currentMonth = parseInt(m) - 1;
 					}
 				}
-
 				renderCalendar();
 			}
 		} catch (error) {
@@ -181,14 +168,13 @@ const yearSuffix = isChinese ? "年" : " ";
 
 	function processPostsData(posts) {
 		if (!posts || posts.length === 0) return;
-
 		posts.forEach((post) => {
-			const [yStr, mStr, dStr] = post.date.split("-");
+			const [yStr, mStr] = post.date.split("-");
 			const year = parseInt(yStr);
 			const month = parseInt(mStr); // 1-12
-
 			stats.hasPostInYear[year] = true;
 			stats.hasPostInMonth[`${year}-${month}`] = true;
+
 			if (year < stats.minYear) stats.minYear = year;
 
 			const dateKey = post.date;
@@ -229,7 +215,6 @@ const yearSuffix = isChinese ? "年" : " ";
 	function getCurrentPostId() {
 		const path = window.location.pathname;
 		if (!allPostsData || allPostsData.length === 0) return null;
-
 		const decodedPath = decodeURIComponent(path);
 		const normalizedPath = decodedPath.endsWith("/")
 			? decodedPath.slice(0, -1)
@@ -244,7 +229,6 @@ const yearSuffix = isChinese ? "年" : " ";
 	function init() {
 		renderCalendar();
 		setupEventListeners();
-
 		fetchCalendarData();
 	}
 
@@ -264,6 +248,7 @@ const yearSuffix = isChinese ? "年" : " ";
 			}
 			renderCalendar();
 		});
+
 		dom.nextBtn.addEventListener("click", () => {
 			currentMonth++;
 			if (currentMonth > 11) {
@@ -284,14 +269,12 @@ const yearSuffix = isChinese ? "年" : " ";
 		dom.grid.addEventListener("click", (e) => {
 			const cell = e.target.closest(".calendar-day");
 			if (!cell) return;
-
 			const dateKey = cell.getAttribute("data-date");
 
 			if (selectedDateKey === dateKey) selectedDateKey = null;
 			else selectedDateKey = dateKey;
 
 			renderCalendar();
-
 			if (selectedDateKey && postDateMap[selectedDateKey]) {
 				renderPostList(postDateMap[selectedDateKey]);
 			} else {
@@ -325,7 +308,6 @@ const yearSuffix = isChinese ? "年" : " ";
 
 	function updateHeader() {
 		dom.title.textContent = `${currentYear}${yearSuffix} ${monthNames[currentMonth]}`;
-
 		const isCurrentRealMonth =
 			currentYear === todayYear && currentMonth === todayMonth;
 		const shouldShowReset = !isCurrentRealMonth || selectedDateKey !== null;
@@ -340,7 +322,6 @@ const yearSuffix = isChinese ? "年" : " ";
 
 	function renderCalendar() {
 		updateHeader();
-
 		const firstDayOfMonth =
 			(new Date(currentYear, currentMonth, 1).getDay() + 6) % 7;
 		const daysInMonth = new Date(
@@ -356,7 +337,6 @@ const yearSuffix = isChinese ? "年" : " ";
 
 		for (let day = 1; day <= daysInMonth; day++) {
 			const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
 			const posts = postDateMap[dateKey] || [];
 			const hasPost = posts.length > 0;
 			const count = posts.length;
@@ -368,6 +348,7 @@ const yearSuffix = isChinese ? "年" : " ";
 
 			let bgClass =
 				"hover:bg-[var(--btn-plain-bg-hover)] text-neutral-700 dark:text-neutral-300";
+
 			if (isSelected) {
 				bgClass = "bg-[var(--primary)] text-white shadow-md";
 			} else if (isToday) {
@@ -387,8 +368,8 @@ const yearSuffix = isChinese ? "年" : " ";
                 </div>
             `;
 		}
-		dom.grid.innerHTML = html;
 
+		dom.grid.innerHTML = html;
 		if (selectedDateKey && postDateMap[selectedDateKey]) {
 			renderPostList(postDateMap[selectedDateKey]);
 		} else {
@@ -404,22 +385,21 @@ const yearSuffix = isChinese ? "年" : " ";
 
 	function renderPostList(posts) {
 		if (!dom.postsList) return;
-
 		if (posts.length === 0) {
 			dom.divider.classList.add("hidden");
 			dom.postsList.innerHTML = "";
 			return;
 		}
-		dom.divider.classList.remove("hidden");
 
+		dom.divider.classList.remove("hidden");
 		const currentPostId = getCurrentPostId();
 
 		const listHtml = posts
 			.map((post) => {
-				const [y, m, d] = post.date.split("-");
+				const [, m, d] = post.date.split("-");
 				const dateStr = `${parseInt(m)}-${parseInt(d)}`;
-				const isCurrentPost = post.id === currentPostId;
 
+				const isCurrentPost = post.id === currentPostId;
 				let containerClass =
 					"flex items-center justify-between text-sm transition-colors px-2 py-2 rounded-lg group border border-transparent";
 				let titleClass = "truncate flex-1 font-bold transition-colors";
@@ -459,11 +439,11 @@ const yearSuffix = isChinese ? "年" : " ";
 
 		dom.selectionContent.className =
 			"w-full h-full p-4 grid grid-cols-3 gap-3 content-center";
+
 		let html = "";
 		monthNames.forEach((name, index) => {
 			const isCurrentMonth = index === currentMonth;
 			const hasPost = stats.hasPostInMonth[`${currentYear}-${index + 1}`];
-
 			let cls =
 				"month-item cursor-pointer rounded-lg flex flex-col items-center justify-center p-2 transition-all hover:bg-[var(--btn-plain-bg-hover)] relative border border-transparent";
 			if (isCurrentMonth)
@@ -486,8 +466,8 @@ const yearSuffix = isChinese ? "年" : " ";
 		updateHeader();
 		dom.selectionContent.className =
 			"w-full h-full p-2 grid grid-cols-4 gap-2 content-start overflow-y-auto";
-		let html = "";
 
+		let html = "";
 		for (let y = stats.minYear; y <= stats.maxYear; y++) {
 			const isCurrent = y === currentYear;
 			const hasPost = stats.hasPostInYear[y];
@@ -506,6 +486,7 @@ const yearSuffix = isChinese ? "年" : " ";
             `;
 		}
 		dom.selectionContent.innerHTML = html;
+
 		setTimeout(() => {
 			const el = document.getElementById(`year-${currentYear}`);
 			if (el) el.scrollIntoView({ block: "center", behavior: "smooth" });
