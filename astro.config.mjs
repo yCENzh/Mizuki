@@ -61,15 +61,7 @@ export default defineConfig({
 				);
 			},
 		}),
-		icon({
-			include: {
-				"fa6-brands": ["*"],
-				"fa6-regular": ["*"],
-				"fa6-solid": ["*"],
-				mdi: ["*"],
-				"simple-icons": ["*"],
-			},
-		}),
+		icon(),
 		expressiveCode({
 			themes: ["github-light", "github-dark"],
 			plugins: [
