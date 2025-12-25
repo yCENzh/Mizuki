@@ -46,15 +46,19 @@ const yearSuffix = isChinese ? "年" : " ";
 	class={`hidden md:block ${className}`}
 	style={style}
 >
-	<div class="flex justify-between items-center mb-4 relative">
-		<div class="flex-1 flex justify-center items-center">
+	<div class="flex justify-between items-center mb-2 mt-2">
+		<div
+			class="font-bold transition text-lg text-neutral-900 dark:text-neutral-100 relative ml-4 flex items-center
+					before:w-1 before:h-4 before:rounded-md before:bg-[var(--primary)]
+					before:absolute before:left-[-16px] before:top-[13.5px]"
+		>
 			<div
 				id="calendar-title-container"
-				class="flex justify-center items-center cursor-pointer hover:bg-[var(--btn-plain-bg-hover)] px-2 py-2 rounded-lg transition-colors"
+				class="flex justify-center items-center cursor-pointer hover:bg-[var(--btn-plain-bg-hover)] px-2 py-2 -ml-2 rounded-lg transition-colors"
 			>
 				<span
 					id="calendar-title"
-					class="text-base font-bold text-neutral-900 dark:text-neutral-100 select-none"
+					class="text-lg font-bold text-neutral-900 dark:text-neutral-100 select-none"
 				></span>
 			</div>
 		</div>
