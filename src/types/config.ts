@@ -442,3 +442,10 @@ export type PioConfig = {
 		}>;
 	};
 };
+
+/**
+ * 分享组件配置
+ */
+export type ShareConfig = {
+	enable: boolean; // 是否启用分享功能
+};
