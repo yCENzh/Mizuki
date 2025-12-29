@@ -27,7 +27,7 @@ async function getUserIdFromConfig() {
 				!userId
 			) {
 				console.warn(
-					"警告: src/config.ts 中的 userId 似乎是默认值。",
+					"Warning: userId in src/config.ts appears to be a default value.",
 				);
 				return userId;
 			}
@@ -35,7 +35,7 @@ async function getUserIdFromConfig() {
 		}
 		throw new Error("Could not find bangumi.userId in config.ts");
 	} catch (error) {
-		console.error("✘ 无法从 config.ts 读取 Bangumi ID");
+		console.error("✘ Failed to read Bangumi ID from config.ts");
 		throw error;
 	}
 }
@@ -78,7 +78,7 @@ async function fetchCollection(userId, type) {
 	const limit = 50;
 	let hasMore = true;
 
-	console.log(`正在获取类型: ${type}...`);
+	console.log(`Fetching type: ${type}...`);
 
 	while (hasMore) {
 		const url = `${API_BASE}/v0/users/${userId}/collections?subject_type=2&type=${type}&limit=${limit}&offset=${offset}`;
@@ -87,7 +87,7 @@ async function fetchCollection(userId, type) {
 
 			if (!response.ok) {
 				if (response.status === 404) {
-					console.log(`   用户 ${userId} 不存在或没有此类型的数据。`);
+					console.log(`   User ${userId} does not exist or has no data of this type.`);
 					return [];
 				}
 				throw new Error(`API Error ${response.status}`);
@@ -97,7 +97,7 @@ async function fetchCollection(userId, type) {
 
 			if (data.data && data.data.length > 0) {
 				allData = [...allData, ...data.data];
-				process.stdout.write(`   已获取 ${allData.length} 条数据...\r`);
+				process.stdout.write(`   Fetched ${allData.length} records...\r`);
 			}
 
 			if (!data.data || data.data.length < limit) {
@@ -107,7 +107,7 @@ async function fetchCollection(userId, type) {
 				await delay(300);
 			}
 		} catch (e) {
-			console.error(`\n获取失败 (Type ${type}):`, e.message);
+			console.error(`\nFetch failed (Type ${type}):`, e.message);
 			hasMore = false;
 		}
 	}
@@ -123,7 +123,7 @@ async function processData(items, status) {
 	for (const item of items) {
 		count++;
 		process.stdout.write(
-			`[${status}] 处理进度: ${count}/${total} (${item.subject_id})\r`,
+			`[${status}] Processing progress: ${count}/${total} (${item.subject_id})\r`,
 		);
 
 		const subjectPersons = await fetchSubjectPersons(item.subject_id);
@@ -182,23 +182,23 @@ async function processData(items, status) {
 			endDate: item.subject?.date || "",
 		});
 	}
-	console.log(`\n✓ 完成 ${status} 列表处理`);
+	console.log(`\n✓ Completed ${status} list processing`);
 	return results;
 }
 
 async function main() {
-	console.log("初始化 Bangumi 数据更新脚本...");
+	console.log("Initializing Bangumi data update script...");
 
 	const animeMode = await getAnimeModeFromConfig();
 	if (animeMode !== "bangumi") {
 		console.log(
-			`检测到当前番剧模式为 "${animeMode}"，跳过 Bangumi 数据更新。`,
+			`Detected current anime mode is "${animeMode}", skipping Bangumi data update.`,
 		);
 		return;
 	}
 
 	const USER_ID = await getUserIdFromConfig();
-	console.log(`读取到 User ID: ${USER_ID}`);
+	console.log(`Read User ID: ${USER_ID}`);
 
 	const collections = [
 		{ type: 3, status: "watching" },
@@ -226,12 +226,12 @@ async function main() {
 	}
 
 	await fs.writeFile(OUTPUT_FILE, JSON.stringify(finalAnimeList, null, 2));
-	console.log(`\n更新完成！数据已保存到: ${OUTPUT_FILE}`);
-	console.log(`总计收录: ${finalAnimeList.length} 部番剧`);
+	console.log(`\nUpdate complete! Data saved to: ${OUTPUT_FILE}`);
+	console.log(`Total collected: ${finalAnimeList.length} anime series`);
 }
 
 main().catch((err) => {
-	console.error("\n✘ 脚本执行出错:");
+	console.error("\n✘ Script execution error:");
 	console.error(err);
 	process.exit(1);
 });
