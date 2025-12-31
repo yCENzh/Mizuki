@@ -157,7 +157,7 @@ async function generatePoster() {
 		}
 
 		currentY += 24 * scale;
-		const footerHeight = 64 * scale;
+		const footerHeight = 80 * scale;
 		currentY += footerHeight;
 		currentY += padding;
 
@@ -305,9 +305,33 @@ async function generatePoster() {
 		ctx.moveTo(padding, drawY);
 		ctx.lineTo(width - padding, drawY);
 		ctx.stroke();
-		drawY += 24 * scale;
+		drawY += 16 * scale;
 
 		const footerY = drawY;
+
+		const qrSize = 80 * scale;
+		const qrX = width - padding - qrSize;
+		const qrY = footerY;
+
+		ctx.fillStyle = "#ffffff";
+		ctx.shadowColor = "rgba(0, 0, 0, 0.05)";
+		ctx.shadowBlur = 4 * scale;
+		ctx.shadowOffsetY = 2 * scale;
+		drawRoundedRect(ctx, qrX, qrY, qrSize, qrSize, 4 * scale);
+		ctx.fill();
+		ctx.shadowColor = "transparent";
+
+		const qrInnerSize = 76 * scale;
+		const qrPadding = (qrSize - qrInnerSize) / 2;
+		if (qrImg) {
+			ctx.drawImage(
+				qrImg,
+				qrX + qrPadding,
+				qrY + qrPadding,
+				qrInnerSize,
+				qrInnerSize,
+			);
+		}
 
 		if (avatarImg) {
 			ctx.save();
@@ -342,49 +366,27 @@ async function generatePoster() {
 		}
 
 		const authorTextX = padding + (avatar ? 64 * scale + 16 * scale : 0);
-		const textCenterY = footerY + 32 * scale;
+		const textCenterY = footerY + 16 * scale;
 
 		ctx.fillStyle = "#9ca3af";
 		ctx.font = `${12 * scale}px 'Roboto', sans-serif`;
-		ctx.fillText(i18n(I18nKey.author), authorTextX, textCenterY - 20 * scale);
+		ctx.fillText(i18n(I18nKey.author), authorTextX, textCenterY - 12 * scale);
 
 		ctx.fillStyle = "#1f2937";
 		ctx.font = `700 ${20 * scale}px 'Roboto', sans-serif`;
 		ctx.fillText(author, authorTextX, textCenterY + 4 * scale);
 
-		const qrSize = 64 * scale;
-		const qrX = width - padding - qrSize;
-
-		ctx.fillStyle = "#ffffff";
-		ctx.shadowColor = "rgba(0, 0, 0, 0.05)";
-		ctx.shadowBlur = 4 * scale;
-		ctx.shadowOffsetY = 2 * scale;
-		drawRoundedRect(ctx, qrX, footerY, qrSize, qrSize, 4 * scale);
-		ctx.fill();
-		ctx.shadowColor = "transparent";
-
-		const qrInnerSize = 56 * scale;
-		const qrPadding = (qrSize - qrInnerSize) / 2;
-		if (qrImg) {
-			ctx.drawImage(
-				qrImg,
-				qrX + qrPadding,
-				footerY + qrPadding,
-				qrInnerSize,
-				qrInnerSize,
-			);
-		}
-
-		const siteInfoX = qrX - 16 * scale;
-		ctx.textAlign = "right";
+		const siteInfoX = padding + (avatar ? 64 * scale + 16 * scale : 0);
+		const qrTextCenterY = footerY + 56 * scale;
+		ctx.textAlign = "left";
 
 		ctx.fillStyle = "#9ca3af";
 		ctx.font = `${12 * scale}px 'Roboto', sans-serif`;
-		ctx.fillText(i18n(I18nKey.scanToRead), siteInfoX, textCenterY - 20 * scale);
+		ctx.fillText(i18n(I18nKey.scanToRead), siteInfoX, qrTextCenterY - 12 * scale);
 
 		ctx.fillStyle = "#1f2937";
 		ctx.font = `700 ${20 * scale}px 'Roboto', sans-serif`;
-		ctx.fillText(siteTitle, siteInfoX, textCenterY + 4 * scale);
+		ctx.fillText(siteTitle, siteInfoX, qrTextCenterY + 4 * scale);
 
 		posterImage = canvas.toDataURL("image/png");
 		generating = false;
