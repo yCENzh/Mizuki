@@ -107,6 +107,7 @@ export const en: Translation = {
 	// Devices Page
 	[Key.devices]: "My Devices",
 	[Key.devicesSubtitle]: "Here are the devices I use in my daily life",
+	[Key.devicesViewDetails]: "View Details",
 	[Key.albumsPhotoCount]: "photo",
 	[Key.albumsPhotosCount]: "photos",
 
@@ -311,3 +312,4 @@ export const en: Translation = {
 	[Key.shareOnSocialDescription]:
 		"If this article helped you, please share it with others!",
 };
+

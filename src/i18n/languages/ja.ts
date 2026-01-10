@@ -63,6 +63,7 @@ export const ja: Translation = {
 	// デバイスページ
 	[Key.devices]: "私のデバイス",
 	[Key.devicesSubtitle]: "ここに私の日常で使用するデバイスを表示します",
+	[Key.devicesViewDetails]: "詳細を見る",
 
 	// アニメページ
 	[Key.animeTitle]: "私のアニメリスト",
@@ -314,3 +315,4 @@ export const ja: Translation = {
 	[Key.shareOnSocialDescription]:
 		"この記事が役に立った場合は、ぜひ他の人とシェアしてください！",
 };
+
