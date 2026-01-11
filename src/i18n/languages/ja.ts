@@ -315,4 +315,3 @@ export const ja: Translation = {
 	[Key.shareOnSocialDescription]:
 		"この記事が役に立った場合は、ぜひ他の人とシェアしてください！",
 };
-

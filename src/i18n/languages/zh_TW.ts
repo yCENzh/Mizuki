@@ -303,4 +303,3 @@ export const zh_TW: Translation = {
 	[Key.shareOnSocialDescription]:
 		"如果這篇文章對你有幫助，歡迎分享給更多人！",
 };
-

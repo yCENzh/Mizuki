@@ -312,4 +312,3 @@ export const en: Translation = {
 	[Key.shareOnSocialDescription]:
 		"If this article helped you, please share it with others!",
 };
-
