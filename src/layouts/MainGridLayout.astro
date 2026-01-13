@@ -845,8 +845,8 @@ body.no-banner-mode #toc-inner-wrapper {
     max-height: calc(100vh - 8rem) !important;
 }
 
-/* 全屏壁纸模式下的 TOC 毛玻璃背景 - 仅在 TOC 有内容时显示 */
-body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents:not(:empty)) {
+/* 全屏壁纸模式下的 TOC 毛玻璃背景 - 仅在 TOC 加载完成后显示 */
+body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded="true"]) {
     background: var(--card-bg-transparent) !important;
     backdrop-filter: blur(10px) !important;
     -webkit-backdrop-filter: blur(10px) !important;
@@ -856,7 +856,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents:not(:empty))
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-:root.dark body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents:not(:empty)) {
+:root.dark body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded="true"]) {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
