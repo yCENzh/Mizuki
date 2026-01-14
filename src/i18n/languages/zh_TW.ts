@@ -302,4 +302,10 @@ export const zh_TW: Translation = {
 	[Key.shareOnSocial]: "分享",
 	[Key.shareOnSocialDescription]:
 		"如果這篇文章對你有幫助，歡迎分享給更多人！",
+
+	// 個人資料統計
+	[Key.profileStatsLoading]: "統計載入中...",
+	[Key.profileStatsPageViews]: "瀏覽量",
+	[Key.profileStatsVisits]: "訪問次數",
+	[Key.profileStatsUnavailable]: "統計不可用",
 };
