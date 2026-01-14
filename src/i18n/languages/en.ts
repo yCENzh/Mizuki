@@ -311,4 +311,10 @@ export const en: Translation = {
 	[Key.shareOnSocial]: "Share",
 	[Key.shareOnSocialDescription]:
 		"If this article helped you, please share it with others!",
+
+	// Profile Stats
+	[Key.profileStatsLoading]: "Loading stats...",
+	[Key.profileStatsPageViews]: "Page views",
+	[Key.profileStatsVisits]: "Visits",
+	[Key.profileStatsUnavailable]: "Stats unavailable",
 };

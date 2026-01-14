@@ -314,4 +314,10 @@ export const ja: Translation = {
 	[Key.shareOnSocial]: "シェア",
 	[Key.shareOnSocialDescription]:
 		"この記事が役に立った場合は、ぜひ他の人とシェアしてください！",
+
+	// プロフィール統計
+	[Key.profileStatsLoading]: "統計情報を読み込み中...",
+	[Key.profileStatsPageViews]: "ページビュー",
+	[Key.profileStatsVisits]: "アクセス数",
+	[Key.profileStatsUnavailable]: "統計情報は利用できません",
 };

@@ -291,6 +291,12 @@ enum I18nKey {
 	scanToRead = "scanToRead",
 	shareOnSocial = "shareOnSocial",
 	shareOnSocialDescription = "shareOnSocialDescription",
+
+	// 个人资料统计
+	profileStatsLoading = "profileStatsLoading",
+	profileStatsPageViews = "profileStatsPageViews",
+	profileStatsVisits = "profileStatsVisits",
+	profileStatsUnavailable = "profileStatsUnavailable",
 }
 
 export default I18nKey;
