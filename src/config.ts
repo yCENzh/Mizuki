@@ -117,7 +117,6 @@ export const siteConfig: SiteConfig = {
 
 		carousel: {
 			enable: true, // 为 true 时：为多张图片启用轮播。为 false 时：从数组中随机显示一张图片
-
 			interval: 1.5, // 轮播间隔时间（秒）
 		},
 
@@ -421,7 +420,7 @@ export const commentConfig: CommentConfig = {
 };
 
 export const shareConfig: ShareConfig = {
-	enable: true, // 启用分享功能。当设置为 false 时，分享组件将不会显示在文章区域，且不会加载分享组件使用的库
+	enable: true, // 启用分享功能
 };
 
 export const announcementConfig: AnnouncementConfig = {
