@@ -19,6 +19,7 @@ export const en: Translation = {
 	[Key.recentPosts]: "Recent Posts",
 	[Key.postList]: "Post List",
 	[Key.tableOfContents]: "Table of Contents",
+	[Key.tocEmpty]: "No table of contents",
 
 	// Announcement
 	[Key.announcement]: "Announcement",
