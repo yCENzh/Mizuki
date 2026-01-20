@@ -13,6 +13,10 @@
 🌏 README 語言
 [**English**](../README.md) / [**中文**](../README.zh.md) / [**日本語**](./README.ja.md) / [**中文繁体**](./README.tw.md) /
 
+透過我們的綜合文檔快速開始。無論是自訂主題、配置功能，還是部署到生產環境，文檔涵蓋了您成功啟動部落格所需的所有內容。
+
+[📚 閱讀完整文檔](https://docs.mizuki.mysqil.com/) →
+
 ![Mizuki Preview](./README.webp)
 
 <table>
@@ -31,10 +35,6 @@
 ## 🚀 NEW: 自動解析度適配
 
 > **🎯 自動解析度演算法** - 智能適配內容佈局基於裝置螢幕解析度，為所有裝置提供最佳觀看體驗
-
-透過我們的綜合文檔快速開始。無論是自訂主題、配置功能，還是部署到生產環境，文檔涵蓋了您成功啟動部落格所需的所有內容。
-
-[📚 閱讀完整文檔](https://docs.mizuki.mysqil.com/) →
 
 🌏 README 語言
 [**English**](../README.md) /

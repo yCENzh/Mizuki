@@ -13,6 +13,10 @@ A modern, feature-rich static blog template built with [Astro](https://astro.bui
 🌏 README Languages
 [**English**](./README.md) / [**中文**](./README.zh.md) / [**日本語**](./README.ja.md) / [**中文繁体**](./README.tw.md) /
 
+Get started quickly with our comprehensive documentation. Whether you're customizing your theme, configuring features, or deploying to production, the documentation covers everything you need to launch your blog successfully.
+
+[📚 Read Full Documentation](https://docs.mizuki.mysqil.com/) →
+
 ![Mizuki Preview](./README.webp)
 
 <table>
@@ -28,7 +32,7 @@ A modern, feature-rich static blog template built with [Astro](https://astro.bui
   <tr>
 </table>
 
-![Configuration](configuration.svg)
+
 
 ### 🔧 Component Configuration System Restructuring
 - **Unified Configuration Architecture:** Brand new modular component configuration system, supporting dynamic component management and order configuration
