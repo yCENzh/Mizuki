@@ -142,16 +142,16 @@ onMount(() => {
 </script>
 
 {#if mounted && siteConfig.postListLayout.allowSwitch && !isSmallScreen}
-  <button 
+  <button
     type="button"
     aria-label={userPreference === 'list' ? '切换到网格模式' : '切换到列表模式'}
     aria-pressed={userPreference === 'grid'}
-    class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 flex items-center justify-center theme-switch-btn {isSwitching ? 'switching' : ''}" 
+    class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 flex items-center justify-center theme-switch-btn {isSwitching ? 'switching' : ''}"
     on:click={switchLayout}
     disabled={isSwitching}
     title={userPreference === 'list' ? '切换到网格模式' : '切换到列表模式'}
   >
-    <div 
+    <div
         class="icon-container w-5 h-5 flex items-center justify-center relative"
         on:animationend={onAnimationEnd}
     >
