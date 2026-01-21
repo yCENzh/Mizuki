@@ -216,7 +216,7 @@ export const ja: Translation = {
 	[Key.skillsBackend]: "バックエンド開発",
 	[Key.skillsDatabase]: "データベース",
 	[Key.skillsTools]: "開発ツール",
-	[Key.skillsOther]: "その他スキル",
+	[Key.skillsOther]: "その他のスキル",
 	[Key.skillLevel]: "熟練度",
 	[Key.skillLevelBeginner]: "初心者",
 	[Key.skillLevelIntermediate]: "中級者",
