@@ -3,7 +3,7 @@ import type { Translation } from "../translation";
 
 export const ja: Translation = {
 	[Key.home]: "ホーム",
-	[Key.about]: "このブログについて",
+	[Key.about]: "情報",
 	[Key.archive]: "アーカイブ",
 	[Key.search]: "検索",
 	[Key.other]: "その他",
@@ -57,12 +57,12 @@ export const ja: Translation = {
 	[Key.author]: "著者",
 	[Key.publishedAt]: "公開日",
 	[Key.license]: "ライセンス",
-	[Key.anime]: "アニメ",
+	[Key.anime]: "視聴したアニメ",
 	[Key.diary]: "日記",
 
 	// アニメページ
 	[Key.animeTitle]: "視聴したアニメ",
-	[Key.animeSubtitle]: "アニメの旅の記録",
+	[Key.animeSubtitle]: "アニメの旅の記録です",
 	[Key.animeStatusWatching]: "視聴中",
 	[Key.animeStatusCompleted]: "完了",
 	[Key.animeStatusPlanned]: "検討中",
@@ -79,7 +79,7 @@ export const ja: Translation = {
 
 	// 日記ページ
 	[Key.diarySubtitle]: "いつでも、どこでも生活を共有",
-	[Key.diaryCount]: "日記のエントリー",
+	[Key.diaryCount]: "件の日記のエントリー",
 	[Key.diaryReply]: "返信",
 	[Key.diaryTips]: "最新の30件の日記のエントリーのみを表示",
 	[Key.diaryMinutesAgo]: "分前",
@@ -120,7 +120,7 @@ export const ja: Translation = {
 
 	// アルバムページ
 	[Key.albums]: "アルバム",
-	[Key.albumsSubtitle]: "人生の美しい瞬間の記録",
+	[Key.albumsSubtitle]: "人生の美しい瞬間の記録です",
 	[Key.albumsEmpty]: "コンテンツなし",
 	[Key.albumsEmptyDesc]:
 		"まだアルバムが作成されていません。美しい思い出を追加しましょう!",
@@ -152,7 +152,7 @@ export const ja: Translation = {
 	[Key.projectsTotal]: "プロジェクトの合計",
 	[Key.projectsCompleted]: "完了",
 	[Key.projectsInProgress]: "進行中",
-	[Key.projectsTechStack]: "技術スタックの統計",
+	[Key.projectsTechStack]: "技術スタック",
 	[Key.projectsFeatured]: "注目のプロジェクト",
 	[Key.projectsPlanned]: "計画中",
 	[Key.projectsDemo]: "ライブデモ",
@@ -165,8 +165,8 @@ export const ja: Translation = {
 	[Key.rssDescription]: "最新情報を受け取るために購読する",
 	[Key.rssSubtitle]:
 		"RSSフィードを購読すると最新の記事や更新情報をすぐに確認できます。",
-	[Key.rssLink]: "RSSのリンク",
-	[Key.rssCopyToReader]: "RSSリーダーへのリンクをコピー",
+	[Key.rssLink]: "RSSフィードのリンク",
+	[Key.rssCopyToReader]: "RSSリーダーへのリンクをコピーします",
 	[Key.rssCopyLink]: "コピー",
 	[Key.rssLatestPosts]: "最新の投稿",
 	[Key.rssWhatIsRSS]: "RSSとは何ですか?",
@@ -176,7 +176,7 @@ export const ja: Translation = {
 		"手動でウェブサイトにアクセスすることなく、最新のコンテンツをタイムリーに入手できます",
 	[Key.rssBenefit2]: "複数のウェブサイトへの購読を一括で管理できます",
 	[Key.rssBenefit3]: "重要な更新情報や記事を見逃すこともありません",
-	[Key.rssBenefit4]: "広告なしのクリーンな読書体験を楽しみましょう",
+	[Key.rssBenefit4]: "広告なしのクリーンな読書体験を楽しめます",
 	[Key.rssHowToUse]:
 		"このサイトの購読はFeedly、Inoreaderまたはその他のRSSリーダーの使用をおすすめします。",
 	[Key.rssCopied]: "RSSのリンクをクリップボードにコピーしました!",
@@ -187,9 +187,9 @@ export const ja: Translation = {
 	[Key.atom]: "Atomフィード",
 	[Key.atomDescription]: "最新情報を受け取るために購読する",
 	[Key.atomSubtitle]:
-		"Atomを購読すると最新の記事や更新情報をすぐに確認できます。",
-	[Key.atomLink]: "Atomのリンク",
-	[Key.atomCopyToReader]: "Atomリーダーへのリンクをコピー",
+		"Atomフィードを購読すると最新の記事や更新情報をすぐに確認できます。",
+	[Key.atomLink]: "Atomフィードのリンク",
+	[Key.atomCopyToReader]: "Atomリーダーへのリンクをコピーします",
 	[Key.atomCopyLink]: "コピー",
 	[Key.atomLatestPosts]: "最新の投稿",
 	[Key.atomWhatIsAtom]: "Atomとは何ですか?",
@@ -199,7 +199,7 @@ export const ja: Translation = {
 		"手動でウェブサイトにアクセスすることなく、最新のコンテンツをタイムリーに入手できます",
 	[Key.atomBenefit2]: "複数のウェブサイトへの購読を一括で管理できます",
 	[Key.atomBenefit3]: "重要な更新情報や記事を見逃すこともありません",
-	[Key.atomBenefit4]: "広告なしのクリーンな読書体験を楽しみましょう",
+	[Key.atomBenefit4]: "広告なしのクリーンな読書体験を楽しめます",
 	[Key.atomHowToUse]:
 		"このサイトの購読はFeedly、Inoreaderまたはその他のAtomリーダーの使用をおすすめします。",
 	[Key.atomCopied]: "Atomのリンクをクリップボードにコピーしました!",
@@ -223,8 +223,8 @@ export const ja: Translation = {
 	[Key.skillLevelBeginner]: "初心者",
 	[Key.skillLevelIntermediate]: "中級者",
 	[Key.skillLevelAdvanced]: "上級者",
-	[Key.skillLevelExpert]: "エキスパート",
-	[Key.skillExperience]: "経験",
+	[Key.skillLevelExpert]: "専門家",
+	[Key.skillExperience]: "経験の合計",
 	[Key.skillYears]: "年",
 	[Key.skillMonths]: "ヶ月",
 	[Key.skillsTotal]: "スキルの合計",
@@ -263,7 +263,7 @@ export const ja: Translation = {
 	// パスワード保護
 	[Key.passwordProtected]: "パスワードで保護されています",
 	[Key.passwordProtectedTitle]:
-		"このコンテンツはパスワードで保護されています。",
+		"このコンテンツはパスワードで保護されています",
 	[Key.passwordProtectedDescription]:
 		"保護されたコンテンツを表示するにはパスワードを入力してください。",
 	[Key.passwordPlaceholder]: "パスワードを入力",
