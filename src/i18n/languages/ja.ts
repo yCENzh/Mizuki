@@ -105,7 +105,7 @@ export const ja: Translation = {
 	[Key.musicPlayerNext]: "次へ",
 	[Key.musicPlayerShuffle]: "シャッフル",
 	[Key.musicPlayerRepeat]: "リピート",
-	[Key.musicPlayerRepeatOne]: "1回のみリピート",
+	[Key.musicPlayerRepeatOne]: "1曲のみリピート",
 	[Key.musicPlayerVolume]: "音量コントロール",
 	[Key.musicPlayerProgress]: "再生状況",
 	[Key.musicPlayerCover]: "カバー",
