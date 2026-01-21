@@ -299,7 +299,7 @@ export const ja: Translation = {
 	[Key.siteStatsCategoryCount]: "カテゴリー",
 	[Key.siteStatsTagCount]: "タグ",
 	[Key.siteStatsTotalWords]: "文字数の合計",
-	[Key.siteStatsRunningDays]: "実行時間",
+	[Key.siteStatsRunningDays]: "稼働日数",
 	[Key.siteStatsLastUpdate]: "最終更新",
 	[Key.siteStatsDaysAgo]: "{days}日前",
 	[Key.siteStatsDays]: "{days}日",
