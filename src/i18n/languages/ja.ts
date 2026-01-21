@@ -112,7 +112,8 @@ export const ja: Translation = {
 	[Key.musicPlayerPlaylist]: "プレイリスト",
 	[Key.musicPlayerLoading]: "読み込み中...",
 	[Key.musicPlayerErrorPlaylist]: "プレイリストを取得できませんでした。",
-	[Key.musicPlayerErrorSong]: "曲の読み込みに失敗しました。次の曲を再生します。",
+	[Key.musicPlayerErrorSong]:
+		"曲の読み込みに失敗しました。次の曲を再生します。",
 	[Key.musicPlayerErrorEmpty]: "プレイリストに利用可能な曲がありません。",
 	[Key.unknownSong]: "不明な曲",
 	[Key.unknownArtist]: "不明なアーティスト",
@@ -179,7 +180,8 @@ export const ja: Translation = {
 	[Key.rssHowToUse]:
 		"このサイトの購読はFeedly、Inoreaderまたはその他のRSSリーダーの使用をおすすめします。",
 	[Key.rssCopied]: "RSSのリンクをクリップボードにコピーしました!",
-	[Key.rssCopyFailed]: "コピーに失敗しました。リンクを手動で追加してください。",
+	[Key.rssCopyFailed]:
+		"コピーに失敗しました。リンクを手動で追加してください。",
 
 	// Atomページ
 	[Key.atom]: "Atomフィード",
@@ -195,14 +197,14 @@ export const ja: Translation = {
 		"Atom(Atom Syndication Format)はフィードとその項目を記述するためのXMLベースの標準フォーマットです:",
 	[Key.atomBenefit1]:
 		"手動でウェブサイトにアクセスすることなく、最新のコンテンツをタイムリーに入手できます",
-	[Key.atomBenefit2]:
-		"複数のウェブサイトへの購読を一括で管理できます",
+	[Key.atomBenefit2]: "複数のウェブサイトへの購読を一括で管理できます",
 	[Key.atomBenefit3]: "重要な更新情報や記事を見逃すこともありません",
-	[Key.atomBenefit4]: "広告なしのクリーンな読書体験を楽しみましょう,
+	[Key.atomBenefit4]: "広告なしのクリーンな読書体験を楽しみましょう",
 	[Key.atomHowToUse]:
 		"このサイトの購読はFeedly、Inoreaderまたはその他のAtomリーダーの使用をおすすめします。",
 	[Key.atomCopied]: "Atomのリンクをクリップボードにコピーしました!",
-	[Key.atomCopyFailed]: "コピーに失敗しました。リンクを手動で追加してください。",
+	[Key.atomCopyFailed]:
+		"コピーに失敗しました。リンクを手動で追加してください。",
 
 	// 壁紙モード
 	[Key.wallpaperBanner]: "バナーモード",
@@ -260,7 +262,8 @@ export const ja: Translation = {
 
 	// パスワード保護
 	[Key.passwordProtected]: "パスワードで保護されています",
-	[Key.passwordProtectedTitle]: "このコンテンツはパスワードで保護されています。",
+	[Key.passwordProtectedTitle]:
+		"このコンテンツはパスワードで保護されています。",
 	[Key.passwordProtectedDescription]:
 		"保護されたコンテンツを表示するにはパスワードを入力してください。",
 	[Key.passwordPlaceholder]: "パスワードを入力",
@@ -271,13 +274,13 @@ export const ja: Translation = {
 		"復号に失敗しました。パスワードが正しいかどうか確認してください。",
 	[Key.passwordRequired]: "パスワードを入力してください。",
 	[Key.passwordVerifying]: "認証中...",
-	[Key.passwordDecryptFailed]: "復号に失敗しました。パスワードを確認してください。",
+	[Key.passwordDecryptFailed]:
+		"復号に失敗しました。パスワードを確認してください。",
 	[Key.passwordDecryptRetry]: "復号に失敗しました。再度お試しください。",
 	[Key.passwordUnlockButton]: "ロックを解除",
 	[Key.copyFailed]: "コピーに失敗しました:",
 	[Key.syntaxHighlightFailed]: "構文の強調表示が失敗しました:",
-	[Key.autoSyntaxHighlightFailed]:
-		"自動構文強調表示が失敗しました:",
+	[Key.autoSyntaxHighlightFailed]: "自動構文強調表示が失敗しました:",
 	[Key.decryptionError]: "復号中にエラーが発生しました:",
 
 	// 最終更新時間カード
