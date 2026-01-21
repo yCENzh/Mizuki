@@ -263,6 +263,45 @@ export const siteConfig: SiteConfig = {
 - **Diary Page:** Edit moments in `src/pages/diary.astro`
 - **About Page:** Edit content in `src/content/spec/about.md`
 
+### 📦 Code-Content Separation (Optional)
+
+Mizuki supports separating code and content into two independent repositories, suitable for team collaboration and large projects.
+
+**Quick Selection**:
+
+| Use Case | Configuration | For Whom |
+|---------|---------|---------|
+| 🆕 **Local Mode** (default) | No configuration, use directly | Beginners, personal blogs |
+| 🔧 **Separation Mode** | Set `ENABLE_CONTENT_SYNC=true` | Team collaboration, private content |
+
+**One-Click Enable/Disable**:
+
+```bash
+# Method 1: Local Mode (recommended for beginners)
+# No need to create .env file, run directly
+pnpm dev
+
+# Method 2: Content Separation Mode
+# 1. Copy configuration file
+cp .env.example .env
+
+# 2. Edit .env to enable content separation
+ENABLE_CONTENT_SYNC=true
+CONTENT_REPO_URL=https://github.com/your-username/Mizuki-Content.git
+
+# 3. Sync content
+pnpm run sync-content
+```
+
+**Features**:
+- ✅ Supports public and private repositories 🔐
+- ✅ One-click enable/disable without code modification
+- ✅ Auto-sync, pulls latest content automatically before development
+
+📖 **Detailed Configuration**: [Content Separation Guide](docs/CONTENT_SEPARATION.md)
+🔄 **Migration Tutorial**: [Migrate from Single Repo to Separation Mode](docs/MIGRATION_GUIDE.md)
+📚 **More Documentation**: [Documentation Index](docs/README.md)
+
 ## ✏️ Contributing
 
 Contributions are welcome! Feel free to submit issues and pull requests.
