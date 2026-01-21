@@ -27,7 +27,7 @@ export const ja: Translation = {
 
 	[Key.comments]: "コメント",
 	[Key.friends]: "友達",
-	[Key.friendsSubtitle]: "より優れたウェブサイトを見つける",
+	[Key.friendsSubtitle]: "素晴らしいウェブサイトを見つける",
 	[Key.friendsSearchPlaceholder]: "友達の名前または説明を検索...",
 	[Key.friendsFilterAll]: "すべて",
 	[Key.friendsNoResults]: "一致する友達が見つかりません",
@@ -76,7 +76,7 @@ export const ja: Translation = {
 	[Key.animeFilterAll]: "すべて",
 	[Key.animeYear]: "年",
 	[Key.animeStudio]: "スタジオ",
-	[Key.animeEmpty]: "アニメデータなし",
+	[Key.animeEmpty]: "アニメデータがありません",
 	[Key.animeEmptyBangumi]:
 		"Bangumiの設定またはネットワーク接続を確認してください",
 	[Key.animeEmptyLocal]:
@@ -101,15 +101,15 @@ export const ja: Translation = {
 	// 音楽プレーヤー
 	[Key.musicPlayer]: "音楽プレーヤー",
 	[Key.musicPlayerShow]: "音楽プレーヤーを表示",
-	[Key.musicPlayerHide]: "プレーヤーを隠す",
+	[Key.musicPlayerHide]: "音楽プレーヤーを隠す",
 	[Key.musicPlayerExpand]: "音楽プレーヤーを展開",
-	[Key.musicPlayerCollapse]: "プレーヤーを折りたたむ",
+	[Key.musicPlayerCollapse]: "音楽プレーヤーを折りたたむ",
 	[Key.musicPlayerPause]: "一時停止",
 	[Key.musicPlayerPlay]: "再生",
 	[Key.musicPlayerPrevious]: "前の曲",
 	[Key.musicPlayerNext]: "次の曲",
 	[Key.musicPlayerShuffle]: "シャッフル",
-	[Key.musicPlayerRepeat]: "リピート",
+	[Key.musicPlayerRepeat]: "全曲リピート",
 	[Key.musicPlayerRepeatOne]: "1曲リピート",
 	[Key.musicPlayerVolume]: "ボリューム制御",
 	[Key.musicPlayerProgress]: "再生状況",
@@ -120,8 +120,8 @@ export const ja: Translation = {
 	[Key.musicPlayerErrorSong]:
 		"現在の曲の読み込みに失敗しました、次の曲を試しています",
 	[Key.musicPlayerErrorEmpty]: "プレイリストに利用可能な曲がありません",
-	[Key.unknownSong]: "未知の曲",
-	[Key.unknownArtist]: "未知のアーティスト",
+	[Key.unknownSong]: "不明な曲",
+	[Key.unknownArtist]: "不明なアーティスト",
 
 	// アルバムページ
 	[Key.albums]: "アルバム",
@@ -145,7 +145,7 @@ export const ja: Translation = {
 	[Key.projectLiveDemo]: "ライブデモ",
 	[Key.projectSourceCode]: "ソースコード",
 	[Key.projectDescription]: "プロジェクト説明",
-	[Key.projectStatus]: "ステータス",
+	[Key.projectStatus]: "プロジェクトステータス",
 	[Key.projectStatusCompleted]: "完了",
 	[Key.projectStatusInProgress]: "進行中",
 	[Key.projectStatusPlanned]: "予定",
@@ -296,9 +296,9 @@ export const ja: Translation = {
 
 	// サイト統計
 	[Key.siteStats]: "サイト統計",
-	[Key.siteStatsPostCount]: "記事数",
-	[Key.siteStatsCategoryCount]: "カテゴリー数",
-	[Key.siteStatsTagCount]: "タグ数",
+	[Key.siteStatsPostCount]: "記事",
+	[Key.siteStatsCategoryCount]: "カテゴリ",
+	[Key.siteStatsTagCount]: "タグ",
 	[Key.siteStatsTotalWords]: "総字数",
 	[Key.siteStatsRunningDays]: "運用日数",
 	[Key.siteStatsLastUpdate]: "最終更新",
