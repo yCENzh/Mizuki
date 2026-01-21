@@ -285,52 +285,61 @@
   }
 }
 
-/* 响应式优化 */
+/* ========================================
+   响应式布局优化 (Responsive Layout)
+   ======================================== */
 
-/* 桌面端&平板端布局 */
+/* === CSS 变量定义 === */
+:root {
+  --nav-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --nav-gap-sm: 0.2rem;
+  --nav-gap-lg: 0.3rem;
+  --nav-spacing: clamp(1rem, 2vw, 2rem);
+  --nav-transition-fast: 0.25s var(--nav-ease);
+  --nav-transition-normal: 0.3s var(--nav-ease);
+}
+
+/* === 桌面 & 平板 (≥768px) === */
 @media (min-width: 768px) {
-  /* 使用 Flex 布局实现精确的间距控制 */
+  /* 容器布局 */
   #navbar > div {
     display: flex !important;
     justify-content: space-between;
     align-items: center;
   }
 
-  /* Logo区域到导航选项的间距 */
+  /* Logo 间距 */
   #navbar > div > a:first-child {
-    margin-right: clamp(1rem, 2vw, 2rem);
+    margin-right: var(--nav-spacing);
   }
 
+  /* 导航链接 */
   #navbar .navbar-nav-links {
     position: static;
     left: unset;
     transform: none;
-    gap: 0.2rem;
-    transition:
-      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      filter 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      visibility 0.3s,
-      max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      gap 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    /* 导航选项到按钮的间距与Logo到导航选项相同 */
-    margin-right: clamp(1rem, 2vw, 2rem);
+    gap: var(--nav-gap-sm);
+    margin-right: var(--nav-spacing);
     max-width: 100%;
-  }
-
-  /* 导航链接内部项的过渡 */
-  #navbar .navbar-nav-links > * {
     transition:
-      opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-      transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity var(--nav-transition-normal),
+      transform var(--nav-transition-normal),
+      filter var(--nav-transition-normal),
+      visibility 0.3s,
+      max-width var(--nav-transition-normal),
+      gap var(--nav-transition-normal);
   }
 
+  #navbar .navbar-nav-links > * {
+    transition: opacity var(--nav-transition-fast), transform var(--nav-transition-fast);
+  }
+
+  /* 按钮组 */
   #navbar .navbar-buttons {
-    gap: 0.2rem;
-    /* 按钮区域不添加右边距 */
+    gap: var(--nav-gap-sm);
   }
 
-  /* 搜索状态下的避让逻辑以防重叠 - 所有桌面尺寸 */
+  /* 搜索状态 - 导航隐藏 */
   #navbar.is-searching .navbar-nav-links {
     opacity: 0;
     transform: translateX(-2rem) scale(0.95);
@@ -342,53 +351,46 @@
     gap: 0;
   }
 
-  /* 导航项依次淡出效果 */
-  #navbar.is-searching .navbar-nav-links > *:nth-child(1) {
-    transition-delay: 0ms;
-  }
-  #navbar.is-searching .navbar-nav-links > *:nth-child(2) {
-    transition-delay: 20ms;
-  }
-  #navbar.is-searching .navbar-nav-links > *:nth-child(3) {
-    transition-delay: 40ms;
-  }
-  #navbar.is-searching .navbar-nav-links > *:nth-child(4) {
-    transition-delay: 60ms;
-  }
-  #navbar.is-searching .navbar-nav-links > *:nth-child(5) {
-    transition-delay: 80ms;
-  }
-
   #navbar.is-searching .navbar-nav-links > * {
     opacity: 0;
     transform: translateX(-1rem) scale(0.9);
   }
+
+  /* 阶梯式延迟 */
+  #navbar.is-searching .navbar-nav-links > *:nth-child(1) { transition-delay: 0ms; }
+  #navbar.is-searching .navbar-nav-links > *:nth-child(2) { transition-delay: 20ms; }
+  #navbar.is-searching .navbar-nav-links > *:nth-child(3) { transition-delay: 40ms; }
+  #navbar.is-searching .navbar-nav-links > *:nth-child(4) { transition-delay: 60ms; }
+  #navbar.is-searching .navbar-nav-links > *:nth-child(5) { transition-delay: 80ms; }
 }
 
-/* 大屏桌面端优化 */
+/* === 大屏桌面 (≥1281px) === */
 @media (min-width: 1281px) {
-  #navbar .navbar-nav-links {
-    gap: 0.3rem;
-  }
-
+  #navbar .navbar-nav-links,
   #navbar .navbar-buttons {
-    gap: 0.3rem;
+    gap: var(--nav-gap-lg);
   }
 }
 
-/* 非大屏桌面端&平板端优化 */
+/* === 平板 (768px - 1280px) === */
 @media (min-width: 768px) and (max-width: 1280px) {
-  #navbar .navbar-nav-links {
-    gap: 0.2rem;
-  }
-
+  #navbar .navbar-nav-links,
   #navbar .navbar-buttons {
-    gap: 0.2rem;
+    gap: var(--nav-gap-sm);
   }
 }
 
-/* 手机端导航栏 */
-@media (max-width: 767px) {
+/* ========================================
+   手机端导航栏 - 贴边但保留内边距和圆角
+   ======================================== */
+
+/* 手机端导航栏全宽优化 (≤768px) */
+@media (max-width: 768px) {
+  #navbar {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
   #navbar > div {
     max-width: none !important;
     width: 100% !important;
@@ -396,11 +398,19 @@
     margin-right: 0 !important;
   }
 }
-/* 手机端导航栏 - 小屏 */
-@media (max-width: 511px) {
+
+/* 小屏手机优化 (≤480px) - 参考 Mizuki-Blog */
+@media (max-width: 480px) {
+  #navbar {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
   #navbar > div {
-    border-radius: 0.3rem !important;
+    border-radius: 0.5rem !important;
     margin: 0 !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
     max-width: none !important;
     width: 100% !important;
   }
@@ -408,6 +418,7 @@
   #navbar-buttons {
     gap: 0.123rem !important;
   }
+
   /* Only size the trigger buttons; do not affect nested buttons inside panels */
   #navbar-buttons button:not(.float-panel *) {
     width: 2.4rem !important;
@@ -428,6 +439,7 @@
   #navbar-buttons {
     gap: 0.111rem !important;
   }
+
   /* Only size the trigger buttons; do not affect nested buttons inside panels */
   #navbar-buttons button:not(.float-panel *) {
     width: 2.1rem !important;
