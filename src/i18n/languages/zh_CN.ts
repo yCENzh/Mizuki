@@ -326,4 +326,8 @@ export const zh_CN: Translation = {
 	[Key.profileStatsPageViews]: "浏览量",
 	[Key.profileStatsVisits]: "访问次数",
 	[Key.profileStatsUnavailable]: "统计不可用",
+
+	// 布局切换按钮
+	[Key.switchToGridMode]: "切换到网格模式",
+	[Key.switchToListMode]: "切换到列表模式",
 };

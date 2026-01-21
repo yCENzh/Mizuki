@@ -338,4 +338,8 @@ export const en: Translation = {
 	[Key.profileStatsPageViews]: "Page views",
 	[Key.profileStatsVisits]: "Visits",
 	[Key.profileStatsUnavailable]: "Stats unavailable",
+
+	// Layout Switch Button
+	[Key.switchToGridMode]: "Switch to Grid Mode",
+	[Key.switchToListMode]: "Switch to List Mode",
 };
