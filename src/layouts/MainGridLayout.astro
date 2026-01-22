@@ -158,7 +158,8 @@ const desktopShowRightSidebar = desktopShowSidebar && hasRightSidebarComponents;
 
 // 平板端侧边栏最终显示状态
 const tabletShowLeftSidebar = tabletShowSidebar && hasLeftSidebarComponents;
-const tabletShowRightSidebar = tabletShowSidebar && hasRightSidebarComponents;
+// 如果左侧有组件，则平板端不显示右侧侧栏；只有当左侧为空且右侧有组件时，才显示右侧侧栏（会被移到左侧）
+const tabletShowRightSidebar = tabletShowSidebar && hasRightSidebarComponents && !hasLeftSidebarComponents;
 const tabletAnySidebar = tabletShowLeftSidebar || tabletShowRightSidebar;
 
 // 检查默认布局模式，如果是 grid 模式，右侧边栏初始就应该隐藏
@@ -185,17 +186,17 @@ const gridCols = `
 
 // 侧边栏容器类名 - 始终在左侧
 const sidebarClass = `
-	mb-4 onload-animation
-	${mobileShowSidebar && hasLeftSidebarComponents ? "block" : "hidden"}
-	${tabletShowLeftSidebar ? "md:block md:max-w-[17.5rem]" : "md:hidden"}
-	${desktopShowLeftSidebar ? "lg:block lg:row-start-1 lg:row-end-2 lg:max-w-[17.5rem] lg:col-start-1 lg:col-end-2" : "lg:hidden"}
+	onload-animation
+	${mobileShowSidebar && hasLeftSidebarComponents ? "block mb-4" : "hidden"}
+	${tabletShowLeftSidebar ? "md:block md:mb-4 md:max-w-[17.5rem]" : "md:hidden"}
+	${desktopShowLeftSidebar ? "lg:block lg:mb-4 lg:row-start-1 lg:row-end-2 lg:max-w-[17.5rem] lg:col-start-1 lg:col-end-2" : "lg:hidden"}
 `
 	.trim()
 	.replace(/\s+/g, " ");
 
 // 右侧边栏容器类名
 // 手机端：显示在左侧栏下方（row-start-3），全宽
-// 平板端：合并到左侧栏下方，由父容器控制布局
+// 平板端：根据简化逻辑显示（只有当左侧为空时才显示并移到左侧）
 // 桌面端：定位到网格最后一列（右侧）
 // 如果默认是 grid 模式，初始就隐藏
 let desktopRightSidebarPos = "lg:col-start-3 lg:col-end-4";
@@ -204,10 +205,10 @@ if (!desktopShowLeftSidebar) {
 }
 
 const rightSidebarClass = `
-	mb-4 onload-animation
-	${isBothSidebarMode && mobileShowSidebar && hasRightSidebarComponents ? "block row-start-3 row-end-4 col-span-1" : "hidden"}
-	${isBothSidebarMode && tabletShowRightSidebar ? "md:block md:max-w-[17.5rem]" : "md:hidden"}
-	${desktopShowRightSidebar ? `lg:block lg:row-start-1 lg:row-end-2 lg:max-w-[17.5rem] ${desktopShowLeftSidebar ? "lg:col-start-3 lg:col-end-4" : "lg:col-start-2 lg:col-end-3"} lg:col-span-1` : "lg:hidden"}
+	onload-animation
+	${isBothSidebarMode && mobileShowSidebar && hasRightSidebarComponents ? "block mb-4 row-start-3 row-end-4 col-span-1" : "hidden"}
+	${isBothSidebarMode && tabletShowRightSidebar ? "md:block md:mb-4 md:max-w-[17.5rem]" : "md:hidden"}
+	${desktopShowRightSidebar ? `lg:block lg:mb-4 lg:row-start-1 lg:row-end-2 lg:max-w-[17.5rem] ${desktopShowLeftSidebar ? "lg:col-start-3 lg:col-end-4" : "lg:col-start-2 lg:col-end-3"} lg:col-span-1` : "lg:hidden"}
 	${initialRightSidebarHidden ? "hidden-in-grid-mode" : ""}
 `
 	.trim()
