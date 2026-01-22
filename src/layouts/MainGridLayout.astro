@@ -624,21 +624,21 @@ const transparentClass = shouldEnableTransparency
                     
                     return (
                         <li class={`carousel-item absolute inset-0 transition-all duration-500 ${index === 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}>
-                            <!-- Mobile: use mobile-specific images with same logic as desktop -->
+                            <!-- Mobile: use mobile-specific images -->
                             {hasMobileImage && (
                                 <ImageWrapper 
                                     alt={`Mobile banner image ${index + 1}`} 
-                                    class:list={["block lg:hidden object-cover h-full w-full transition-transform duration-500 ease-out"]}
+                                    class:list={["block md:hidden object-cover h-full w-full transition-transform duration-500 ease-out"]}
                                     src={Array.isArray(bannerImages.mobile) ? bannerImages.mobile[index] : (typeof bannerImages.mobile === 'string' ? bannerImages.mobile : '')} 
                                     position={siteConfig.banner.position}
                                     loading={index === 0 ? "eager" : "lazy"}
                                 />
                             )}
-                            <!-- Desktop: use desktop-specific images -->
+                            <!-- Desktop/Tablet: use desktop-specific images -->
                             {hasDesktopImage && (
                                 <ImageWrapper 
                                     alt={`Desktop banner image ${index + 1}`} 
-                                    class:list={["hidden lg:block object-cover h-full w-full transition-transform duration-500 ease-out"]}
+                                    class:list={["hidden md:block object-cover h-full w-full transition-transform duration-500 ease-out"]}
                                     src={Array.isArray(bannerImages.desktop) ? bannerImages.desktop[index] : (typeof bannerImages.desktop === 'string' ? bannerImages.desktop : '')} 
                                     position={siteConfig.banner.position}
                                     loading={index === 0 ? "eager" : "lazy"}
@@ -680,7 +680,7 @@ const transparentClass = shouldEnableTransparency
                     if (mobileSrc) {
                         const mobileImg = document.createElement('img');
                         mobileImg.alt = 'Mobile banner image of the blog';
-                        mobileImg.className = 'block lg:hidden object-cover h-full w-full transition duration-700 opacity-100';
+                        mobileImg.className = 'block md:hidden object-cover h-full w-full transition duration-700 opacity-100';
                         mobileImg.src = mobileSrc;
                         mobileImg.loading = 'eager';
                         mobileImg.dataset.position = position;
@@ -691,7 +691,7 @@ const transparentClass = shouldEnableTransparency
                         const desktopImg = document.createElement('img');
                         desktopImg.id = 'banner';
                         desktopImg.alt = 'Desktop banner image of the blog';
-                        desktopImg.className = 'hidden lg:block object-cover h-full w-full transition duration-700 opacity-100';
+                        desktopImg.className = 'hidden md:block object-cover h-full w-full transition duration-700 opacity-100';
                         desktopImg.src = desktopSrc;
                         desktopImg.loading = 'eager';
                         desktopImg.dataset.position = position;
