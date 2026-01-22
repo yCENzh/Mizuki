@@ -60,14 +60,14 @@ let links: NavBarLink[] = navBarConfig.links.map(
             })}
         </div>
         <div class="flex items-center navbar-buttons" id="navbar-buttons">
-            <Search client:load="svelte"></Search>
-            {siteConfig.toc.enable && <MobileTOC client:load="svelte"></MobileTOC>}
+            <Search client:load></Search>
+            {siteConfig.toc.enable && <MobileTOC client:load></MobileTOC>}
             {!siteConfig.themeColor.fixed && (
                     <button aria-label="Display Settings" class="btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90" id="display-settings-switch">
                         <Icon name="material-symbols:palette-outline" class="text-[1.25rem]"></Icon>
                     </button>
             )}
-            <LayoutSwitchButton client:load="svelte" currentLayout={siteConfig.postListLayout.defaultMode}></LayoutSwitchButton>
+            <LayoutSwitchButton client:load currentLayout={siteConfig.postListLayout.defaultMode}></LayoutSwitchButton>
             <!-- 整体布局方案切换按钮：根据配置决定在哪些设备上显示 -->
             <div class:list={[
                 modeSwitchDisplay === "off" ? "hidden" :
@@ -75,15 +75,15 @@ let links: NavBarLink[] = navBarConfig.links.map(
                 modeSwitchDisplay === "desktop" ? "hidden md:block" :
                 modeSwitchDisplay === "both" ? "block" : "hidden md:block"
             ]}>
-                <WallpaperSwitch client:load="svelte"></WallpaperSwitch>
+                <WallpaperSwitch client:load></WallpaperSwitch>
             </div>
-            <LightDarkSwitch client:load="svelte"></LightDarkSwitch>
+            <LightDarkSwitch client:load></LightDarkSwitch>
             <button aria-label="Menu" name="Nav Menu" class="btn-plain scale-animation rounded-lg w-11 h-11 active:scale-90 md:!hidden" id="nav-menu-switch">
                 <Icon name="material-symbols:unfold-more" class="text-[1.25rem]"></Icon>
             </button>
         </div>
         <NavMenuPanel links={links}></NavMenuPanel>
-        <DisplaySettings client:load="svelte"></DisplaySettings>
+        <DisplaySettings client:load></DisplaySettings>
     </div>
 </div>
 
