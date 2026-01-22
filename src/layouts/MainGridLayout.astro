@@ -199,11 +199,6 @@ const sidebarClass = `
 // 平板端：根据简化逻辑显示（只有当左侧为空时才显示并移到左侧）
 // 桌面端：定位到网格最后一列（右侧）
 // 如果默认是 grid 模式，初始就隐藏
-let desktopRightSidebarPos = "lg:col-start-3 lg:col-end-4";
-if (!desktopShowLeftSidebar) {
-	desktopRightSidebarPos = "lg:col-start-2 lg:col-end-3";
-}
-
 const rightSidebarClass = `
 	onload-animation
 	${isBothSidebarMode && mobileShowSidebar && hasRightSidebarComponents ? "block mb-4 row-start-3 row-end-4 col-span-1" : "hidden"}
