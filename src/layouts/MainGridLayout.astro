@@ -187,7 +187,7 @@ const gridCols = `
 // 侧边栏容器类名 - 始终在左侧
 const sidebarClass = `
 	onload-animation
-	${mobileShowSidebar && hasLeftSidebarComponents ? "block mb-4" : "hidden"}
+	${mobileShowSidebar && hasLeftSidebarComponents ? "block" : "hidden"}
 	${tabletShowLeftSidebar ? "md:block md:mb-4 md:max-w-[17.5rem]" : "md:hidden"}
 	${desktopShowLeftSidebar ? "lg:block lg:mb-4 lg:row-start-1 lg:row-end-2 lg:max-w-[17.5rem] lg:col-start-1 lg:col-end-2" : "lg:hidden"}
 `
@@ -201,7 +201,7 @@ const sidebarClass = `
 // 如果默认是 grid 模式，初始就隐藏
 const rightSidebarClass = `
 	onload-animation
-	${isBothSidebarMode && mobileShowSidebar && hasRightSidebarComponents ? "block mb-4 row-start-3 row-end-4 col-span-1" : "hidden"}
+	${isBothSidebarMode && mobileShowSidebar && hasRightSidebarComponents ? "block row-start-3 row-end-4 col-span-1" : "hidden"}
 	${isBothSidebarMode && tabletShowRightSidebar ? "md:block md:mb-4 md:max-w-[17.5rem]" : "md:hidden"}
 	${desktopShowRightSidebar ? `lg:block lg:mb-4 lg:row-start-1 lg:row-end-2 lg:max-w-[17.5rem] ${desktopShowLeftSidebar ? "lg:col-start-3 lg:col-end-4" : "lg:col-start-2 lg:col-end-3"} lg:col-span-1` : "lg:hidden"}
 	${initialRightSidebarHidden ? "hidden-in-grid-mode" : ""}
@@ -790,7 +790,7 @@ const transparentClass = shouldEnableTransparency
 <div class={`absolute w-full z-30 pointer-events-none ${mobileNonHomeBannerClass ? 'mobile-main-no-banner' : ''} ${siteConfig.wallpaperMode.defaultMode === 'none' ? 'no-banner-layout' : ''} ${transparentClass}`} style={`top: ${finalMainPanelTop}`}>
     <!-- The pointer-events-none here prevent blocking the click event of the TOC -->
     <div class="relative max-w-[var(--page-width)] mx-auto pointer-events-auto">
-        <div id="main-grid" class={`transition duration-700 w-full left-0 right-0 grid ${gridCols} grid-rows-[auto_1fr_auto] md:grid-rows-[auto] mx-auto gap-4 px-2 md:px-4 ${!mobileShowSidebar ? 'mobile-no-sidebar' : ''} ${isBothSidebarMode ? 'mobile-both-sidebar' : ''}`}
+        <div id="main-grid" class={`transition duration-700 w-full left-0 right-0 grid ${gridCols} grid-rows-none md:grid-rows-[auto] mx-auto gap-4 px-2 md:px-4 ${!mobileShowSidebar ? 'mobile-no-sidebar' : ''} ${isBothSidebarMode ? 'mobile-both-sidebar' : ''}`}
              data-layout-mode={defaultPostListLayout}
         >
             <!-- Banner image credit -->
