@@ -17,6 +17,7 @@ let isDesktopSearchExpanded = $state(false);
 let debounceTimer: NodeJS.Timeout;
 let windowJustFocused = false;
 let focusTimer: NodeJS.Timeout;
+let blurTimer: NodeJS.Timeout;
 
 const fakeResult: SearchResult[] = [
 	{
@@ -63,7 +64,7 @@ const collapseDesktopSearch = () => {
 
 const handleBlur = () => {
 	// 延迟处理以允许搜索结果的点击事件先于折叠逻辑执行
-	setTimeout(() => {
+	blurTimer = setTimeout(() => {
 		isDesktopSearchExpanded = false;
 		// 仅隐藏面板并折叠，保留搜索关键词和结果以便下次展开时查看
 		setPanelVisibility(false, true);
@@ -230,10 +231,18 @@ onDestroy(() => {
     aria-label="Search"
     onmouseenter={() => {if (!isDesktopSearchExpanded) toggleDesktopSearch()}}
     onmouseleave={collapseDesktopSearch}
+    onclick={() => {
+        const input = document.getElementById("search-input-desktop") as HTMLInputElement;
+        input?.focus();
+    }}
 >
     <Icon icon="material-symbols:search" class="absolute text-[1.25rem] pointer-events-none {isDesktopSearchExpanded ? 'left-3' : 'left-1/2 -translate-x-1/2'} transition top-1/2 -translate-y-1/2 {isDesktopSearchExpanded ? 'text-black/30 dark:text-white/30' : ''}"></Icon>
     <input id="search-input-desktop" placeholder={i18n(I18nKey.search)} bind:value={keywordDesktop}
-        onfocus={() => {if (!isDesktopSearchExpanded) toggleDesktopSearch(); search(keywordDesktop, true)}}
+        onfocus={() => {
+            clearTimeout(blurTimer);
+            if (!isDesktopSearchExpanded) toggleDesktopSearch(); 
+            search(keywordDesktop, true);
+        }}
         onblur={handleBlur}
         class="transition-all pl-10 text-sm bg-transparent outline-0
             h-full {isDesktopSearchExpanded ? 'w-36' : 'w-0'} text-black/50 dark:text-white/50"
