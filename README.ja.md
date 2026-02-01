@@ -1,4 +1,5 @@
-# 🌸 Mizuki <img align='right' src='logo.png' width='200px' alt="Mizuki logo">
+# 🌸 Mizuki
+<img align='right' src='logo.png' width='200px' alt="Mizuki logo">
 
 [Astro](https://astro.build)をベースにした、先進的な機能と美しいデザインを備えた現代的な静的ブログテンプレートです。
 
@@ -10,7 +11,7 @@
 
 [**🖥️ ライブデモ**](https://mizuki.mysqil.com/) | [**📝 ドキュメント**](https://docs.mizuki.mysqil.com/)
 
-🌏 README 言語
+🌏 **README 言語:**
 [**English**](./README.md) / [**中文**](./README.zh.md) / [**日本語**](./README.ja.md) / [**中文繁体**](./README.tw.md) /
 
 包括的なドキュメントで素早く始めましょう。テーマのカスタマイズ、機能の設定、本番環境へのデプロイなど、ブログを正常に立ち上げるために必要なすべての情報が網羅されています。
