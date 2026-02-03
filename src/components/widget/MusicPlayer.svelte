@@ -32,10 +32,10 @@ let showPlaylist = false;
 // 当前播放时间，默认为 0
 let currentTime = 0;
 // 歌曲总时长，默认为 0
-let duration = 0;git add .
+let duration = 0;
 
 // localStorage 存储音量
-const STORAGE_KEY_VOLUME = 'music-player-volume';g
+const STORAGE_KEY_VOLUME = 'music-player-volume';
 
 // 音量，默认为 0.7
 let volume = 0.7;
