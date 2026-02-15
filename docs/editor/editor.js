@@ -215,6 +215,161 @@ function applyI18n() {
   renderModules($('#moduleSearch').value);
 }
 
+// ========== Code Snippet Localization ==========
+const CODE_TRANSLATIONS = {
+  'zh-TW': {
+    '文章标题': '文章標題', '文章描述': '文章描述', '标签1': '標籤1', '标签2': '標籤2', '分类名称': '分類名稱',
+    '加密文章': '加密文章', '加密文章描述': '加密文章描述', '加密': '加密', '安全': '安全',
+    '置顶文章': '置頂文章', '置顶文章描述': '置頂文章描述', '公告': '公告',
+    '草稿文章': '草稿文章', '草稿': '草稿', '示例': '範例',
+    '标题': '標題', '加粗文本': '粗體文字', '斜体文本': '斜體文字', '删除文本': '刪除文字',
+    '列表项一': '清單項一', '列表项二': '清單項二', '列表项三': '清單項三',
+    '第一项': '第一項', '第二项': '第二項', '第三项': '第三項',
+    '已完成任务': '已完成任務', '未完成任务': '未完成任務', '待办事项': '待辦事項',
+    '引用内容': '引用內容', '引用第二段': '引用第二段',
+    '行内代码': '行內程式碼', '代码内容': '程式碼內容', '代码': '程式碼',
+    '链接文本': '連結文字', '替代文本': '替代文字', '图片标题': '圖片標題',
+    '内容': '內容', '列1': '欄1', '列2': '欄2', '列3': '欄3',
+    '用户名/仓库名': '使用者名稱/儲存庫名稱',
+    '提示信息内容': '提示資訊內容', '技巧和建议内容': '技巧與建議內容',
+    '重要信息内容': '重要資訊內容', '警告内容': '警告內容', '注意事项内容': '注意事項內容',
+    '自定义标题': '自訂標題', '带有自定义标题的提示框内容': '帶有自訂標題的提示框內容',
+    '隐藏的内容': '隱藏的內容',
+    '开始': '開始', '条件判断': '條件判斷', '是': '是', '否': '否',
+    '处理步骤1': '處理步驟1', '处理步骤2': '處理步驟2', '结束': '結束',
+    '用户': '使用者', '应用': '應用', '服务器': '伺服器',
+    '提交请求': '提交請求', '发送数据': '傳送資料', '返回结果': '回傳結果', '显示结果': '顯示結果',
+    '项目时间线': '專案時間線', '设计': '設計', '需求分析': '需求分析', 'UI设计': 'UI設計',
+    '开发': '開發', '前端开发': '前端開發', '后端开发': '後端開發',
+    '用户名': '使用者名稱', '密码': '密碼', '登录': '登入', '退出': '登出',
+    '文章': '文章', '内容': '內容', '发布': '發佈', '撰写': '撰寫',
+    '数据分析': '資料分析', '分类A': '分類A', '分类B': '分類B', '分类C': '分類C', '其他': '其他',
+    '审核中': '審核中', '提交': '提交', '拒绝': '拒絕', '已发布': '已發佈', '通过': '通過', '已归档': '已歸檔', '归档': '歸檔',
+    '视频ID': '影片ID', '视频BV号': '影片BV號',
+    '文章主标题': '文章主標題', '这里是文章开头部分': '這裡是文章開頭部分',
+    '二级标题': '二級標題', '正文内容，支持': '正文內容，支持',
+    '三级标题': '三級標題', '文章总结部分': '文章總結部分', '总结': '總結',
+    '加密内容': '加密內容', '这是一篇加密文章，只有输入正确密码才能查看': '這是一篇加密文章，只有輸入正確密碼才能查看',
+    '敏感信息': '敏感資訊', '这里包含需要保护的内容': '這裡包含需要保護的內容',
+    '重要公告': '重要公告', '重要通知': '重要通知', '重要': '重要',
+    '时间': '時間', '待定': '待定', '影响范围': '影響範圍', '全站': '全站',
+    '详细内容': '詳細內容', '公告详情': '公告詳情', '重要提醒': '重要提醒', '请注意': '請注意',
+    '技术教程标题': '技術教學標題', '技术教程描述': '技術教學描述',
+    '教程': '教學', '技术': '技術', '技术教程': '技術教學',
+    '简介段落': '簡介段落', '基本概念': '基本概念', '概念说明': '概念說明',
+    '示例代码': '範例程式碼', '实际应用': '實際應用', '实用技巧': '實用技巧', '技巧内容': '技巧內容',
+    '关键词': '關鍵詞', '关键词1': '關鍵詞1', '关键词2': '關鍵詞2',
+    'HTML内容': 'HTML內容',
+    '需要密码访问的加密文章': '需要密碼存取的加密文章',
+    '加密文章示例': '加密文章範例'
+  },
+  en: {
+    '文章标题': 'Article Title', '文章描述': 'Article description', '标签1': 'Tag1', '标签2': 'Tag2', '分类名称': 'Category',
+    '加密文章': 'Encrypted Article', '加密文章描述': 'Encrypted article description', '加密': 'Encrypted', '安全': 'Security',
+    '置顶文章': 'Pinned Article', '置顶文章描述': 'Pinned article description', '公告': 'Announcement',
+    '草稿文章': 'Draft Article', '草稿': 'Draft', '示例': 'Example',
+    '标题': 'Heading', '加粗文本': 'Bold text', '斜体文本': 'Italic text', '删除文本': 'Deleted text',
+    '列表项一': 'List item 1', '列表项二': 'List item 2', '列表项三': 'List item 3',
+    '第一项': 'First item', '第二项': 'Second item', '第三项': 'Third item',
+    '已完成任务': 'Completed task', '未完成任务': 'Incomplete task', '待办事项': 'Todo item',
+    '引用内容': 'Quoted content', '引用第二段': 'Second paragraph',
+    '行内代码': 'inline code', '代码内容': 'code here', '代码': 'code',
+    '链接文本': 'Link text', '替代文本': 'Alt text', '图片标题': 'Image title',
+    '内容': 'Content', '列1': 'Col 1', '列2': 'Col 2', '列3': 'Col 3',
+    '用户名/仓库名': 'user/repo',
+    '提示信息内容': 'Note content here.', '技巧和建议内容': 'Tip content here.',
+    '重要信息内容': 'Important content here.', '警告内容': 'Warning content here.', '注意事项内容': 'Caution content here.',
+    '自定义标题': 'Custom Title', '带有自定义标题的提示框内容': 'Admonition content with custom title.',
+    '隐藏的内容': 'Hidden content',
+    '开始': 'Start', '条件判断': 'Condition', '是': 'Yes', '否': 'No',
+    '处理步骤1': 'Process 1', '处理步骤2': 'Process 2', '结束': 'End',
+    '用户': 'User', '应用': 'App', '服务器': 'Server',
+    '提交请求': 'Submit request', '发送数据': 'Send data', '返回结果': 'Return result', '显示结果': 'Show result',
+    '项目时间线': 'Project Timeline', '设计': 'Design', '需求分析': 'Requirements', 'UI设计': 'UI Design',
+    '开发': 'Development', '前端开发': 'Frontend', '后端开发': 'Backend',
+    '用户名': 'username', '密码': 'password', '登录': 'login', '退出': 'logout',
+    '文章': 'Article', '发布': 'publish', '撰写': 'writes',
+    '数据分析': 'Data Analysis', '分类A': 'Category A', '分类B': 'Category B', '分类C': 'Category C', '其他': 'Others',
+    '审核中': 'Reviewing', '提交': 'Submit', '拒绝': 'Reject', '已发布': 'Published', '通过': 'Approve', '已归档': 'Archived', '归档': 'Archive',
+    '视频ID': 'VIDEO_ID', '视频BV号': 'VIDEO_BV_ID',
+    '文章主标题': 'Main Title', '这里是文章开头部分': 'Introduction paragraph here.',
+    '二级标题': 'Section Title', '正文内容，支持': 'Body text with',
+    '三级标题': 'Subsection', '文章总结部分': 'Summary section.', '总结': 'Summary',
+    '加密内容': 'Encrypted Content', '这是一篇加密文章，只有输入正确密码才能查看': 'This is an encrypted article. Enter the correct password to view.',
+    '敏感信息': 'Sensitive Info', '这里包含需要保护的内容': 'Protected content here.',
+    '重要公告': 'Important Announcement', '重要通知': 'Important notice', '重要': 'Important',
+    '时间': 'Date', '待定': 'TBD', '影响范围': 'Scope', '全站': 'Entire site',
+    '详细内容': 'Details', '公告详情': 'Announcement details...', '重要提醒': 'Important Reminder', '请注意': 'Please note...',
+    '技术教程标题': 'Technical Tutorial Title', '技术教程描述': 'Technical tutorial description',
+    '教程': 'Tutorial', '技术': 'Tech', '技术教程': 'Tech Tutorial',
+    '简介段落': 'Introduction paragraph.', '基本概念': 'Basic Concepts', '概念说明': 'Concept explanation...',
+    '示例代码': 'Example Code', '实际应用': 'Practical Usage', '实用技巧': 'Useful Tips', '技巧内容': 'Tip content.',
+    '关键词': 'Keywords', '关键词1': 'keyword1', '关键词2': 'keyword2',
+    'HTML内容': 'HTML content',
+    '需要密码访问的加密文章': 'Encrypted article requiring password',
+    '加密文章示例': 'Encrypted Article Example'
+  },
+  ja: {
+    '文章标题': '記事タイトル', '文章描述': '記事の説明', '标签1': 'タグ1', '标签2': 'タグ2', '分类名称': 'カテゴリ名',
+    '加密文章': '暗号化記事', '加密文章描述': '暗号化記事の説明', '加密': '暗号化', '安全': 'セキュリティ',
+    '置顶文章': 'ピン留め記事', '置顶文章描述': 'ピン留め記事の説明', '公告': 'お知らせ',
+    '草稿文章': '下書き記事', '草稿': '下書き', '示例': 'サンプル',
+    '标题': '見出し', '加粗文本': '太字テキスト', '斜体文本': '斜体テキスト', '删除文本': '取消テキスト',
+    '列表项一': 'リスト項目1', '列表项二': 'リスト項目2', '列表项三': 'リスト項目3',
+    '第一项': '最初の項目', '第二项': '2番目の項目', '第三项': '3番目の項目',
+    '已完成任务': '完了タスク', '未完成任务': '未完了タスク', '待办事项': 'TODO項目',
+    '引用内容': '引用文', '引用第二段': '引用の第2段落',
+    '行内代码': 'インラインコード', '代码内容': 'コードの内容', '代码': 'コード',
+    '链接文本': 'リンクテキスト', '替代文本': '代替テキスト', '图片标题': '画像タイトル',
+    '内容': '内容', '列1': '列1', '列2': '列2', '列3': '列3',
+    '用户名/仓库名': 'ユーザー名/リポジトリ名',
+    '提示信息内容': 'ノートの内容。', '技巧和建议内容': 'ヒントの内容。',
+    '重要信息内容': '重要な内容。', '警告内容': '警告の内容。', '注意事项内容': '注意の内容。',
+    '自定义标题': 'カスタムタイトル', '带有自定义标题的提示框内容': 'カスタムタイトル付きの内容。',
+    '隐藏的内容': '隠された内容',
+    '开始': '開始', '条件判断': '条件分岐', '是': 'はい', '否': 'いいえ',
+    '处理步骤1': '処理ステップ1', '处理步骤2': '処理ステップ2', '结束': '終了',
+    '用户': 'ユーザー', '应用': 'アプリ', '服务器': 'サーバー',
+    '提交请求': 'リクエスト送信', '发送数据': 'データ送信', '返回结果': '結果返却', '显示结果': '結果表示',
+    '项目时间线': 'プロジェクトタイムライン', '設計': '設計', '需求分析': '要件分析', 'UIデザイン': 'UIデザイン',
+    '開発': '開発', 'フロントエンド': 'フロントエンド', 'バックエンド': 'バックエンド',
+    'ユーザー名': 'ユーザー名', 'パスワード': 'パスワード', 'ログイン': 'ログイン', 'ログアウト': 'ログアウト',
+    '記事': '記事', '公開': '公開', '執筆': '執筆',
+    'データ分析': 'データ分析', 'カテゴリA': 'カテゴリA', 'カテゴリB': 'カテゴリB', 'カテゴリC': 'カテゴリC', 'その他': 'その他',
+    'レビュー中': 'レビュー中', '提出': '提出', '却下': '却下', '公開済み': '公開済み', '承認': '承認', 'アーカイブ済み': 'アーカイブ済み', 'アーカイブ': 'アーカイブ',
+    '動画ID': '動画ID', '動画BV番号': '動画BV番号',
+    '記事メインタイトル': '記事メインタイトル', 'ここは記事の導入部分です。': 'ここは記事の導入部分です。',
+    'セクションタイトル': 'セクションタイトル', '本文は': '本文は',
+    'サブセクション': 'サブセクション', 'まとめのセクション。': 'まとめのセクション。', 'まとめ': 'まとめ',
+    '暗号化コンテンツ': '暗号化コンテンツ', 'この記事は暗号化されています。正しいパスワードを入力してください。': 'この記事は暗号化されています。正しいパスワードを入力してください。',
+    '機密情報': '機密情報', '保護が必要な内容です。': '保護が必要な内容です。',
+    '重要なお知らせ': '重要なお知らせ', '重要な通知': '重要な通知', '重要': '重要',
+    '日時': '日時', '未定': '未定', '影響範囲': '影響範囲', 'サイト全体': 'サイト全体',
+    '詳細': '詳細', 'お知らせの詳細...': 'お知らせの詳細...', '重要なリマインダー': '重要なリマインダー', 'ご注意ください...': 'ご注意ください...',
+    '技術チュートリアルタイトル': '技術チュートリアルタイトル', '技術チュートリアルの説明': '技術チュートリアルの説明',
+    'チュートリアル': 'チュートリアル', '技術': '技術', '技術チュートリアル': '技術チュートリアル',
+    '紹介文。': '紹介文。', '基本概念': '基本概念', '概念の説明...': '概念の説明...',
+    'サンプルコード': 'サンプルコード', '実践的な使い方': '実践的な使い方', '実用ヒント': '実用ヒント', 'ヒントの内容。': 'ヒントの内容。',
+    'キーワード': 'キーワード', 'キーワード1': 'キーワード1', 'キーワード2': 'キーワード2',
+    'HTML内容': 'HTML内容',
+    'パスワードが必要な暗号化記事': 'パスワードが必要な暗号化記事',
+    '暗号化記事の例': '暗号化記事の例'
+  }
+};
+
+function localizeCode(code) {
+  if (currentLang === 'zh-CN') return code;
+  const map = CODE_TRANSLATIONS[currentLang];
+  if (!map) return code;
+  // Sort keys by length descending so longer phrases are replaced first
+  const keys = Object.keys(map).sort((a, b) => b.length - a.length);
+  let result = code;
+  keys.forEach(k => {
+    result = result.split(k).join(map[k]);
+  });
+  return result;
+}
+
 // ========== Module Data ==========
 const MODULES = [
   { catKey: 'catFrontMatter', icon: '⚙️', items: [
@@ -327,10 +482,6 @@ function setTheme(theme) {
       ? 'https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css'
       : 'https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github-dark.min.css';
   }
-  const hueDisabled = (theme === 'deep-blue' || theme === 'high-contrast');
-  $('#hueSlider').disabled = hueDisabled;
-  $('#hueSlider').style.opacity = hueDisabled ? '0.35' : '1';
-  $$('.preset').forEach(p => p.style.pointerEvents = hueDisabled ? 'none' : 'auto');
   $$('.theme-opt').forEach(opt => {
     opt.classList.toggle('active', opt.dataset.theme === theme);
   });
@@ -393,9 +544,9 @@ function renderModules(filter = '') {
       const el = document.createElement('div');
       el.className = 'module-item';
       el.innerHTML = `<span class="icon">${item.icon}</span>${t(item.nameKey)}`;
-      el.onclick = () => insertAtCursor(item.code);
+      el.onclick = () => insertAtCursor(localizeCode(item.code));
       el.draggable = true;
-      el.ondragstart = e => e.dataTransfer.setData('text/plain', item.code);
+      el.ondragstart = e => e.dataTransfer.setData('text/plain', localizeCode(item.code));
       itemsEl.appendChild(el);
     });
     catEl.querySelector('.module-cat-header').onclick = function() {
@@ -478,9 +629,15 @@ function updatePreview() {
 }
 
 let previewTimer;
+let saveTimer;
 editor.addEventListener('input', () => {
   clearTimeout(previewTimer);
   previewTimer = setTimeout(updatePreview, 300);
+  // Auto-save content
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    localStorage.setItem('mizuki-editor-content', editor.value);
+  }, 500);
 });
 
 // ========== View Switching ==========
@@ -663,6 +820,20 @@ $$('.export-btn').forEach(btn => {
 });
 
 // ========== Init ==========
+// Restore saved content
+const savedContent = localStorage.getItem('mizuki-editor-content');
+if (savedContent) {
+  editor.value = savedContent;
+  updatePreview();
+}
+
 $('#fm-published').value = new Date().toISOString().split('T')[0];
+
+// Save on page unload as safety net
+window.addEventListener('beforeunload', () => {
+  if (editor.value.trim()) {
+    localStorage.setItem('mizuki-editor-content', editor.value);
+  }
+});
 
 })();
