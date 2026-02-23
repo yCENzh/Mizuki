@@ -45,8 +45,8 @@ const style = Astro.props.style;
             </div>
             
             {config.closable && (
-                <button 
-                    class="btn-regular rounded-lg h-8 w-8 text-sm hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+                <button
+                    class="btn-regular rounded-lg h-8 w-8 text-sm hover:bg-(--btn-regular-bg-hover) transition-colors"
                     onclick="closeAnnouncement()"
                     aria-label={i18n(I18nKey.announcementClose)}
                 >
