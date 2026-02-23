@@ -415,32 +415,33 @@ if (siteConfig.font) {
 		"banner-height": `${BANNER_HEIGHT}vh`,
 	}}
 >
-	@reference "../styles/main.css";
+	@import "tailwindcss";
 
 	@layer components {
-		.enable-banner.lg\:is-home #banner-wrapper {
-    	  height: var(--banner-height-home);
-    	  transform: translateY(var(--banner-height-extend));
-    	}
-    	.enable-banner #banner-wrapper {
-    	  height: var(--banner-height-home);
-    	}
-
-    	.enable-banner.lg\:is-home #banner {
-    	  height: var(--banner-height-home);
-    	  transform: translateY(0);
-    	}
-    	.enable-banner #banner {
-    	  height: var(--banner-height-home);
-    	  transform: translateY(var(--bannerOffset));
-    	}
-    	.enable-banner.lg\:is-home #main-grid {
-    	  transform: translateY(var(--banner-height-extend));
-    	}
-    	.enable-banner #top-row {
-    	  height: calc(var(--banner-height-home) - 4.5rem);
-    	  @apply transition-all duration-300;
-    	}
+		.enable-banner.is-home #banner-wrapper {
+			@apply xl:h-(--banner-height-home) xl:translate-y-[var(--banner-height-extend)];
+		}
+		.enable-banner #banner-wrapper {
+			@apply xl:h-[var(--banner-height-home)];
+		}
+		.enable-banner.is-home #banner {
+			@apply xl:h-(--banner-height-home) xl:translate-y-0;
+		}
+		.enable-banner #banner {
+			@apply xl:h-(--banner-height-home) xl:translate-y-[var(--bannerOffset)];
+		}
+		.enable-banner.is-home #main-grid {
+			@apply xl:translate-y-[var(--banner-height-extend)];
+		}
+		.enable-banner #top-row {
+			@apply xl:h-[calc(var(--banner-height-home)-4.5rem)] transition-all duration-300;
+		}
+		.enable-banner.is-home #sidebar-sticky {
+			@apply xl:top-[calc(1rem_-_var(--banner-height-extend))];
+		}
+		.navbar-hidden {
+			@apply opacity-0 -translate-y-16;
+		}
 
 		/* Water waves animation */
 		.waves > .parallax use {
@@ -455,21 +456,7 @@ if (siteConfig.font) {
 			}
 		}
 	}
-	@layer utilities {
-    	.enable-banner.lg\:is-home #sidebar-sticky {
-    	  top: calc(1rem - var(--banner-height-extend)) !important;
-    	}
-    	.enable-banner.lg\:is-home #left-sidebar-sticky {
-    	  top: calc(1rem - var(--banner-height-extend)) !important;
-    	}
-    	.enable-banner.lg\:is-home #right-sidebar-sticky {
-    	  top: calc(1rem - var(--banner-height-extend)) !important;
-    	}
-    	.navbar-hidden {
-    	  @apply opacity-0 -translate-y-16;
-    	}
-  	}
-</style>
+ </style>
 
 <script>
 	// import { animationManager } from '../utils/animation-utils';
