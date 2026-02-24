@@ -410,10 +410,10 @@ function portal(node: HTMLElement) {
 </button>
 
 {#if showModal}
-  <div use:portal class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-opacity" on:click={closeModal}>
-    <div class="bg-[var(--card-bg)] rounded-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto flex flex-col shadow-2xl transform transition-all" on:click|stopPropagation>
+  <div use:portal class="fixed inset-0 z-9999 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-opacity" on:click={closeModal}>
+    <div class="bg-(--card-bg) rounded-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto flex flex-col shadow-2xl transform transition-all" on:click|stopPropagation>
       
-      <div class="p-6 flex justify-center bg-[var(--btn-plain-bg-hover)] min-h-[200px] items-center">
+      <div class="p-6 flex justify-center bg-(--btn-plain-bg-hover) min-h-[200px] items-center">
         {#if posterImage}
           <img src={posterImage} alt="Poster" class="max-w-full h-auto shadow-lg rounded-lg" />
         {:else}
@@ -426,7 +426,7 @@ function portal(node: HTMLElement) {
       
       <div class="p-4 border-t border-black/5 dark:border-white/10 grid grid-cols-2 gap-3">
         <button 
-          class="py-3 bg-[var(--btn-plain-bg-hover)] text-75 rounded-xl font-medium hover:bg-[var(--btn-plain-bg-active)] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+          class="py-3 bg-(--btn-plain-bg-hover) text-75 rounded-xl font-medium hover:bg-(--btn-plain-bg-active) active:scale-[0.98] transition-all flex items-center justify-center gap-2"
           on:click={copyLink}
         >
           {#if copied}
