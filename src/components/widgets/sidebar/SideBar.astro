@@ -4,7 +4,7 @@ import { widgetManager } from "../../../utils/widget-manager";
 import Announcement from "../announcement/Announcement.astro";
 import Calendar from "../calendar/Calendar.astro";
 import Categories from "../categories/Categories.astro";
-import MusicPlayer from "../../widget/MusicPlayer.svelte";
+import MusicPlayer from "../../widgets/music-player/MusicPlayer.svelte";
 import Profile from "../profile/Profile.astro";
 import SiteStats from "../site-stats/SiteStats.astro";
 import Tags from "../tags/Tags.astro";
@@ -147,6 +147,8 @@ function renderComponent(component: any, index: number, _components: any[]) {
 	hasMobileComponents: mobileTopComponents.length > 0 || mobileStickyComponents.length > 0,
 	hasTabletComponents: tabletTopComponents.length > 0 || tabletStickyComponents.length > 0
 }}>
+	const SIDEBAR_MANAGER_KEY = '__mizukiSidebarManagerInitialized';
+
 	// 响应式布局管理
 	class SidebarManager {
 		constructor() {
@@ -155,14 +157,43 @@ function renderComponent(component: any, index: number, _components: any[]) {
 		
 		init() {
 			this.updateResponsiveDisplay();
-			window.addEventListener('resize', () => this.updateResponsiveDisplay());
+			if (!window.__mizukiSidebarResizeHandler) {
+				window.__mizukiSidebarResizeHandler = () => this.updateResponsiveDisplay();
+				window.addEventListener('resize', window.__mizukiSidebarResizeHandler);
+			}
 			
 			// 监听SWUP内容替换事件
-			if (typeof window !== 'undefined' && window.swup) {
+			if (typeof window !== 'undefined' && window.swup && !window.__mizukiSidebarSwupHooked) {
+				window.__mizukiSidebarSwupHooked = true;
 				window.swup.hooks.on('content:replace', () => {
 					// 延迟执行以确保DOM已更新
 					setTimeout(() => {
-						this.updateResponsiveDisplay();
+						const sidebar = document.getElementById('sidebar');
+						if (!sidebar) return;
+
+						const width = window.innerWidth;
+						let deviceType;
+						let hasComponents = false;
+						let showConfig = false;
+
+						if (width < breakpoints.mobile) {
+							deviceType = 'mobile';
+							hasComponents = hasMobileComponents;
+							showConfig = mobileShowSidebar;
+						} else if (width < breakpoints.tablet) {
+							deviceType = 'tablet';
+							hasComponents = hasTabletComponents;
+							showConfig = tabletShowSidebar;
+						} else {
+							deviceType = 'desktop';
+							hasComponents = hasTabletComponents;
+							showConfig = desktopShowSidebar;
+						}
+
+						sidebar.style.setProperty(
+							`--sidebar-${deviceType}-display`,
+							showConfig && hasComponents ? 'block' : 'none'
+						);
 					}, 100);
 				});
 			}
@@ -205,5 +236,8 @@ function renderComponent(component: any, index: number, _components: any[]) {
 	}
 	
 	// 初始化侧边栏管理器
-	new SidebarManager();
+	if (!window[SIDEBAR_MANAGER_KEY]) {
+		window[SIDEBAR_MANAGER_KEY] = true;
+		new SidebarManager();
+	}
 </script>

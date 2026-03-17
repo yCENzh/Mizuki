@@ -1,6 +1,6 @@
 ---
 import ConfigCarrier from "@components/ConfigCarrier.astro";
-import MusicPlayer from "@components/widget/MusicPlayer.svelte";
+import MusicPlayer from "@components/widgets/music-player/MusicPlayer.svelte";
 import Pio from "@components/widget/Pio.svelte"; // 使用 Svelte 版本的 Pio 组件
 import {
 	musicPlayerConfig,
@@ -22,6 +22,7 @@ import {
 import { defaultFavicons } from "../constants/icon";
 import type { Favicon } from "../types/config";
 import { pathsEqual, url } from "../utils/url-utils";
+import "../styles/main.css";
 import "../styles/mobile-navbar.css";
 import "../styles/wallpaper-navbar-transparent.css";
 import "../styles/fancybox-custom.css";
@@ -172,7 +173,13 @@ if (siteConfig.font) {
 		<!-- 第三方分析脚本 - 延迟加载优化 -->
 		<script is:inline>
 			// 使用 requestIdleCallback 延迟加载第三方脚本
+			// 标记脚本是否已加载，防止 swup 导航时重复加载
+			window.analyticsLoaded = window.analyticsLoaded || false;
+			
 			function loadAnalytics() {
+				if (window.analyticsLoaded) return;
+				window.analyticsLoaded = true;
+				
 				// Google Tag Manager
 				(function (w, d, s, l, i) {
 					w[l] = w[l] || [];
@@ -349,6 +356,19 @@ if (siteConfig.font) {
 					window.addEventListener('orientationchange', adjustPageScale);
 				}
 			})();
+		</script>
+		<script is:inline define:vars={{ IS_DEV: import.meta.env.DEV }}>
+			// Dev 模式下，避免 swup 在页面切换时反复替换 head 中的样式标签，导致偶发样式丢失
+			if (IS_DEV) {
+				document.addEventListener("swup:enable", () => {
+					if (window?.swup?.options) {
+						window.swup.options.updateHead = false;
+					}
+				});
+				if (window?.swup?.options) {
+					window.swup.options.updateHead = false;
+				}
+			}
 		</script>
 		<style
 			define:vars={{
