@@ -8,7 +8,6 @@
 // 组件导出（兼容包装器）
 export { default as SidebarTOC } from "./SidebarTOC.astro";
 export { default as FloatingTOC } from "./FloatingTOC.astro";
-// MobileTOC 是 Svelte 组件，不支持重导出，请使用：import MobileTOC from "@components/MobileTOC.svelte"
 
 // 子组件导出
 export { default as TOCBadge } from "./components/TOCBadge.astro";

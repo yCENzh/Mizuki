@@ -9,6 +9,7 @@ export * from "./features/timeline";
 export * from "./features/stats";
 export * from "./features/pio";
 export * from "./features/settings";
+export * from "./features/toc";
 
 // Organisms - 有机体组件
 export * from "./organisms/navigation";
