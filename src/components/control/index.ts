@@ -16,4 +16,4 @@ export { default as Pagination } from "./Pagination.astro";
 export { default as ThemeSwitch } from "./ThemeSwitch.svelte";
 
 // Re-export types
-export type { ButtonLinkProps, ButtonTagProps } from "../atoms/Button/types";
+export type { ButtonLinkProps, ButtonTagProps } from "../atoms/button/types";

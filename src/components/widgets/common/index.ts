@@ -1,13 +1,13 @@
 /**
- * @deprecated Use atoms/Badge instead
+ * @deprecated Use atoms/badge instead
  */
-export { Badge } from "../../atoms/Badge";
+export { Badge } from "../../atoms/badge";
 /**
- * @deprecated Use atoms/Chip instead
+ * @deprecated Use atoms/chip instead
  */
-export { Chip } from "../../atoms/Chip";
+export { Chip } from "../../atoms/chip";
 export { default as WidgetHeader } from "./WidgetHeader.svelte";
 /**
- * @deprecated Use atoms/TagChip instead
+ * @deprecated Use atoms/tag-chip instead
  */
-export { TagChip } from "../../atoms/TagChip";
+export { TagChip } from "../../atoms/tag-chip";
