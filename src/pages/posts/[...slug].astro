@@ -27,7 +27,7 @@ import Image from "../../components/atoms/Image/Image.astro";
 import PostMetadata from "@components/features/posts/PostMeta.astro";
 import { profileConfig, siteConfig } from "../../config";
 import { formatDateToYYYYMMDD } from "../../utils/date-utils";
-import Encryptor from "../../components/Encryptor.astro";
+import Encryptor from "../../components/features/auth/Encryptor.astro";
 
 export async function getStaticPaths() {
 	const blogEntries = await getSortedPosts();
