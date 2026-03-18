@@ -27,4 +27,5 @@ export interface TimelineItemProps {
 	showTimeline?: boolean;
 	size?: "small" | "medium" | "large";
 	layout?: "card" | "timeline";
+	isCurrent?: boolean;
 }
