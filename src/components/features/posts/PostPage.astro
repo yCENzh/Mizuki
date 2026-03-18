@@ -1,22 +1,17 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import type { Page } from "astro";
-import { siteConfig } from "../config";
-import { widgetManager } from "../utils/widget-manager";
+import { siteConfig } from "../../../config";
+import { widgetManager } from "../../../utils/widget-manager";
 import PostCard from "./PostCard.astro";
+import type { PostPageProps } from "./types";
 
-interface Props {
-	page: Page<CollectionEntry<"posts">>;
-}
+const { page }: PostPageProps = Astro.props;
 
-const { page } = Astro.props;
-
-// 检查是否启用右侧边栏（通过检查右侧是否有组件）
 const hasRightSidebars =
 	widgetManager.getComponentsByPosition("top", "right", "desktop").length > 0 ||
 	widgetManager.getComponentsByPosition("sticky", "right", "desktop").length > 0;
 
-// 根据配置设置初始布局模式
 const defaultLayout = siteConfig.postListLayout.defaultMode || "list";
 const initialLayoutClass = defaultLayout === "grid" ? "grid-mode" : "list-mode";
 ---
@@ -39,7 +34,6 @@ const initialLayoutClass = defaultLayout === "grid" ? "grid-mode" : "list-mode";
 </div>
 
 <script>
-	// 动态布局切换脚本
 	function initLayout() {
 		requestAnimationFrame(() => {
 			const postListContainer = document.getElementById(
@@ -47,13 +41,11 @@ const initialLayoutClass = defaultLayout === "grid" ? "grid-mode" : "list-mode";
 			);
 			if (!postListContainer) return;
 
-			// 读取偏好
 			const savedLayout = localStorage.getItem("postListLayout");
 			const defaultLayout =
 				postListContainer.getAttribute("data-default-layout") || "list";
 			const currentLayout = savedLayout || defaultLayout;
 
-			// 检查现有状态是否一致，避免重复初始化
 			const hasGridClass =
 				postListContainer.classList.contains("grid-mode");
 			const isClassCorrect =
@@ -66,7 +58,6 @@ const initialLayoutClass = defaultLayout === "grid" ? "grid-mode" : "list-mode";
 				return;
 			}
 
-			// 桌面端执行布局更新，移动端由 CSS 处理
 			if (window.innerWidth >= 769) {
 				updatePostListLayout(currentLayout);
 			} else {
@@ -83,12 +74,10 @@ const initialLayoutClass = defaultLayout === "grid" ? "grid-mode" : "list-mode";
 
 		container.classList.add("layout-switching");
 
-		// 切换布局模式类名
 		if (layout === "grid") {
 			container.classList.remove("list-mode");
 			container.classList.add("grid-mode");
 
-			// Grid 模式下隐藏右侧栏
 			const rightSidebar = document.querySelector(
 				".right-sidebar-container",
 			);
@@ -100,7 +89,6 @@ const initialLayoutClass = defaultLayout === "grid" ? "grid-mode" : "list-mode";
 			container.classList.remove("grid-mode");
 			container.classList.add("list-mode");
 
-			// List 模式下显示右侧栏
 			const rightSidebar = document.querySelector(
 				".right-sidebar-container",
 			);
@@ -113,18 +101,15 @@ const initialLayoutClass = defaultLayout === "grid" ? "grid-mode" : "list-mode";
 
 		container.classList.add("js-initialized");
 
-		// 移除切换动画类
 		setTimeout(() => {
 			container.classList.remove("layout-switching");
 		}, 500);
 	}
 
-	// 监听布局变化
 	window.addEventListener("layoutChange", (event: any) => {
 		if (event.detail?.layout) updatePostListLayout(event.detail.layout);
 	});
 
-	// Resize 防抖
 	let resizeTimeout: number | undefined;
 	window.addEventListener("resize", () => {
 		clearTimeout(resizeTimeout);
@@ -140,11 +125,9 @@ const initialLayoutClass = defaultLayout === "grid" ? "grid-mode" : "list-mode";
 		}, 100);
 	});
 
-	// 初始化
 	document.addEventListener("DOMContentLoaded", initLayout);
 	if (document.readyState !== "loading") initLayout();
 
-	// Swup 集成
 	function setupSwupListeners() {
 		if ((window as any)._postListSwupListenerAttached) return;
 
@@ -188,23 +171,19 @@ const initialLayoutClass = defaultLayout === "grid" ? "grid-mode" : "list-mode";
 </script>
 
 <style>
-	/* 基础容器 */
 	#post-list-container {
 		min-height: 200px;
 		transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 	}
 
-	/* 布局模式 - 列表模式 */
 	#post-list-container.list-mode {
 		@apply flex flex-col gap-4;
 	}
 
-	/* 布局模式 - 网格模式 (仅在桌面端生效，移动端强制单列) */
 	#post-list-container.grid-mode {
 		@apply grid grid-cols-1 md:grid-cols-2 gap-6;
 	}
 
-	/* 内容可见性 (视口外不渲染) */
 	#post-list-container > :global(*) {
 		content-visibility: auto;
 		contain-intrinsic-size: 200px;
@@ -216,12 +195,10 @@ const initialLayoutClass = defaultLayout === "grid" ? "grid-mode" : "list-mode";
 		);
 	}
 
-	/* 网格模式动画调整 */
 	#post-list-container.grid-mode > :global(*) {
 		animation-name: fadeInScale;
 	}
 
-	/* 布局切换时的过渡状态 */
 	#post-list-container.layout-switching {
 		opacity: 0.95;
 	}
