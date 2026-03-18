@@ -4,7 +4,6 @@ import IconifyLoader from "../components/misc/IconifyLoader.astro";
 import { siteConfig } from "../config";
 import {
 	getCurrentItems,
-	// getFeaturedTimeline,
 	getTimelineByType,
 	getTimelineStats,
 	getTotalWorkExperience,
@@ -14,28 +13,19 @@ import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 
-// 检查时间线页面是否启用
 if (!siteConfig.featurePages.timeline) {
 	return Astro.redirect("/404/");
 }
 
-// const { lang } = Astro.props;
-
-// 收集所有时间线图标用于预加载
 const allIcons = timelineData
 	.map((item) => item.icon || getTypeIcon(item.type))
 	.filter(Boolean);
 
-// 获取时间线统计信息
 const stats = getTimelineStats();
-// const featuredItems = getFeaturedTimeline();
 const currentItems = getCurrentItems();
 const workExperience = getTotalWorkExperience();
-
-// 获取所有时间线项目（按时间倒序）
 const allTimelineItems = getTimelineByType();
 
-// 类型图标映射
 const getTypeIcon = (type: string) => {
 	switch (type) {
 		case "education":
@@ -51,29 +41,11 @@ const getTypeIcon = (type: string) => {
 	}
 };
 
-// 类型颜色映射
-// const getTypeColor = (type: string) => {
-// 	switch (type) {
-// 		case "education":
-// 			return "bg-blue-500";
-// 		case "work":
-// 			return "bg-green-500";
-// 		case "project":
-// 			return "bg-purple-500";
-// 		case "achievement":
-// 			return "bg-orange-500";
-// 		default:
-// 			return "bg-gray-500";
-// 	}
-// };
-
-// 格式化日期
 const formatDate = (dateString: string) => {
 	const date = new Date(dateString);
 	return date.toLocaleDateString("zh-CN", { year: "numeric", month: "long" });
 };
 
-// 计算持续时间
 const getDuration = (startDate: string, endDate?: string) => {
 	const start = new Date(startDate);
 	const end = endDate ? new Date(endDate) : new Date();
@@ -95,30 +67,25 @@ const title = i18n(I18nKey.timeline);
 const subtitle = i18n(I18nKey.timelineSubtitle);
 ---
 
-
 <MainGridLayout title={title} description={subtitle}>
-  <!-- 引入右侧边栏布局管理器 -->
   <script>
     import('../scripts/right-sidebar-layout.js');
   </script>
-  <!-- 图标加载器，预加载所有时间线图标 -->
   <IconifyLoader preloadIcons={allIcons} />
   <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
-    <div class="card-base z-10 px-6 py-8 md:px-9 md:py-1ss0 relative w-full">
-      <!-- 页面标题 -->
-      <div class="flex flex-col items-start justify-center mb-10">
-        <h1 class="text-3xl md:text-4xl font-bold text-black/90 dark:text-white/90 mb-3 relative
+    <div class="card-base z-10 px-9 py-6 relative w-full">
+      <div class="flex flex-col items-start justify-center mb-8">
+        <h1 class="text-4xl font-bold text-black/90 dark:text-white/90 mb-2 relative
                   before:w-1 before:h-8 before:rounded-md before:bg-[var(--primary)]
                   before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-4">
           {i18n(I18nKey.timeline)}
         </h1>
-        <p class="text-base md:text-lg text-black/60 dark:text-white/60">
+        <p class="text-lg text-black/60 dark:text-white/60">
           {i18n(I18nKey.timelineSubtitle)}
         </p>
       </div>
 
-      <!-- 统计信息卡片 -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div class="bg-blue-500/10 dark:bg-blue-900/30 rounded-xl p-5 border border-blue-500/20 dark:border-blue-900/30 hover:shadow-lg transition-shadow duration-300">
           <div class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">{stats.total}</div>
           <div class="text-sm text-blue-600/70 dark:text-blue-400/70">{i18n(I18nKey.timelineTotal)}</div>
@@ -139,10 +106,9 @@ const subtitle = i18n(I18nKey.timelineSubtitle);
         </div>
       </div>
 
-      <!-- 当前进行中的项目 -->
       {currentItems.length > 0 && (
-        <div class="mb-12">
-          <h2 class="text-2xl font-bold text-black/90 dark:text-white/90 mb-6 flex items-center">
+        <div class="mb-8">
+          <h2 class="text-2xl font-bold text-black/90 dark:text-white/90 mb-4 flex items-center">
             <span class="w-3 h-3 rounded-full bg-green-500 mr-3"></span>
             {i18n(I18nKey.timelineCurrent)}
           </h2>
@@ -231,23 +197,18 @@ const subtitle = i18n(I18nKey.timelineSubtitle);
         </div>
       )}
 
-      <!-- 时间线 -->
-      <div class="mb-12">
-        <h2 class="text-2xl font-bold text-black/90 dark:text-white/90 mb-8 flex items-center">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-black/90 dark:text-white/90 mb-4 flex items-center">
           <span class="w-3 h-3 rounded-full bg-indigo-500 mr-3"></span>
           {i18n(I18nKey.timelineHistory)}
         </h2>
         
-        <!-- 横向时间线容器 -->
-        <div class="relative overflow-hidden rounded-xl bg-transparent border border-black/10 dark:border-white/10 p-6 hover:shadow-lg transition-shadow duration-300">
-          <!-- 水平滚动区域 -->
+        <div class="relative overflow-hidden rounded-xl bg-transparent border border-black/10 dark:border-white/10 p-6">
           <div class="flex overflow-x-auto pb-6 -mx-2 px-2 timeline-horizontal-scroll" id="timeline-scrollbar">
-            
             <div class="flex space-x-8 min-w-max">
               {allTimelineItems.map((item, index) => (
                 <div class="flex flex-col items-center flex-shrink-0 w-72" data-key={index}>
-                  {/* 时间线节点 */}
-                  <div class="relative z-10 w-16 h-16 rounded-xl flex items-center justify-center mb-6" style={`background-color: ${item.color || 'rgb(99 102 241)'}`}>
+                  <div class="relative z-10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 timeline-node" style={`background-color: ${item.color || 'rgb(99 102 241)'}`}>
                     <Icon 
                       icon={item.icon || getTypeIcon(item.type)} 
                       class="text-2xl text-white" 
@@ -255,16 +216,13 @@ const subtitle = i18n(I18nKey.timelineSubtitle);
                       fallback={item.title.charAt(0)}
                       loading="eager"
                     />
-                    {/* 节点外圈装饰 */}
                     <div class="absolute inset-0 rounded-xl border-2 border-white/30"></div>
                   </div>
                   
-                  {/* 时间点 */}
                   <div class="text-xs text-black/50 dark:text-white/50 mb-2">
                     {formatDate(item.startDate)}
                   </div>
                   
-                  {/* 内容卡片 */}
                   <div class="flex-1 bg-transparent rounded-xl border border-black/10 dark:border-white/10 p-5 w-full">
                     <div class="flex flex-col gap-3">
                       <div>
@@ -312,7 +270,6 @@ const subtitle = i18n(I18nKey.timelineSubtitle);
             </div>
           </div>
           
-          {/* 滚动指示器 */}
           <div class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-transparent to-transparent pointer-events-none hidden md:block"></div>
         </div>
       </div>
@@ -329,7 +286,13 @@ const subtitle = i18n(I18nKey.timelineSubtitle);
     overflow: hidden;
   }
   
-  /* 时间线节点动画 */
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
   @keyframes pulse {
     0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
     70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
@@ -339,8 +302,6 @@ const subtitle = i18n(I18nKey.timelineSubtitle);
   .timeline-node {
     animation: pulse 2s infinite;
   }
-  
-  /* 优化夜间模式下的原生滚动条样式 */
 
   .timeline-horizontal-scroll::-webkit-scrollbar {
     height: 8px;
@@ -352,23 +313,19 @@ const subtitle = i18n(I18nKey.timelineSubtitle);
   }
   
   .timeline-horizontal-scroll::-webkit-scrollbar-thumb {
-    background: hsl(var(--hue), 70%, 60%); /* 使用动态主题色 */
+    background: hsl(var(--hue), 70%, 60%);
     border-radius: 4px;
   }
   
-
-
-
-
+  .timeline-horizontal-scroll::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--hue), 70%, 50%);
+  }
 </style>
 
 <script>
-  // 确保图标库已加载，并处理页面导航
   function initTimelinePage() {
-    // 如果图标加载器存在，确保图标已加载
     if (window.__iconifyLoader) {
       window.__iconifyLoader.load().then(function() {
-        // 图标加载完成后，触发时间线项目的重新渲染
         var timelineItems = document.querySelectorAll('.timeline-item');
         timelineItems.forEach(function(item) {
           item.dispatchEvent(new CustomEvent('iconify-ready'));
@@ -378,32 +335,25 @@ const subtitle = i18n(I18nKey.timelineSubtitle);
       });
     }
     
-    // 添加时间线节点动画效果
     var timelineNodes = document.querySelectorAll('.timeline-node');
     timelineNodes.forEach(function(node, index) {
-      // 添加延迟，使动画依次出现
       (node as HTMLElement).style.animationDelay = (index * 0.2) + 's';
     });
   }
   
-  // 页面加载完成后初始化
   document.addEventListener('DOMContentLoaded', function() {
     initTimelinePage();
   });
   
-  // 处理页面导航时的图标重新加载
   if (typeof window !== 'undefined') {
-    // 监听页面显示事件（包括前进/后退导航）
     window.addEventListener('pageshow', function(event) {
       if (event.persisted && window.__iconifyLoader) {
-        // 页面从缓存恢复，重新检查图标状态
         setTimeout(function() {
           window.__iconifyLoader?.load().catch(console.error);
         }, 100);
       }
     });
     
-    // 增强对 Astro 导航的支持
     document.addEventListener('astro:page-load', function() {
       setTimeout(initTimelinePage, 100);
     });
@@ -412,7 +362,6 @@ const subtitle = i18n(I18nKey.timelineSubtitle);
       setTimeout(initTimelinePage, 100);
     });
     
-    // 监听 SWUP 事件
     document.addEventListener('swup:contentReplaced', function() {
       setTimeout(initTimelinePage, 100);
     });
@@ -422,4 +371,3 @@ const subtitle = i18n(I18nKey.timelineSubtitle);
     });
   }
 </script>
-
