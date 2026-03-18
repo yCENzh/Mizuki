@@ -12,6 +12,7 @@ export * from "./features/settings";
 
 // Organisms - 有机体组件
 export * from "./organisms/navigation";
+export * from "./organisms/footer";
 
 // Widgets - 侧边栏小部件
 export * from "./widgets/profile";

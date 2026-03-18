@@ -1,17 +1,17 @@
 ---
 import { Icon } from "astro-icon/components"
-import { navBarConfig, siteConfig } from "../config"
-import { LinkPresets } from "../constants/link-presets"
-import { LinkPreset, type NavBarLink } from "../types/config"
-import { url } from "../utils/url-utils"
-import LayoutSwitchButton from "./LayoutSwitchButton.svelte"
-import LightDarkSwitch from "./LightDarkSwitch.svelte"
-import MobileTOC from "./MobileTOC.svelte"
+import { navBarConfig, siteConfig } from "../../../config"
+import { LinkPresets } from "../../../constants/link-presets"
+import { LinkPreset, type NavBarLink } from "../../../types/config"
+import { url } from "../../../utils/url-utils"
+import LayoutSwitchButton from "../../LayoutSwitchButton.svelte"
+import LightDarkSwitch from "../../LightDarkSwitch.svelte"
+import MobileTOC from "../../MobileTOC.svelte"
 import Search from "./Search.svelte"
-import WallpaperSwitch from "./WallpaperSwitch.svelte"
-import DisplaySettings from "./features/settings/DisplaySettings.svelte"
-import DropdownMenu from "./organisms/navigation/DropdownMenu.astro"
-import NavMenuPanel from "./organisms/navigation/NavMenuPanel.astro"
+import WallpaperSwitch from "../../WallpaperSwitch.svelte"
+import DisplaySettings from "../../features/settings/DisplaySettings.svelte"
+import DropdownMenu from "./DropdownMenu.astro"
+import NavMenuPanel from "./NavMenuPanel.astro"
 
 const className = Astro.props.class
 
@@ -147,8 +147,7 @@ const iconSrc = rawIcon.match(/^(http|https|\/\/)/) ? rawIcon : url(rawIcon);
 
 async function loadButtonScript() {
     try {
-        // 导入面板管理器
-        const { panelManager } = await import('../utils/panel-manager.js');
+        const { panelManager } = await import('../../../utils/panel-manager.js');
         
         let settingBtn = document.getElementById("display-settings-switch");
         if (settingBtn) {
