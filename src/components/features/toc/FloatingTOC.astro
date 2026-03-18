@@ -1,0 +1,18 @@
+---
+/**
+ * FloatingTOC - 悬浮目录组件
+ *
+ * 此组件重导出自 control/FloatingTOC.astro 以保持向后兼容性
+ * 新代码应使用此位置
+ */
+
+import OriginalFloatingTOC from "../../control/FloatingTOC.astro";
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<OriginalFloatingTOC class={className} />

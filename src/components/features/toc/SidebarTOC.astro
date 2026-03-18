@@ -1,0 +1,20 @@
+---
+/**
+ * SidebarTOC - 侧边栏目录组件
+ *
+ * 此组件重导出自 widgets/toc/TOC.astro 以保持向后兼容性
+ * 新代码应使用此位置
+ */
+
+import TOC from "../../widgets/toc/TOC.astro";
+import type { MarkdownHeading } from "astro";
+
+export interface Props {
+  class?: string;
+  headings?: MarkdownHeading[];
+}
+
+const { class: className, headings = [] } = Astro.props;
+---
+
+<TOC class={className} headings={headings} />
