@@ -9,7 +9,7 @@ import type { MarkdownHeading } from "astro";
 import { Icon } from "astro-icon/components";
 import FullscreenWallpaper from "../components/misc/FullscreenWallpaper.astro";
 import IconifyLoader from "../components/misc/IconifyLoader.astro";
-import ImageWrapper from "../components/misc/ImageWrapper.astro";
+import Image from "../components/atoms/Image/Image.astro";
 import TypewriterText from "../components/TypewriterText.astro";
 import {
 	fullscreenWallpaperConfig,
@@ -623,7 +623,7 @@ const transparentClass = shouldEnableTransparency
                         <li class={`carousel-item absolute inset-0 transition-all duration-500 ${index === 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}>
                             <!-- Mobile: use mobile-specific images -->
                             {hasMobileImage && (
-                                <ImageWrapper 
+                                <Image 
                                     alt={`Mobile banner image ${index + 1}`} 
                                     class:list={["block md:hidden object-cover h-full w-full transition-transform duration-500 ease-out"]}
                                     src={Array.isArray(bannerImages.mobile) ? bannerImages.mobile[index] : (typeof bannerImages.mobile === 'string' ? bannerImages.mobile : '')} 
@@ -633,7 +633,7 @@ const transparentClass = shouldEnableTransparency
                             )}
                             <!-- Desktop/Tablet: use desktop-specific images -->
                             {hasDesktopImage && (
-                                <ImageWrapper 
+                                <Image 
                                     alt={`Desktop banner image ${index + 1}`} 
                                     class:list={["hidden md:block object-cover h-full w-full transition-transform duration-500 ease-out"]}
                                     src={Array.isArray(bannerImages.desktop) ? bannerImages.desktop[index] : (typeof bannerImages.desktop === 'string' ? bannerImages.desktop : '')} 

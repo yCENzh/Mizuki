@@ -23,7 +23,7 @@ import { Icon } from "astro-icon/components";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { licenseConfig, permalinkConfig, shareConfig } from "src/config";
-import ImageWrapper from "../../components/misc/ImageWrapper.astro";
+import Image from "../../components/atoms/Image/Image.astro";
 import PostMetadata from "@components/features/posts/PostMeta.astro";
 import { profileConfig, siteConfig } from "../../config";
 import { formatDateToYYYYMMDD } from "../../utils/date-utils";
@@ -282,7 +282,7 @@ const jsonLd = {
                 entry.data.image && siteConfig.showCoverInContent && (
                     <>
                         <div class="mt-4" />
-                        <ImageWrapper
+                        <Image
                             id="post-cover"
                             src={entry.data.image}
                             basePath={getFileDirFromPath(entry.filePath || '')}

@@ -1,5 +1,5 @@
 ---
-import ImageWrapper from "../components/misc/ImageWrapper.astro";
+import Image from "../components/atoms/Image/Image.astro";
 import { siteConfig } from "../config";
 import localAnimeList from "../data/anime";
 import I18nKey from "../i18n/i18nKey";
@@ -313,7 +313,7 @@ const hiddenAnimeList = animeList.slice(INITIAL_DISPLAY_COUNT);
 													rel="noopener noreferrer"
 													class="block w-full h-full"
 												>
-													<ImageWrapper
+													<Image
 														src={anime.cover}
 														alt={anime.title}
 														class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110"
@@ -454,7 +454,7 @@ const hiddenAnimeList = animeList.slice(INITIAL_DISPLAY_COUNT);
 													rel="noopener noreferrer"
 													class="block w-full h-full"
 												>
-													<ImageWrapper
+													<Image
 														src={anime.cover}
 														alt={anime.title}
 														class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110"
