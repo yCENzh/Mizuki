@@ -1,8 +1,10 @@
 ---
-import Icon from "../components/misc/Icon.astro";
+import { PageHeader } from "../components/features/page-header";
+import { SectionTitle } from "../components/features/section-title";
+import { SkillCard } from "../components/features/skills";
+import { SkillsCategory } from "../components/features/skills-category";
 import IconifyLoader from "../components/misc/IconifyLoader.astro";
 import SkillsChart from "../components/skills/SkillsChart.astro";
-import { SkillCard } from "../components/features/skills";
 import { siteConfig } from "../config";
 import { UNCATEGORIZED } from "../constants/constants";
 import {
@@ -14,7 +16,6 @@ import {
 } from "../data/skills";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
-
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 
 if (!siteConfig.featurePages.skills) {
@@ -56,98 +57,54 @@ const getCategoryText = (category: string) => {
 
 const title = i18n(I18nKey.skills);
 const subtitle = i18n(I18nKey.skillsSubtitle);
-
 const allIcons = skillsData.map((skill) => skill.icon).filter(Boolean);
 ---
 
 <MainGridLayout title={title} description={subtitle}>
-  <script is:inline>
-    document.documentElement.setAttribute('data-page-type', 'skills');
-  </script>
-  
-  <script>
-    import('../scripts/right-sidebar-layout.js');
-  </script>
-  
-  <IconifyLoader preloadIcons={allIcons} />
-  
-  <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
-    <div class="card-base z-10 px-9 py-6 relative w-full">
-      <div class="flex flex-col items-start justify-center mb-8">
-        <h1 class="text-4xl font-bold text-black/90 dark:text-white/90 mb-2 relative
-                  before:w-1 before:h-8 before:rounded-md before:bg-[var(--primary)]
-                  before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-4">
-          {i18n(I18nKey.skills)}
-        </h1>
-        <p class="text-lg text-black/60 dark:text-white/60">
-          {i18n(I18nKey.skillsSubtitle)}
-        </p>
-      </div>
+	<script is:inline>
+		document.documentElement.setAttribute("data-page-type", "skills");
+	</script>
+	<script>
+		import("../scripts/right-sidebar-layout.js");
+	</script>
 
-      <SkillsChart stats={stats} totalExperience={totalExperience} />
+	<IconifyLoader preloadIcons={allIcons} />
 
-      {advancedSkills.length > 0 && (
-        <div class="mb-8">
-          <h2 class="text-2xl font-bold text-black/90 dark:text-white/90 mb-4 relative
-                    before:w-1 before:h-6 before:rounded-md before:bg-[var(--primary)]
-                    before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-4">
-            {i18n(I18nKey.skillsAdvancedTitle)}
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {advancedSkills.map((skill) => (
-              <SkillCard skill={skill} size="medium" showProgress={true} showIcon={true} />
-            ))}
-          </div>
-        </div>
-      )}
+	<div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
+		<div class="card-base z-10 px-9 py-6 relative w-full">
+			<PageHeader title={title} subtitle={subtitle} />
 
-      <div class="space-y-8 skills-container" style="container-type: inline-size;">
-        {categories.map((category) => {
-          const categorySkills = skillsByCategory[category];
-          if (categorySkills.length === 0) return null;
-          
-          return (
-            <div>
-              <h2 class="text-2xl font-bold text-black/90 dark:text-white/90 mb-4 relative
-                        before:w-1 before:h-6 before:rounded-md before:bg-[var(--primary)]
-                        before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-4">
-                {getCategoryText(category)}
-                <span class="text-lg font-normal text-black/60 dark:text-white/60 ml-2">
-                  ({categorySkills.length})
-                </span>
-              </h2>
-              <div class="skills-grid-container grid grid-cols-1 gap-4">
-                {categorySkills.map((skill) => (
-                  <SkillCard skill={skill} size="small" showProgress={true} showIcon={true} />
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  </div>
+			<SkillsChart stats={stats} totalExperience={totalExperience} />
+
+			{advancedSkills.length > 0 && (
+				<div class="mb-8">
+					<SectionTitle title={i18n(I18nKey.skillsAdvancedTitle)} />
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+						{advancedSkills.map((skill) => (
+							<SkillCard skill={skill} size="medium" showProgress={true} showIcon={true} />
+						))}
+					</div>
+				</div>
+			)}
+
+			<div class="space-y-8">
+				{categories.map((category) => {
+					const categorySkills = skillsByCategory[category];
+					if (categorySkills.length === 0) return null;
+
+					return (
+						<SkillsCategory
+							category={category}
+							categoryText={getCategoryText(category)}
+							skills={categorySkills}
+						/>
+					);
+				})}
+			</div>
+		</div>
+	</div>
 </MainGridLayout>
 
 <style>
-  .skills-container {
-    position: relative;
-  }
-  
-  .skills-grid-container {
-    grid-template-columns: 1fr;
-    transition: grid-template-columns 0.3s ease;
-  }
-  
-  @container (min-width: 40rem) {
-    .skills-grid-container {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  
-  @container (min-width: 56.25rem) {
-    .skills-grid-container {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
+	/* 保留样式块占位，后续如需扩展可在此添加 */
 </style>
