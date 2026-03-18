@@ -1,5 +1,4 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
 import { Icon } from "astro-icon/components";
 import { getFileDirFromPath, getTagUrl, getPostUrl } from "@/utils/url-utils";
@@ -10,7 +9,7 @@ import Image from "../../atoms/Image/Image.astro";
 import PostMetadata from "./PostMeta.astro";
 import type { PostCardProps } from "./types";
 
-const { entry, style }: PostCardProps = Astro.props;
+const { entry, style }: PostCardProps = Astro.props as PostCardProps;
 const className = Astro.props.class;
 
 const {

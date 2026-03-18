@@ -1,8 +1,6 @@
 ---
 import type { IconProps } from "./types";
 
-const props: IconProps = Astro.props;
-
 const {
 	icon,
 	class: className = "",
@@ -11,7 +9,7 @@ const {
 	color,
 	fallback = "●",
 	loading = "lazy",
-} = props;
+} = Astro.props as IconProps;
 
 const sizeClasses = {
 	xs: "text-xs",

@@ -1,12 +1,10 @@
 ---
-import type { CollectionEntry } from "astro:content";
-import type { Page } from "astro";
 import { siteConfig } from "../../../config";
 import { widgetManager } from "../../../utils/widget-manager";
 import PostCard from "./PostCard.astro";
 import type { PostPageProps } from "./types";
 
-const { page }: PostPageProps = Astro.props;
+const { page }: PostPageProps = Astro.props as PostPageProps;
 
 const hasRightSidebars =
 	widgetManager.getComponentsByPosition("top", "right", "desktop").length > 0 ||
