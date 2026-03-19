@@ -5,19 +5,18 @@ import Footer from "@components/organisms/footer/Footer.astro";
 import RightSideBar from "@components/layout/RightSideBar.astro";
 import Navbar from "@components/organisms/navigation/Navbar.astro";
 import SideBar from "@components/widgets/sidebar/SideBar.astro";
+import Banner from "@components/layout/Banner.astro";
 import type { MarkdownHeading } from "astro";
 import { Icon } from "astro-icon/components";
 import FullscreenWallpaper from "@components/misc/FullscreenWallpaper.astro";
 import IconifyLoader from "@components/misc/IconifyLoader.astro";
-import Image from "@components/atoms/image/Image.astro";
-import TypewriterText from "@components/atoms/typewriter-text/TypewriterText.astro";
 import {
 	fullscreenWallpaperConfig,
 	siteConfig,
 } from "../config";
 import {
 	BANNER_HEIGHT,
-	BANNER_HEIGHT_EXTEND,
+	// BANNER_HEIGHT_EXTEND,
 	// BANNER_HEIGHT_HOME,
 	// MAIN_PANEL_OVERLAPS_BANNER_HEIGHT,
 } from "../constants/constants";
@@ -55,7 +54,7 @@ interface Props {
 // };
 
 // 获取banner图片的辅助函数
-const getBannerImages = async () => {
+const getBannerImages = async (): Promise<{ desktop: string | string[]; mobile: string | string[] }> => {
 	let bannerSrc = siteConfig.banner.src;
 
 	// 如果启用了图片API，获取API图片
@@ -90,8 +89,8 @@ const getBannerImages = async () => {
 	}
 	// 如果是字符串或字符串数组，同时用于桌面端和移动端
 	return {
-		desktop: bannerSrc,
-		mobile: bannerSrc,
+		desktop: bannerSrc as string | string[],
+		mobile: bannerSrc as string | string[],
 	};
 };
 
@@ -111,7 +110,6 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 
 // 检查是否为首页
 const isHomePage = Astro.url.pathname === "/" || Astro.url.pathname === "";
-const showHomeText = siteConfig.banner.homeText?.enable && isHomePage;
 // 手机端非首页不显示banner的CSS类
 const mobileNonHomeBannerClass = !isHomePage ? "mobile-hide-banner" : "";
 
@@ -596,202 +594,11 @@ const transparentClass = shouldEnableTransparency
     </div>
 </div>
 
-<!-- Banner - 始终渲染，通过 JS 控制显示隐藏 -->
-<div id="banner-wrapper" class={`absolute z-10 w-full transition duration-700 overflow-hidden ${mobileNonHomeBannerClass}`} style={`top: -${BANNER_HEIGHT_EXTEND}vh`}>
-
-    {siteConfig.banner.carousel?.enable && ((bannerImages.desktop && Array.isArray(bannerImages.desktop) && bannerImages.desktop.length > 1) || (bannerImages.mobile && Array.isArray(bannerImages.mobile) && bannerImages.mobile.length > 1)) ? (
-        <!-- Carousel mode for multiple images -->
-        <div id="banner-carousel" class="relative h-full w-full">
-            <ul class="carousel-list h-full w-full">
-                {Math.max(
-                    Array.isArray(bannerImages.desktop) ? bannerImages.desktop.length : 0,
-                    Array.isArray(bannerImages.mobile) ? bannerImages.mobile.length : 0
-                ) && Array.from({ length: Math.max(
-                    Array.isArray(bannerImages.desktop) ? bannerImages.desktop.length : 0,
-                    Array.isArray(bannerImages.mobile) ? bannerImages.mobile.length : 0
-                ) }).map((_, index) => {
-                    // 确保至少有一个平台有对应索引的图片
-                    const hasDesktopImage = Array.isArray(bannerImages.desktop) && bannerImages.desktop[index];
-                    const hasMobileImage = Array.isArray(bannerImages.mobile) && bannerImages.mobile[index];
-                    
-                    // 如果两个平台都没有对应索引的图片，跳过这个轮播项
-                    if (!hasDesktopImage && !hasMobileImage) {
-                        return null;
-                    }
-                    
-                    return (
-                        <li class={`carousel-item absolute inset-0 transition-all duration-500 ${index === 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}>
-                            <!-- Mobile: use mobile-specific images -->
-                            {hasMobileImage && (
-                                <Image 
-                                    alt={`Mobile banner image ${index + 1}`} 
-                                    class:list={["block md:hidden object-cover h-full w-full transition-transform duration-500 ease-out"]}
-                                    src={Array.isArray(bannerImages.mobile) ? bannerImages.mobile[index] : (typeof bannerImages.mobile === 'string' ? bannerImages.mobile : '')} 
-                                    position={siteConfig.banner.position}
-                                    loading={index === 0 ? "eager" : "lazy"}
-                                />
-                            )}
-                            <!-- Desktop/Tablet: use desktop-specific images -->
-                            {hasDesktopImage && (
-                                <Image 
-                                    alt={`Desktop banner image ${index + 1}`} 
-                                    class:list={["hidden md:block object-cover h-full w-full transition-transform duration-500 ease-out"]}
-                                    src={Array.isArray(bannerImages.desktop) ? bannerImages.desktop[index] : (typeof bannerImages.desktop === 'string' ? bannerImages.desktop : '')} 
-                                    position={siteConfig.banner.position}
-                                    loading={index === 0 ? "eager" : "lazy"}
-                                />
-                            )}
-                        </li>
-                    );
-                }).filter(Boolean)}
-            </ul>
-        </div>
-    ) : (
-        <!-- Single image mode -->
-        <div id="banner-single-container" class="relative h-full w-full">
-            <script is:inline define:vars={{ desktopImages: bannerImages.desktop, mobileImages: bannerImages.mobile, position: siteConfig.banner.position }}>
-                (function() {
-                    const getRandomImage = (images, storageKey) => {
-                        if (Array.isArray(images)) {
-                            if (images.length === 0) return null;
-                            if (images.length === 1) return images[0];
-                            
-                            const lastIndex = sessionStorage.getItem(storageKey);
-                            let newIndex;
-                            
-                            do {
-                                newIndex = Math.floor(Math.random() * images.length);
-                            } while (newIndex === parseInt(lastIndex || '-1'));
-                            
-                            sessionStorage.setItem(storageKey, newIndex.toString());
-                            return images[newIndex];
-                        }
-                        return images || null;
-                    };
-                    
-                    const container = document.getElementById('banner-single-container');
-                    
-                    // 检查容器是否已有图片，避免在页面切换或缩放时重复创建
-                    if (container.querySelector('img')) {
-                        return;
-                    }
-                    
-                    const desktopSrc = getRandomImage(desktopImages, 'banner_desktop_index');
-                    const mobileSrc = getRandomImage(mobileImages, 'banner_mobile_index');
-                    
-                    if (mobileSrc) {
-                        const mobileImg = document.createElement('img');
-                        mobileImg.alt = 'Mobile banner image of the blog';
-                        mobileImg.className = 'block md:hidden object-cover h-full w-full transition duration-700 opacity-100';
-                        mobileImg.src = mobileSrc;
-                        mobileImg.loading = 'eager';
-                        mobileImg.dataset.position = position;
-                        container.appendChild(mobileImg);
-                    }
-                    
-                    if (desktopSrc) {
-                        const desktopImg = document.createElement('img');
-                        desktopImg.id = 'banner';
-                        desktopImg.alt = 'Desktop banner image of the blog';
-                        desktopImg.className = 'hidden md:block object-cover h-full w-full transition duration-700 opacity-100';
-                        desktopImg.src = desktopSrc;
-                        desktopImg.loading = 'eager';
-                        desktopImg.dataset.position = position;
-                        container.appendChild(desktopImg);
-                    }
-                })();
-            </script>
-        </div>
-    )}
-    
-    <!-- Home page text overlay -->
-    {siteConfig.banner.homeText?.enable && (
-        <div class={`banner-text-overlay absolute inset-0 z-20 flex items-center justify-center ${!showHomeText ? 'hidden' : ''}`}>
-            <div class="w-4/5 lg:w-3/4 text-center mb-0">
-                <div class="flex flex-col">
-                    {siteConfig.banner.homeText?.title && (
-                        <h1 class="banner-title text-6xl lg:text-8xl text-white drop-shadow-lg mb-2 lg:mb-4">
-                            {siteConfig.banner.homeText.title}
-                        </h1>
-                    )}
-                    {siteConfig.banner.homeText?.subtitle && (
-                        <h2 class="banner-subtitle text-xl lg:text-3xl text-white/90 drop-shadow-md">
-                            <span class="inline-block min-h-[1.2em]">
-                                {siteConfig.banner.homeText.typewriter?.enable ? (
-                                    <TypewriterText 
-                                        text={siteConfig.banner.homeText.subtitle}
-                                        speed={siteConfig.banner.homeText.typewriter.speed}
-                                        deleteSpeed={siteConfig.banner.homeText.typewriter.deleteSpeed}
-                                        pauseTime={siteConfig.banner.homeText.typewriter.pauseTime}
-                                    />
-                                ) : (
-                                    Array.isArray(siteConfig.banner.homeText.subtitle) 
-                                        ? siteConfig.banner.homeText.subtitle[0] 
-                                        : siteConfig.banner.homeText.subtitle
-                                )}
-                            </span>
-                        </h2>
-                    )}
-                </div>
-            </div>
-        </div>
-    )}
-    
-    <!-- Water waves effect -->
-    {siteConfig.banner.waves?.enable && (
-        <div class="waves absolute -bottom-[1px] h-[10vh] max-h-[9.375rem] min-h-[3.125rem] w-full md:h-[15vh]" id="header-waves" style="transform: translateZ(0); will-change: fill;">
-            <svg
-                class="waves"
-                xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-                viewBox="0 20 150 32"
-                preserveAspectRatio="none"
-                shape-rendering="auto"
-                style="transform: translateZ(0); backface-visibility: hidden;"
-            >
-                <defs>
-                    <path
-                        id="gentle-wave"
-                        d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v48h-352z"
-                    >
-                    </path>
-                </defs>
-                <g class="parallax" style="transform: translateZ(0);">
-                    <use
-                        xlink:href="#gentle-wave"
-                        x="48"
-                        y="0"
-                        class="opacity-25 fill-[var(--page-bg)]"
-                        style="animation-delay: -2s; animation-duration: 7s; will-change: transform;"
-                    ></use>
-                    <use
-                        xlink:href="#gentle-wave"
-                        x="48"
-                        y="3"
-                        class="opacity-50 fill-[var(--page-bg)]"
-                        style="animation-delay: -3s; animation-duration: 10s; will-change: transform;"
-                    ></use>
-                    <use
-                        xlink:href="#gentle-wave"
-                        x="48"
-                        y="5"
-                        class="opacity-75 fill-[var(--page-bg)]"
-                        style="animation-delay: -4s; animation-duration: 13s; will-change: transform;"
-                    ></use>
-                    <use
-                        xlink:href="#gentle-wave"
-                        x="48"
-                        y="7"
-                        class="fill-[var(--page-bg)]"
-                        style="animation-delay: -5s; animation-duration: 20s; will-change: transform;"
-                    ></use>
-                </g>
-            </svg>
-        </div>
-    )}
-    
-
-</div>
+<!-- Banner 组件 -->
+<Banner
+	bannerImages={bannerImages}
+	mobileNonHomeBannerClass={mobileNonHomeBannerClass}
+/>
 
 <!-- Main content -->
 <div class={`absolute w-full z-30 pointer-events-none ${mobileNonHomeBannerClass ? 'mobile-main-no-banner' : ''} ${siteConfig.wallpaperMode.defaultMode === 'none' ? 'no-banner-layout' : ''} ${transparentClass}`} style={`top: ${finalMainPanelTop}`}>

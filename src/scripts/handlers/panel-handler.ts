@@ -18,24 +18,24 @@ interface PanelConfig {
 export class PanelHandler {
 	private panels: PanelConfig[] = [
 		{
-			id: 'display-setting',
-			ignoreElements: ['display-setting', 'display-settings-switch'],
+			id: "display-setting",
+			ignoreElements: ["display-setting", "display-settings-switch"],
 		},
 		{
-			id: 'nav-menu-panel',
-			ignoreElements: ['nav-menu-panel', 'nav-menu-switch'],
+			id: "nav-menu-panel",
+			ignoreElements: ["nav-menu-panel", "nav-menu-switch"],
 		},
 		{
-			id: 'search-panel',
-			ignoreElements: ['search-panel', 'search-bar', 'search-switch'],
+			id: "search-panel",
+			ignoreElements: ["search-panel", "search-bar", "search-switch"],
 		},
 		{
-			id: 'mobile-toc-panel',
-			ignoreElements: ['mobile-toc-panel', 'mobile-toc-switch'],
+			id: "mobile-toc-panel",
+			ignoreElements: ["mobile-toc-panel", "mobile-toc-switch"],
 		},
 		{
-			id: 'wallpaper-mode-panel',
-			ignoreElements: ['wallpaper-mode-panel', 'wallpaper-mode-switch'],
+			id: "wallpaper-mode-panel",
+			ignoreElements: ["wallpaper-mode-panel", "wallpaper-mode-switch"],
 		},
 	];
 
@@ -49,7 +49,7 @@ export class PanelHandler {
 	async init(): Promise<void> {
 		try {
 			// 动态导入面板管理器
-			const module = await import('../../utils/panel-manager.js');
+			const module = await import("../../utils/panel-manager.js");
 			this.panelManager = module.panelManager;
 
 			// 设置所有面板的点击外部关闭功能
@@ -57,10 +57,10 @@ export class PanelHandler {
 				this.setupClickOutsideToClose(panel);
 			});
 
-			console.log('PanelHandler: 初始化完成');
+			console.log("PanelHandler: 初始化完成");
 			return Promise.resolve();
 		} catch (error) {
-			console.error('PanelHandler: 初始化失败', error);
+			console.error("PanelHandler: 初始化失败", error);
 			return Promise.reject(error);
 		}
 	}
@@ -92,7 +92,7 @@ export class PanelHandler {
 
 		// 存储绑定的处理器以便后续清理
 		this.boundClickHandlers.set(panel.id, clickHandler);
-		document.addEventListener('click', clickHandler);
+		document.addEventListener("click", clickHandler);
 	}
 
 	/**
@@ -112,7 +112,7 @@ export class PanelHandler {
 		// 移除事件监听
 		const handler = this.boundClickHandlers.get(panelId);
 		if (handler) {
-			document.removeEventListener('click', handler);
+			document.removeEventListener("click", handler);
 			this.boundClickHandlers.delete(panelId);
 		}
 
@@ -125,8 +125,8 @@ export class PanelHandler {
 	 */
 	destroy(): void {
 		// 移除所有事件监听
-		this.boundClickHandlers.forEach((handler, id) => {
-			document.removeEventListener('click', handler);
+		this.boundClickHandlers.forEach((handler) => {
+			document.removeEventListener("click", handler);
 		});
 		this.boundClickHandlers.clear();
 		this.panelManager = null;

@@ -3,7 +3,6 @@
  * 管理页面滚动相关的功能，包括自定义滚动条和滚动监听
  */
 
-import { SCROLL_CONFIG, SWUP_SELECTORS } from '../core/swup-config';
 
 /**
  * 滚动处理器类
@@ -18,14 +17,14 @@ export class ScrollHandler {
 	 */
 	initCustomScrollbar(): void {
 		const katexElements = document.querySelectorAll(
-			'.katex-display:not([data-scrollbar-initialized])'
+			".katex-display:not([data-scrollbar-initialized])",
 		) as NodeListOf<HTMLElement>;
 
 		katexElements.forEach((element) => {
 			if (!element.parentNode) return;
 
-			const container = document.createElement('div');
-			container.className = 'katex-display-container';
+			const container = document.createElement("div");
+			container.className = "katex-display-container";
 			element.parentNode.insertBefore(container, element);
 			container.appendChild(element);
 
@@ -39,7 +38,7 @@ export class ScrollHandler {
 			// 添加 webkit 自定义滚动条样式（只添加一次）
 			this.addKatexScrollbarStyle();
 
-			element.setAttribute('data-scrollbar-initialized', 'true');
+			element.setAttribute("data-scrollbar-initialized", "true");
 		});
 	}
 
@@ -49,7 +48,7 @@ export class ScrollHandler {
 	private addKatexScrollbarStyle(): void {
 		if (this.katexScrollbarStyleAdded) return;
 
-		const style = document.createElement('style');
+		const style = document.createElement("style");
 		style.textContent = `
 			.katex-display-container::-webkit-scrollbar {
 				height: 6px;
@@ -66,8 +65,8 @@ export class ScrollHandler {
 			}
 		`;
 
-		if (!document.head.querySelector('style[data-katex-scrollbar]')) {
-			style.setAttribute('data-katex-scrollbar', 'true');
+		if (!document.head.querySelector("style[data-katex-scrollbar]")) {
+			style.setAttribute("data-katex-scrollbar", "true");
 			document.head.appendChild(style);
 			this.katexScrollbarStyleAdded = true;
 		}
@@ -77,8 +76,8 @@ export class ScrollHandler {
 	 * 检查并加载 KaTeX 样式
 	 */
 	checkKatex(): void {
-		if (document.querySelector('.katex')) {
-			import('katex/dist/katex.css');
+		if (document.querySelector(".katex")) {
+			import("katex/dist/katex.css");
 		}
 	}
 
@@ -88,7 +87,7 @@ export class ScrollHandler {
 	 */
 	static throttle<T extends (...args: any[]) => any>(
 		func: T,
-		limit: number
+		limit: number,
 	): (...args: Parameters<T>) => void {
 		let inThrottle = false;
 		return function (this: any, ...args: Parameters<T>) {

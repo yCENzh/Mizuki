@@ -3,36 +3,30 @@
  * 协调所有子模块，提供统一的页面过渡管理
  */
 
-import { siteConfig, widgetConfigs } from '../config';
-import { SwupHooksManager } from './core/swup-hooks';
+import { siteConfig, widgetConfigs } from "../config";
+import { SwupHooksManager } from "./core/swup-hooks";
 import {
 	FancyboxHandler,
 	getFancyboxHandler,
 	initFancybox,
 	cleanupFancybox,
-} from './handlers/fancybox-handler';
+} from "./handlers/fancybox-handler";
 import {
-	ScrollHandler,
-	getScrollHandler,
 	initCustomScrollbar,
 	checkKatex,
-} from './handlers/scroll-handler';
+} from "./handlers/scroll-handler";
 import {
 	BackToTopHandler,
 	getBackToTopHandler,
 	initBackToTopHandler,
-} from './handlers/back-to-top-handler';
+} from "./handlers/back-to-top-handler";
 import {
 	PanelHandler,
 	getPanelHandler,
 	initPanelHandler,
-} from './handlers/panel-handler';
-import { setupSakuraOnDOMReady } from './effects/sakura-effect';
-import {
-	BANNER_HEIGHT,
-	BANNER_HEIGHT_EXTEND,
-	SWUP_SELECTORS,
-} from './core/swup-config';
+} from "./handlers/panel-handler";
+import { setupSakuraOnDOMReady } from "./effects/sakura-effect";
+import { SWUP_SELECTORS } from "./core/swup-config";
 
 /**
  * Swup 管理器类
@@ -41,7 +35,6 @@ import {
 export class SwupManager {
 	private hooksManager: SwupHooksManager | null = null;
 	private fancyboxHandler: FancyboxHandler;
-	private scrollHandler: ScrollHandler;
 	private backToTopHandler: BackToTopHandler;
 	private panelHandler: PanelHandler;
 
@@ -50,12 +43,11 @@ export class SwupManager {
 
 	constructor() {
 		this.bannerEnabled = !!document.getElementById(
-			SWUP_SELECTORS.bannerWrapper.slice(1)
+			SWUP_SELECTORS.bannerWrapper.slice(1),
 		);
 
 		// 初始化各个处理器
 		this.fancyboxHandler = getFancyboxHandler();
-		this.scrollHandler = getScrollHandler();
 		this.backToTopHandler = getBackToTopHandler(this.bannerEnabled);
 		this.panelHandler = getPanelHandler();
 	}
@@ -82,7 +74,7 @@ export class SwupManager {
 		this.initBanner();
 
 		this.initialized = true;
-		console.log('SwupManager: 初始化完成');
+		console.log("SwupManager: 初始化完成");
 	}
 
 	/**
@@ -92,7 +84,7 @@ export class SwupManager {
 		try {
 			await initPanelHandler();
 		} catch (error) {
-			console.error('SwupManager: 面板处理器初始化失败', error);
+			console.error("SwupManager: 面板处理器初始化失败", error);
 		}
 	}
 
@@ -131,15 +123,15 @@ export class SwupManager {
 			this.hooksManager.registerHooks();
 		} else {
 			// 监听 Swup 就绪事件
-			document.addEventListener('swup:enable', () => {
+			document.addEventListener("swup:enable", () => {
 				if (this.hooksManager) {
 					this.hooksManager.registerHooks();
 				}
 			});
 
 			// 监听 DOM 加载（确保首屏也能加载优化组件）
-			if (document.readyState === 'loading') {
-				document.addEventListener('DOMContentLoaded', async () => {
+			if (document.readyState === "loading") {
+				document.addEventListener("DOMContentLoaded", async () => {
 					await initFancybox();
 					checkKatex();
 				});
@@ -154,8 +146,8 @@ export class SwupManager {
 	 * 初始化 Banner
 	 */
 	private initBanner(): void {
-		if (document.readyState === 'loading') {
-			document.addEventListener('DOMContentLoaded', async () => {
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", async () => {
 				this.showBanner();
 			});
 		} else {
@@ -170,24 +162,24 @@ export class SwupManager {
 		requestAnimationFrame(() => {
 			// 处理单图 Banner (桌面端)
 			const banner = document.getElementById(
-				SWUP_SELECTORS.banner.slice(1)
+				SWUP_SELECTORS.banner.slice(1),
 			);
 			if (banner) {
-				banner.classList.remove('opacity-0', 'scale-105');
+				banner.classList.remove("opacity-0", "scale-105");
 			}
 
 			// 处理移动端单图 Banner
 			const mobileBanner = document.querySelector(
-				'.block.md\\:hidden[alt="Mobile banner image of the blog"]'
+				'.block.md\\:hidden[alt="Mobile banner image of the blog"]',
 			);
-			if (mobileBanner && !document.getElementById('banner-carousel')) {
-				mobileBanner.classList.remove('opacity-0', 'scale-105');
-				mobileBanner.classList.add('opacity-100');
+			if (mobileBanner && !document.getElementById("banner-carousel")) {
+				mobileBanner.classList.remove("opacity-0", "scale-105");
+				mobileBanner.classList.add("opacity-100");
 			}
 
 			// 处理轮播 Banner
 			const carousel = document.getElementById(
-				SWUP_SELECTORS.bannerCarousel.slice(1)
+				SWUP_SELECTORS.bannerCarousel.slice(1),
 			);
 			if (carousel) {
 				this.initCarousel();
@@ -199,22 +191,19 @@ export class SwupManager {
 	 * 初始化轮播图
 	 */
 	private initCarousel(): void {
-		const carouselItems = document.querySelectorAll('.carousel-item');
+		const carouselItems = document.querySelectorAll(".carousel-item");
 
 		// 根据屏幕尺寸过滤有效的轮播项
 		const isMobile = window.innerWidth < 768;
 		const validItems = Array.from(carouselItems).filter((item) => {
 			if (isMobile) {
-				return item.querySelector('.block.md\\:hidden');
+				return item.querySelector(".block.md\\:hidden");
 			} else {
-				return item.querySelector('.hidden.md\\:block');
+				return item.querySelector(".hidden.md\\:block");
 			}
 		});
 
-		if (
-			validItems.length > 1 &&
-			siteConfig.banner.carousel?.enable
-		) {
+		if (validItems.length > 1 && siteConfig.banner.carousel?.enable) {
 			let currentIndex = 0;
 			const interval = siteConfig.banner.carousel?.interval || 6;
 			let carouselInterval: any;
@@ -226,37 +215,37 @@ export class SwupManager {
 			let isSwiping = false;
 
 			const carousel = document.getElementById(
-				SWUP_SELECTORS.bannerCarousel.slice(1)
+				SWUP_SELECTORS.bannerCarousel.slice(1),
 			);
 
 			// 切换图片的函数
 			const switchToSlide = (index: number) => {
 				const currentItem = validItems[currentIndex];
-				currentItem.classList.remove('opacity-100', 'scale-100');
-				currentItem.classList.add('opacity-0', 'scale-110');
+				currentItem.classList.remove("opacity-100", "scale-100");
+				currentItem.classList.add("opacity-0", "scale-110");
 
 				currentIndex = index;
 
 				const nextItem = validItems[currentIndex];
-				nextItem.classList.add('opacity-100', 'scale-100');
-				nextItem.classList.remove('opacity-0', 'scale-110');
+				nextItem.classList.add("opacity-100", "scale-100");
+				nextItem.classList.remove("opacity-0", "scale-110");
 			};
 
 			// 初始化：隐藏所有图片，只显示第一张有效图片
 			carouselItems.forEach((item) => {
-				item.classList.add('opacity-0', 'scale-110');
-				item.classList.remove('opacity-100', 'scale-100');
+				item.classList.add("opacity-0", "scale-110");
+				item.classList.remove("opacity-100", "scale-100");
 			});
 
 			if (validItems.length > 0) {
-				validItems[0].classList.add('opacity-100', 'scale-100');
-				validItems[0].classList.remove('opacity-0', 'scale-110');
+				validItems[0].classList.add("opacity-100", "scale-100");
+				validItems[0].classList.remove("opacity-0", "scale-110");
 			}
 
 			// 移动端触摸事件
-			if (carousel && 'ontouchstart' in window) {
+			if (carousel && "ontouchstart" in window) {
 				carousel.addEventListener(
-					'touchstart',
+					"touchstart",
 					(e: TouchEvent) => {
 						startX = e.touches[0].clientX;
 						startY = e.touches[0].clientY;
@@ -264,31 +253,27 @@ export class SwupManager {
 						isPaused = true;
 						clearInterval(carouselInterval);
 					},
-					{ passive: true }
+					{ passive: true },
 				);
 
 				carousel.addEventListener(
-					'touchmove',
+					"touchmove",
 					(e: TouchEvent) => {
 						if (!startX || !startY) return;
 
-						const diffX = Math.abs(
-							e.touches[0].clientX - startX
-						);
-						const diffY = Math.abs(
-							e.touches[0].clientY - startY
-						);
+						const diffX = Math.abs(e.touches[0].clientX - startX);
+						const diffY = Math.abs(e.touches[0].clientY - startY);
 
 						if (diffX > diffY && diffX > 30) {
 							isSwiping = true;
 							e.preventDefault();
 						}
 					},
-					{ passive: false }
+					{ passive: false },
 				);
 
 				carousel.addEventListener(
-					'touchend',
+					"touchend",
 					(e: TouchEvent) => {
 						if (!startX || !startY || !isSwiping) {
 							isPaused = false;
@@ -318,7 +303,7 @@ export class SwupManager {
 						isPaused = false;
 						startCarousel();
 					},
-					{ passive: true }
+					{ passive: true },
 				);
 			}
 
@@ -336,11 +321,11 @@ export class SwupManager {
 
 			// 鼠标悬停暂停（桌面端）
 			if (carousel) {
-				carousel.addEventListener('mouseenter', () => {
+				carousel.addEventListener("mouseenter", () => {
 					isPaused = true;
 					clearInterval(carouselInterval);
 				});
-				carousel.addEventListener('mouseleave', () => {
+				carousel.addEventListener("mouseleave", () => {
 					isPaused = false;
 					startCarousel();
 				});
@@ -390,6 +375,3 @@ export async function initSwupManager(): Promise<void> {
 	const manager = getSwupManager();
 	await manager.init();
 }
-
-// 导出常量和类型
-export { BANNER_HEIGHT, BANNER_HEIGHT_EXTEND } from './core/swup-config';

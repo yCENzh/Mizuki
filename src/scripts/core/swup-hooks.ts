@@ -3,16 +3,15 @@
  * 处理页面过渡过程中的各种钩子事件
  */
 
-import { pathsEqual, url } from '../../utils/url-utils';
+import { pathsEqual, url } from "../../utils/url-utils";
 import {
 	BANNER_HEIGHT,
-	BANNER_HEIGHT_HOME,
 	SWUP_SELECTORS,
 	ANIMATION_CONFIG,
 	THEME_CONFIG,
-} from './swup-config';
-import type { FancyboxHandler } from '../handlers/fancybox-handler';
-import type { ScrollHandler } from '../handlers/scroll-handler';
+} from "./swup-config";
+import type { FancyboxHandler } from "../handlers/fancybox-handler";
+import type { ScrollHandler } from "../handlers/scroll-handler";
 
 // 钩子处理器接口
 export interface SwupHookHandlers {
@@ -61,11 +60,11 @@ export class SwupHooksManager {
 	 * 处理链接点击时的初始状态
 	 */
 	private registerLinkClickHook(): void {
-		window.swup.hooks.on('link:click', () => {
+		window.swup.hooks.on("link:click", () => {
 			// 移除首次页面加载的延迟
 			document.documentElement.style.setProperty(
-				'--content-delay',
-				'0ms'
+				"--content-delay",
+				"0ms",
 			);
 
 			// 处理 navbar 隐藏
@@ -80,7 +79,7 @@ export class SwupHooksManager {
 	 * 处理内容替换后的初始化
 	 */
 	private registerContentReplaceHook(): void {
-		window.swup.hooks.on('content:replace', () => {
+		window.swup.hooks.on("content:replace", () => {
 			// 初始化新页面的图片、公式、滚动条和 TOC
 			this.handlers.initFancybox?.();
 			this.handlers.checkKatex?.();
@@ -99,26 +98,23 @@ export class SwupHooksManager {
 	 * 处理页面访问开始时的状态
 	 */
 	private registerVisitStartHook(): void {
-		window.swup.hooks.on(
-			'visit:start',
-			(visit: VisitObject) => {
-				// 清理上一页的 Fancybox
-				this.handlers.cleanupFancybox?.();
+		window.swup.hooks.on("visit:start", (visit: VisitObject) => {
+			// 清理上一页的 Fancybox
+			this.handlers.cleanupFancybox?.();
 
-				// 处理页面状态
-				const isHomePage = pathsEqual(visit.to.url, url('/'));
-				this.handleBodyClass(isHomePage);
-				this.handleBannerTextVisibility(isHomePage);
-				this.handleNavbarState(isHomePage);
-				this.handleMobileBannerVisibility(isHomePage);
+			// 处理页面状态
+			const isHomePage = pathsEqual(visit.to.url, url("/"));
+			this.handleBodyClass(isHomePage);
+			this.handleBannerTextVisibility(isHomePage);
+			this.handleNavbarState(isHomePage);
+			this.handleMobileBannerVisibility(isHomePage);
 
-				// 扩展页面高度防止滚动动画跳跃
-				this.extendPageHeight(false);
+			// 扩展页面高度防止滚动动画跳跃
+			this.extendPageHeight(false);
 
-				// 隐藏 TOC
-				this.hideTOC();
-			}
-		);
+			// 隐藏 TOC
+			this.hideTOC();
+		});
 	}
 
 	/**
@@ -126,14 +122,14 @@ export class SwupHooksManager {
 	 * 处理页面视图显示
 	 */
 	private registerPageViewHook(): void {
-		window.swup.hooks.on('page:view', () => {
+		window.swup.hooks.on("page:view", () => {
 			// 扩展页面高度
 			this.extendPageHeight(false);
 
 			// 滚动到页面顶部
 			window.scrollTo({
 				top: 0,
-				behavior: 'instant',
+				behavior: "instant",
 			});
 
 			// 同步主题状态
@@ -149,18 +145,15 @@ export class SwupHooksManager {
 	 * 处理页面访问结束时的清理
 	 */
 	private registerVisitEndHook(): void {
-		window.swup.hooks.on(
-			'visit:end',
-			(_visit: VisitObject) => {
-				setTimeout(() => {
-					// 隐藏高度扩展元素
-					this.extendPageHeight(true);
+		window.swup.hooks.on("visit:end", (_visit: VisitObject) => {
+			setTimeout(() => {
+				// 隐藏高度扩展元素
+				this.extendPageHeight(true);
 
-					// 显示 TOC
-					this.showTOC();
-				}, ANIMATION_CONFIG.heightExtendDelay);
-			}
-		);
+				// 显示 TOC
+				this.showTOC();
+			}, ANIMATION_CONFIG.heightExtendDelay);
+		});
 	}
 
 	// ==================== 私有辅助方法 ====================
@@ -170,13 +163,12 @@ export class SwupHooksManager {
 	 */
 	private handleNavbarHideOnLinkClick(): void {
 		const navbar = document.getElementById(
-			SWUP_SELECTORS.navbarWrapper.slice(1)
+			SWUP_SELECTORS.navbarWrapper.slice(1),
 		);
-		if (navbar && document.body.classList.contains('lg:is-home')) {
-			const threshold =
-				window.innerHeight * (BANNER_HEIGHT / 100) - 88;
+		if (navbar && document.body.classList.contains("lg:is-home")) {
+			const threshold = window.innerHeight * (BANNER_HEIGHT / 100) - 88;
 			if (document.documentElement.scrollTop >= threshold) {
-				navbar.classList.add('navbar-hidden');
+				navbar.classList.add("navbar-hidden");
 			}
 		}
 	}
@@ -186,26 +178,23 @@ export class SwupHooksManager {
 	 */
 	private handleTOCReinit(): void {
 		const tocWrapper = document.getElementById(
-			SWUP_SELECTORS.tocWrapper.slice(1)
+			SWUP_SELECTORS.tocWrapper.slice(1),
 		);
 		const isArticlePage = tocWrapper !== null;
 
 		if (isArticlePage) {
 			// 重新初始化 TOC 组件
 			const tocElement = document.querySelector(
-				SWUP_SELECTORS.tableOfContents
+				SWUP_SELECTORS.tableOfContents,
 			);
-			if (
-				tocElement &&
-				typeof (tocElement as any).init === 'function'
-			) {
+			if (tocElement && typeof (tocElement as any).init === "function") {
 				setTimeout(() => {
 					(tocElement as any).init();
 				}, ANIMATION_CONFIG.tocReadyDelay);
 			}
 
 			// 重新初始化移动端 TOC 组件
-			if (typeof (window as any).mobileTOCInit === 'function') {
+			if (typeof (window as any).mobileTOCInit === "function") {
 				setTimeout(() => {
 					(window as any).mobileTOCInit();
 				}, ANIMATION_CONFIG.tocReadyDelay);
@@ -220,12 +209,12 @@ export class SwupHooksManager {
 		const navbar = document.getElementById(SWUP_SELECTORS.navbar.slice(1));
 		if (navbar) {
 			const transparentMode = navbar.getAttribute(
-				'data-transparent-mode'
+				"data-transparent-mode",
 			);
-			if (transparentMode === 'semifull') {
+			if (transparentMode === "semifull") {
 				if (
 					typeof (window as any).initSemifullScrollDetection ===
-					'function'
+					"function"
 				) {
 					(window as any).initSemifullScrollDetection();
 				}
@@ -237,12 +226,12 @@ export class SwupHooksManager {
 	 * 处理 body class
 	 */
 	private handleBodyClass(isHomePage: boolean): void {
-		const bodyElement = document.querySelector('body');
+		const bodyElement = document.querySelector("body");
 		if (bodyElement) {
 			if (isHomePage) {
-				bodyElement.classList.add('lg:is-home');
+				bodyElement.classList.add("lg:is-home");
 			} else {
-				bodyElement.classList.remove('lg:is-home');
+				bodyElement.classList.remove("lg:is-home");
 			}
 		}
 	}
@@ -252,13 +241,13 @@ export class SwupHooksManager {
 	 */
 	private handleBannerTextVisibility(isHomePage: boolean): void {
 		const bannerTextOverlay = document.querySelector(
-			SWUP_SELECTORS.bannerTextOverlay
+			SWUP_SELECTORS.bannerTextOverlay,
 		);
 		if (bannerTextOverlay) {
 			if (isHomePage) {
-				bannerTextOverlay.classList.remove('hidden');
+				bannerTextOverlay.classList.remove("hidden");
 			} else {
-				bannerTextOverlay.classList.add('hidden');
+				bannerTextOverlay.classList.add("hidden");
 			}
 		}
 	}
@@ -269,16 +258,16 @@ export class SwupHooksManager {
 	private handleNavbarState(isHomePage: boolean): void {
 		const navbar = document.getElementById(SWUP_SELECTORS.navbar.slice(1));
 		if (navbar) {
-			navbar.setAttribute('data-is-home', isHomePage.toString());
+			navbar.setAttribute("data-is-home", isHomePage.toString());
 
 			// 重新初始化 semifull 模式滚动检测
 			const transparentMode = navbar.getAttribute(
-				'data-transparent-mode'
+				"data-transparent-mode",
 			);
-			if (transparentMode === 'semifull') {
+			if (transparentMode === "semifull") {
 				if (
 					typeof (window as any).initSemifullScrollDetection ===
-					'function'
+					"function"
 				) {
 					(window as any).initSemifullScrollDetection();
 				}
@@ -291,28 +280,28 @@ export class SwupHooksManager {
 	 */
 	private handleMobileBannerVisibility(isHomePage: boolean): void {
 		const bannerWrapper = document.getElementById(
-			SWUP_SELECTORS.bannerWrapper.slice(1)
+			SWUP_SELECTORS.bannerWrapper.slice(1),
 		);
 		const mainContentWrapper = document.querySelector(
-			'.absolute.w-full.z-30'
+			".absolute.w-full.z-30",
 		);
 
 		if (bannerWrapper && mainContentWrapper) {
 			if (isHomePage) {
 				// 首页：延迟移除隐藏类
 				setTimeout(() => {
-					bannerWrapper.classList.remove('mobile-hide-banner');
+					bannerWrapper.classList.remove("mobile-hide-banner");
 				}, ANIMATION_CONFIG.mobileBannerDelay);
 				setTimeout(() => {
 					mainContentWrapper.classList.remove(
-						'mobile-main-no-banner'
+						"mobile-main-no-banner",
 					);
 				}, ANIMATION_CONFIG.mobileContentDelay);
 			} else {
 				// 非首页：分阶段隐藏
-				bannerWrapper.classList.add('mobile-hide-banner');
+				bannerWrapper.classList.add("mobile-hide-banner");
 				setTimeout(() => {
-					mainContentWrapper.classList.add('mobile-main-no-banner');
+					mainContentWrapper.classList.add("mobile-main-no-banner");
 				}, ANIMATION_CONFIG.mobileBannerDelay);
 			}
 		}
@@ -323,13 +312,13 @@ export class SwupHooksManager {
 	 */
 	private extendPageHeight(hide: boolean): void {
 		const heightExtend = document.getElementById(
-			SWUP_SELECTORS.pageHeightExtend.slice(1)
+			SWUP_SELECTORS.pageHeightExtend.slice(1),
 		);
 		if (heightExtend) {
 			if (hide) {
-				heightExtend.classList.add('hidden');
+				heightExtend.classList.add("hidden");
 			} else {
-				heightExtend.classList.remove('hidden');
+				heightExtend.classList.remove("hidden");
 			}
 		}
 	}
@@ -340,7 +329,7 @@ export class SwupHooksManager {
 	private hideTOC(): void {
 		const toc = document.getElementById(SWUP_SELECTORS.tocWrapper.slice(1));
 		if (toc) {
-			toc.classList.add('toc-not-ready');
+			toc.classList.add("toc-not-ready");
 		}
 	}
 
@@ -350,7 +339,7 @@ export class SwupHooksManager {
 	private showTOC(): void {
 		const toc = document.getElementById(SWUP_SELECTORS.tocWrapper.slice(1));
 		if (toc) {
-			toc.classList.remove('toc-not-ready');
+			toc.classList.remove("toc-not-ready");
 		}
 	}
 
@@ -368,9 +357,9 @@ export class SwupHooksManager {
 			: THEME_CONFIG.lightExpressiveTheme;
 
 		const currentTheme =
-			document.documentElement.getAttribute('data-theme');
+			document.documentElement.getAttribute("data-theme");
 		const hasDarkClass =
-			document.documentElement.classList.contains('dark');
+			document.documentElement.classList.contains("dark");
 
 		// 如果主题不匹配，使用批量更新减少重绘
 		if (currentTheme !== expectedTheme || hasDarkClass !== isDark) {
@@ -378,16 +367,16 @@ export class SwupHooksManager {
 				// 同步 data-theme 属性
 				if (currentTheme !== expectedTheme) {
 					document.documentElement.setAttribute(
-						'data-theme',
-						expectedTheme
+						"data-theme",
+						expectedTheme,
 					);
 				}
 				// 同步 dark class
 				if (hasDarkClass !== isDark) {
 					if (isDark) {
-						document.documentElement.classList.add('dark');
+						document.documentElement.classList.add("dark");
 					} else {
-						document.documentElement.classList.remove('dark');
+						document.documentElement.classList.remove("dark");
 					}
 				}
 			});
@@ -400,8 +389,8 @@ export class SwupHooksManager {
 	 */
 	private dispatchPageLoadedEvent(): void {
 		setTimeout(() => {
-			if (document.getElementById('tcomment')) {
-				const pageLoadedEvent = new CustomEvent('mizuki:page:loaded', {
+			if (document.getElementById("tcomment")) {
+				const pageLoadedEvent = new CustomEvent("mizuki:page:loaded", {
 					detail: {
 						path: window.location.pathname,
 						timestamp: Date.now(),
@@ -409,8 +398,8 @@ export class SwupHooksManager {
 				});
 				document.dispatchEvent(pageLoadedEvent);
 				console.log(
-					'Layout: 触发 mizuki:page:loaded 事件，路径:',
-					window.location.pathname
+					"Layout: 触发 mizuki:page:loaded 事件，路径:",
+					window.location.pathname,
 				);
 			}
 		}, ANIMATION_CONFIG.commentInitDelay);
