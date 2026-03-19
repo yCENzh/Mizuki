@@ -9,6 +9,7 @@ import SiteStats from "@/components/widgets/site-stats/SiteStats.astro";
 import Tags from "@/components/widgets/tags/Tags.astro";
 import { SidebarTOC } from "@/components/features/toc";
 import { widgetManager } from "@/utils/widget-manager";
+import { buildComponentProps } from "@/utils/widget-renderer";
 
 interface Props {
 	class?: string;
@@ -25,7 +26,8 @@ const stickyComponents = widgetManager.getComponentsByPosition(
 );
 
 // 组件映射表
-const componentMap = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const componentMap: Record<string, any> = {
 	profile: Profile,
 	announcement: Announcement,
 	categories: Categories,
@@ -37,24 +39,19 @@ const componentMap = {
 };
 
 // 渲染组件的辅助函数
-function renderComponent(component: any, index: number, _components: any[]) {
-	const ComponentToRender =
-		componentMap[component.type as keyof typeof componentMap];
+function renderComponent(component: WidgetComponentConfig, index: number, _components: WidgetComponentConfig[]) {
+	const ComponentToRender = componentMap[component.type];
 	if (!ComponentToRender) return null;
 
-	const componentClass = widgetManager.getComponentClass(component, index);
-	const componentStyle = widgetManager.getComponentStyle(component, index);
+	const props = buildComponentProps(component, index, headings);
 
 	return {
 		Component: ComponentToRender,
-		props: {
-			class: componentClass,
-			style: componentStyle,
-			headings: component.type === "toc" ? headings : undefined,
-			...component.customProps,
-		},
+		props,
 	};
 }
+
+type WidgetComponentConfig = ReturnType<typeof widgetManager.getComponentsByPosition>[number];
 ---
 
 <div id="right-sidebar" class:list={[className, "w-full"]}>
