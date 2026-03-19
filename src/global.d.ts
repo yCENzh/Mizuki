@@ -4,11 +4,11 @@ declare global {
 	interface HTMLElementTagNameMap {
 		"table-of-contents": HTMLElement & {
 			init?: () => void;
+			regenerateTOC?: () => void;
 		};
 	}
 
 	interface Window {
-		// Define swup type directly since @swup/astro doesn't export AstroIntegration
 		swup: any;
 		closeAnnouncement: () => void;
 		pagefind: {
@@ -29,7 +29,18 @@ declare global {
 			isLoaded: boolean;
 		};
 		siteConfig: any;
+		hljs?: {
+			highlightElement: (block: HTMLElement) => void;
+		};
+		renderMermaidDiagrams?: () => void;
 	}
+
+	interface Fancybox {
+		unbind: (selector: string) => void;
+		bind: (selector: string, options: object) => void;
+	}
+
+	var Fancybox: Fancybox | undefined;
 }
 
 interface SearchResult {
