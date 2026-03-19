@@ -26,8 +26,7 @@ const stickyComponents = widgetManager.getComponentsByPosition(
 );
 
 // 组件映射表
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const componentMap: Record<string, any> = {
+const componentMap: Record<string, unknown> = {
 	profile: Profile,
 	announcement: Announcement,
 	categories: Categories,
@@ -39,8 +38,9 @@ const componentMap: Record<string, any> = {
 };
 
 // 渲染组件的辅助函数
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function renderComponent(component: WidgetComponentConfig, index: number, _components: WidgetComponentConfig[]) {
-	const ComponentToRender = componentMap[component.type];
+	const ComponentToRender = componentMap[component.type] as any;
 	if (!ComponentToRender) return null;
 
 	const props = buildComponentProps(component, index, headings);
@@ -115,8 +115,7 @@ type WidgetComponentConfig = ReturnType<typeof widgetManager.getComponentsByPosi
 
 <script>
   import { widgetManager } from "../../utils/widget-manager";
-  const RIGHT_SIDEBAR_MANAGER_KEY = '__mizukiRightSidebarManagerInitialized';
-  
+
   // 响应式布局管理
   class RightSidebarManager {
     constructor() {
@@ -125,15 +124,15 @@ type WidgetComponentConfig = ReturnType<typeof widgetManager.getComponentsByPosi
     
     init() {
       this.updateResponsiveDisplay();
-      if (!(window as any).__mizukiRightSidebarResizeHandler) {
-        (window as any).__mizukiRightSidebarResizeHandler = () => this.updateResponsiveDisplay();
-        window.addEventListener('resize', (window as any).__mizukiRightSidebarResizeHandler);
+      if (!window.__mizukiRightSidebarResizeHandler) {
+        window.__mizukiRightSidebarResizeHandler = () => this.updateResponsiveDisplay();
+        window.addEventListener('resize', window.__mizukiRightSidebarResizeHandler);
       }
-      
+
       // 监听SWUP内容替换事件
-      if (typeof window !== 'undefined' && (window as any).swup && !(window as any).__mizukiRightSidebarSwupHooked) {
-        (window as any).__mizukiRightSidebarSwupHooked = true;
-        (window as any).swup.hooks.on('content:replace', () => {
+      if (typeof window !== 'undefined' && window.swup && !window.__mizukiRightSidebarSwupHooked) {
+        window.__mizukiRightSidebarSwupHooked = true;
+        window.swup.hooks.on('content:replace', () => {
           // 延迟执行以确保DOM已更新
           setTimeout(() => {
             const breakpoints = widgetManager.getBreakpoints();
@@ -185,8 +184,8 @@ type WidgetComponentConfig = ReturnType<typeof widgetManager.getComponentsByPosi
   }
   
   // 初始化右侧边栏管理器
-  if (!(window as any)[RIGHT_SIDEBAR_MANAGER_KEY]) {
-    (window as any)[RIGHT_SIDEBAR_MANAGER_KEY] = true;
+  if (!window.__mizukiRightSidebarManagerInitialized) {
+    window.__mizukiRightSidebarManagerInitialized = true;
     new RightSidebarManager();
   }
 </script>

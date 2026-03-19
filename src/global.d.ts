@@ -8,8 +8,41 @@ declare global {
 		};
 	}
 
+	/**
+	 * Swup hooks interface for type-safe swup access
+	 */
+	interface Swup {
+		hooks: {
+			on: (event: string, handler: (...args: unknown[]) => void) => void;
+			off: (event: string, handler: (...args: unknown[]) => void) => void;
+		};
+		navigate?: (url: string, options?: { history?: boolean }) => void;
+		preload?: (url: string) => Promise<void>;
+	}
+
+	/**
+	 * Site config TOC section interface
+	 */
+	interface SiteConfigTOC {
+		enable?: boolean;
+		mode?: "float" | "sidebar";
+		depth?: number;
+		useJapaneseBadge?: boolean;
+	}
+
+	/**
+	 * Site config interface for type-safe global siteConfig access
+	 */
+	interface SiteConfigWindow {
+		lang?: string;
+		toc?: SiteConfigTOC;
+		wallpaperMode?: {
+			defaultMode?: "banner" | "fullscreen" | "none";
+		};
+	}
+
 	interface Window {
-		swup: any;
+		swup: Swup | undefined;
 		closeAnnouncement: () => void;
 		pagefind: {
 			search: (query: string) => Promise<{
@@ -28,11 +61,19 @@ declare global {
 			onLoad: (callback: () => void) => void;
 			isLoaded: boolean;
 		};
-		siteConfig: any;
+		siteConfig: SiteConfigWindow;
 		hljs?: {
 			highlightElement: (block: HTMLElement) => void;
 		};
 		renderMermaidDiagrams?: () => void;
+
+		// Sidebar manager window properties
+		__mizukiSidebarResizeHandler?: () => void;
+		__mizukiSidebarSwupHooked?: boolean;
+		__mizukiSidebarManagerInitialized?: boolean;
+		__mizukiRightSidebarResizeHandler?: () => void;
+		__mizukiRightSidebarSwupHooked?: boolean;
+		__mizukiRightSidebarManagerInitialized?: boolean;
 	}
 
 	interface Fancybox {

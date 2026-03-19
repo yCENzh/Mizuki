@@ -3,6 +3,47 @@ import { LOCAL_PLAYLIST } from "../constants";
 import { i18n } from "../../../../i18n/translation";
 import Key from "../../../../i18n/i18nKey";
 
+/**
+ * Meting API song response structure
+ * Based on https://github.com/metowolf/MetingJS
+ */
+interface MetingSong {
+	id?: number | string;
+	name?: string;
+	title?: string;
+	artist?: string;
+	author?: string;
+	duration?: number | string;
+	pic?: string;
+	url?: string;
+}
+
+/**
+ * Convert Meting API song to internal Song type
+ */
+function convertMetingSong(song: MetingSong): Song {
+	let title = song.name ?? song.title ?? i18n(Key.unknownSong);
+	let artist = song.artist ?? song.author ?? i18n(Key.unknownArtist);
+	let dur = song.duration ?? 0;
+	if (typeof dur === "string") {
+		dur = parseInt(dur, 10);
+	}
+	if (dur > 10000) dur = Math.floor(dur / 1000);
+	if (!Number.isFinite(dur) || dur <= 0) dur = 0;
+
+	return {
+		id:
+			typeof song.id === "string"
+				? parseInt(song.id, 10)
+				: (song.id ?? 0),
+		title,
+		artist,
+		cover: song.pic ?? "",
+		url: song.url ?? "",
+		duration: dur,
+	};
+}
+
 export interface PlaylistState {
 	playlist: Song[];
 	currentIndex: number;
@@ -89,22 +130,8 @@ export async function fetchMetingPlaylist(
 	try {
 		const res = await fetch(apiUrl);
 		if (!res.ok) throw new Error("meting api error");
-		const list = await res.json();
-		state.playlist = list.map((song: any) => {
-			let title = song.name ?? song.title ?? i18n(Key.unknownSong);
-			let artist = song.artist ?? song.author ?? i18n(Key.unknownArtist);
-			let dur = song.duration ?? 0;
-			if (dur > 10000) dur = Math.floor(dur / 1000);
-			if (!Number.isFinite(dur) || dur <= 0) dur = 0;
-			return {
-				id: song.id,
-				title,
-				artist,
-				cover: song.pic ?? "",
-				url: song.url ?? "",
-				duration: dur,
-			};
-		});
+		const list: MetingSong[] = await res.json();
+		state.playlist = list.map(convertMetingSong);
 		onLoadEnd();
 	} catch (e) {
 		showError(i18n(Key.musicPlayerErrorPlaylist));

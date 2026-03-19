@@ -27,10 +27,26 @@ export interface TOCConfig {
  */
 export function generateTOCItems(config: TOCConfig): TOCItem[] {
 	const japaneseHiragana = [
-		"ア", "イ", "ウ", "エ", "オ",
-		"カ", "キ", "ク", "ケ", "コ",
-		"サ", "シ", "ス", "セ", "ソ",
-		"タ", "チ", "ツ", "テ", "ト",
+		"ア",
+		"イ",
+		"ウ",
+		"エ",
+		"オ",
+		"カ",
+		"キ",
+		"ク",
+		"ケ",
+		"コ",
+		"サ",
+		"シ",
+		"ス",
+		"セ",
+		"ソ",
+		"タ",
+		"チ",
+		"ツ",
+		"テ",
+		"ト",
 	];
 
 	const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
@@ -51,7 +67,10 @@ export function generateTOCItems(config: TOCConfig): TOCItem[] {
 		// 只为 H1 标题生成 badge
 		if (level === 1) {
 			h1Count++;
-			if (config.useJapaneseBadge && h1Count - 1 < japaneseHiragana.length) {
+			if (
+				config.useJapaneseBadge &&
+				h1Count - 1 < japaneseHiragana.length
+			) {
 				badge = japaneseHiragana[h1Count - 1];
 			} else {
 				badge = h1Count.toString();
@@ -72,13 +91,18 @@ export function generatePostItems(): PostItem[] {
 	const items: PostItem[] = [];
 
 	postCards.forEach((card) => {
-		const titleLink = card.querySelector('a[href*="/posts/"].transition.group');
-		const categoryLink = card.querySelector('a[href*="/categories/"].link-lg');
+		const titleLink = card.querySelector(
+			'a[href*="/posts/"].transition.group',
+		);
+		const categoryLink = card.querySelector(
+			'a[href*="/categories/"].link-lg',
+		);
 		const pinnedIcon = titleLink?.querySelector('svg[data-icon="mdi:pin"]');
 
 		if (titleLink) {
 			const href = titleLink.getAttribute("href");
-			const title = titleLink.textContent?.replace(/\s+/g, " ").trim() || "";
+			const title =
+				titleLink.textContent?.replace(/\s+/g, " ").trim() || "";
 			const category = categoryLink?.textContent?.trim() || "";
 			const pinned = !!pinnedIcon;
 
@@ -139,7 +163,7 @@ export function scrollToHeading(id: string, offset = 80): void {
  */
 export function getTOCConfig(): TOCConfig {
 	return {
-		useJapaneseBadge: (window as any).siteConfig?.toc?.useJapaneseBadge || false,
-		depth: (window as any).siteConfig?.toc?.depth || 3,
+		useJapaneseBadge: window.siteConfig?.toc?.useJapaneseBadge ?? false,
+		depth: window.siteConfig?.toc?.depth ?? 3,
 	};
 }

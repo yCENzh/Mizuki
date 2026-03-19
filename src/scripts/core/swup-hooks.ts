@@ -48,6 +48,7 @@ export class SwupHooksManager {
 	 * 注册所有 Swup 钩子
 	 */
 	registerHooks(): void {
+		if (!window.swup) return;
 		this.registerLinkClickHook();
 		this.registerContentReplaceHook();
 		this.registerVisitStartHook();
@@ -60,7 +61,7 @@ export class SwupHooksManager {
 	 * 处理链接点击时的初始状态
 	 */
 	private registerLinkClickHook(): void {
-		window.swup.hooks.on("link:click", () => {
+		window.swup!.hooks.on("link:click", () => {
 			// 移除首次页面加载的延迟
 			document.documentElement.style.setProperty(
 				"--content-delay",
@@ -79,7 +80,7 @@ export class SwupHooksManager {
 	 * 处理内容替换后的初始化
 	 */
 	private registerContentReplaceHook(): void {
-		window.swup.hooks.on("content:replace", () => {
+		window.swup!.hooks.on("content:replace", () => {
 			// 初始化新页面的图片、公式、滚动条和 TOC
 			this.handlers.initFancybox?.();
 			this.handlers.checkKatex?.();
@@ -98,7 +99,7 @@ export class SwupHooksManager {
 	 * 处理页面访问开始时的状态
 	 */
 	private registerVisitStartHook(): void {
-		window.swup.hooks.on("visit:start", (visit: VisitObject) => {
+		window.swup!.hooks.on("visit:start", (visit: VisitObject) => {
 			// 清理上一页的 Fancybox
 			this.handlers.cleanupFancybox?.();
 
@@ -122,7 +123,7 @@ export class SwupHooksManager {
 	 * 处理页面视图显示
 	 */
 	private registerPageViewHook(): void {
-		window.swup.hooks.on("page:view", () => {
+		window.swup!.hooks.on("page:view", () => {
 			// 扩展页面高度
 			this.extendPageHeight(false);
 
@@ -145,7 +146,7 @@ export class SwupHooksManager {
 	 * 处理页面访问结束时的清理
 	 */
 	private registerVisitEndHook(): void {
-		window.swup.hooks.on("visit:end", (_visit: VisitObject) => {
+		window.swup!.hooks.on("visit:end", (_visit: VisitObject) => {
 			setTimeout(() => {
 				// 隐藏高度扩展元素
 				this.extendPageHeight(true);

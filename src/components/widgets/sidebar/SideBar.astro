@@ -26,8 +26,7 @@ const tabletTopComponents = widgetManager.getComponentsByPosition("top", "left",
 const tabletStickyComponents = widgetManager.getComponentsByPosition("sticky", "left", "tablet");
 
 // 组件映射表
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const componentMap: Record<string, any> = {
+const componentMap: Record<string, unknown> = {
 	profile: Profile,
 	announcement: Announcement,
 	categories: Categories,
@@ -39,8 +38,9 @@ const componentMap: Record<string, any> = {
 };
 
 // 渲染组件的辅助函数
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function renderComponent(component: WidgetComponentConfig, index: number, _components: WidgetComponentConfig[]) {
-	const ComponentToRender = componentMap[component.type];
+	const ComponentToRender = componentMap[component.type] as any;
 	if (!ComponentToRender) return null;
 
 	const props = buildComponentProps(component, index, headings);

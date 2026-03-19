@@ -120,7 +120,7 @@ export function createHeadingObserver(
  * @returns TOC 配置
  */
 export function getTOCConfig(): TOCConfig {
-	const siteConfig = (window as any).siteConfig || {};
+	const siteConfig = window.siteConfig || {};
 	return {
 		enable: siteConfig.toc?.enable ?? true,
 		mode: siteConfig.toc?.mode ?? "sidebar",
