@@ -15,7 +15,14 @@ export { default as TOCItemComponent } from "./components/TOCItem.astro";
 export { default as TOCProgressBar } from "./components/TOCProgressBar.astro";
 
 // 类型导出
-export type { TOCItem, TOCConfig, HeadingData, TOCBaseProps } from "./types";
+export type {
+	TOCItem,
+	TOCConfig,
+	HeadingData,
+	TOCBaseProps,
+	TOCObserverOptions,
+	TOCScrollOptions,
+} from "./types/toc";
 
 // 工具函数导出
 export {
@@ -31,6 +38,48 @@ export {
 
 // Hooks 导出
 export * from "./hooks/useFloatingTOC";
+
+// Navigation hooks
+export {
+	extractHeadingsFromDOM,
+	scrollToHeading as scrollToTocHeading,
+	createHeadingClickHandler,
+	getTOCConfig as getTocConfig,
+	isPostPage,
+	getContainerSelector,
+} from "./hooks/useTocNavigation";
+
+// Highlight hooks
+export {
+	findActiveHeadingIndex,
+	findActiveHeadingByObserver,
+	calculateActiveHeadingRange,
+	createHeadingVisibilityObserver,
+	isElementInViewport,
+	calculateFallbackActiveHeading,
+} from "./hooks/useTocHighlight";
+
+// Scroll hooks
+export {
+	calculateReadingProgress as getReadingProgress,
+	updateProgressRing,
+	createScrollHandler,
+	scrollActiveIntoView,
+	calculateActiveIndicatorPosition,
+	debounce as debounceScroll,
+	throttle as throttleScroll,
+} from "./hooks/useTocScroll";
+
+// Calculator utilities
+export {
+	generateTOCItems as calcTOCItems,
+	getMinLevel as calcMinLevel,
+	getBadgeText,
+	getBadgeClass,
+	getIndentClass,
+	getTextClass,
+	isInRange,
+} from "./utils/toc-calculator";
 
 export {
 	JAPANESE_KATAKANA,

@@ -2,7 +2,7 @@
  * TOC 组件共享工具函数
  */
 
-import type { TOCItem, HeadingData, TOCConfig } from "../types";
+import type { TOCItem, HeadingData, TOCConfig } from "../types/toc";
 import { getKatakanaBadge } from "./japanese-katakana";
 
 /**
@@ -11,19 +11,19 @@ import { getKatakanaBadge } from "./japanese-katakana";
  * @returns 标题数据数组
  */
 export function extractHeadings(
-  containerSelector = "#post-container"
+	containerSelector = "#post-container",
 ): HeadingData[] {
-  const container = document.querySelector(containerSelector);
-  if (!container) return [];
+	const container = document.querySelector(containerSelector);
+	if (!container) return [];
 
-  const headings = container.querySelectorAll(
-    "h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]"
-  );
-  return Array.from(headings).map((h) => ({
-    id: h.id,
-    text: (h.textContent || "").replace(/#+\s*$/, ""),
-    level: parseInt(h.tagName[1]),
-  }));
+	const headings = container.querySelectorAll(
+		"h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]",
+	);
+	return Array.from(headings).map((h) => ({
+		id: h.id,
+		text: (h.textContent || "").replace(/#+\s*$/, ""),
+		level: parseInt(h.tagName[1]),
+	}));
 }
 
 /**
@@ -32,8 +32,8 @@ export function extractHeadings(
  * @returns 最小级别
  */
 export function getMinLevel(headings: HeadingData[]): number {
-  if (headings.length === 0) return 1;
-  return Math.min(...headings.map((h) => h.level));
+	if (headings.length === 0) return 1;
+	return Math.min(...headings.map((h) => h.level));
 }
 
 /**
@@ -43,35 +43,35 @@ export function getMinLevel(headings: HeadingData[]): number {
  * @returns TOC 条目数组
  */
 export function generateTOCItems(
-  headings: HeadingData[],
-  config: TOCConfig
+	headings: HeadingData[],
+	config: TOCConfig,
 ): TOCItem[] {
-  if (headings.length === 0) return [];
+	if (headings.length === 0) return [];
 
-  const minLevel = getMinLevel(headings);
-  const maxDepth = config.depth;
+	const minLevel = getMinLevel(headings);
+	const maxDepth = config.depth;
 
-  let h1Count = 0;
+	let h1Count = 0;
 
-  return headings
-    .filter((h) => h.level < minLevel + maxDepth)
-    .map((h) => {
-      const depth = h.level - minLevel;
-      let badge: string | undefined;
+	return headings
+		.filter((h) => h.level < minLevel + maxDepth)
+		.map((h) => {
+			const depth = h.level - minLevel;
+			let badge: string | undefined;
 
-      if (h.level === minLevel) {
-        badge = getKatakanaBadge(h1Count, config.useJapaneseBadge);
-        h1Count++;
-      }
+			if (h.level === minLevel) {
+				badge = getKatakanaBadge(h1Count, config.useJapaneseBadge);
+				h1Count++;
+			}
 
-      return {
-        id: h.id,
-        text: h.text,
-        level: h.level,
-        depth,
-        badge,
-      };
-    });
+			return {
+				id: h.id,
+				text: h.text,
+				level: h.level,
+				depth,
+				badge,
+			};
+		});
 }
 
 /**
@@ -80,15 +80,15 @@ export function generateTOCItems(
  * @param offset - 顶部偏移量（用于导航栏）
  */
 export function scrollToHeading(id: string, offset = 80): void {
-  const element = document.getElementById(id);
-  if (!element) return;
+	const element = document.getElementById(id);
+	if (!element) return;
 
-  const targetTop =
-    element.getBoundingClientRect().top + window.scrollY - offset;
-  window.scrollTo({
-    top: targetTop,
-    behavior: "smooth",
-  });
+	const targetTop =
+		element.getBoundingClientRect().top + window.scrollY - offset;
+	window.scrollTo({
+		top: targetTop,
+		behavior: "smooth",
+	});
 }
 
 /**
@@ -98,21 +98,21 @@ export function scrollToHeading(id: string, offset = 80): void {
  * @returns IntersectionObserver 实例
  */
 export function createHeadingObserver(
-  onActiveChange: (id: string) => void,
-  options: { rootMargin?: string; threshold?: number } = {}
+	onActiveChange: (id: string) => void,
+	options: { rootMargin?: string; threshold?: number } = {},
 ): IntersectionObserver {
-  const { rootMargin = "-80px 0px -80% 0px", threshold = 0 } = options;
+	const { rootMargin = "-80px 0px -80% 0px", threshold = 0 } = options;
 
-  return new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && entry.target.id) {
-          onActiveChange(entry.target.id);
-        }
-      });
-    },
-    { rootMargin, threshold }
-  );
+	return new IntersectionObserver(
+		(entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting && entry.target.id) {
+					onActiveChange(entry.target.id);
+				}
+			});
+		},
+		{ rootMargin, threshold },
+	);
 }
 
 /**
@@ -120,13 +120,13 @@ export function createHeadingObserver(
  * @returns TOC 配置
  */
 export function getTOCConfig(): TOCConfig {
-  const siteConfig = (window as any).siteConfig || {};
-  return {
-    enable: siteConfig.toc?.enable ?? true,
-    mode: siteConfig.toc?.mode ?? "sidebar",
-    depth: siteConfig.toc?.depth ?? 3,
-    useJapaneseBadge: siteConfig.toc?.useJapaneseBadge ?? false,
-  };
+	const siteConfig = (window as any).siteConfig || {};
+	return {
+		enable: siteConfig.toc?.enable ?? true,
+		mode: siteConfig.toc?.mode ?? "sidebar",
+		depth: siteConfig.toc?.depth ?? 3,
+		useJapaneseBadge: siteConfig.toc?.useJapaneseBadge ?? false,
+	};
 }
 
 /**
@@ -134,11 +134,11 @@ export function getTOCConfig(): TOCConfig {
  * @returns 进度值（0-1）
  */
 export function calculateReadingProgress(): number {
-  const scrollTop = window.scrollY || document.documentElement.scrollTop;
-  const docHeight =
-    document.documentElement.scrollHeight -
-    document.documentElement.clientHeight;
-  return docHeight > 0 ? scrollTop / docHeight : 0;
+	const scrollTop = window.scrollY || document.documentElement.scrollTop;
+	const docHeight =
+		document.documentElement.scrollHeight -
+		document.documentElement.clientHeight;
+	return docHeight > 0 ? scrollTop / docHeight : 0;
 }
 
 /**
@@ -148,12 +148,12 @@ export function calculateReadingProgress(): number {
  * @returns 防抖后的函数
  */
 export function debounce<T extends (...args: any[]) => any>(
-  fn: T,
-  delay: number
+	fn: T,
+	delay: number,
 ): (...args: Parameters<T>) => void {
-  let timeoutId: ReturnType<typeof setTimeout>;
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn(...args), delay);
-  };
+	let timeoutId: ReturnType<typeof setTimeout>;
+	return (...args: Parameters<T>) => {
+		clearTimeout(timeoutId);
+		timeoutId = setTimeout(() => fn(...args), delay);
+	};
 }

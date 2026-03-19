@@ -139,7 +139,7 @@ const useJapaneseBadge = siteConfig.toc.useJapaneseBadge;
 		width: 4px;
 	}
 
-	.floating-toc-panel-content::-webkit-scrollbar-track{
+	.floating-toc-panel-content::-webkit-scrollbar-track {
 		background: transparent;
 	}
 
@@ -247,39 +247,33 @@ const useJapaneseBadge = siteConfig.toc.useJapaneseBadge;
 	}
 </style>
 
-<script is:inline>
-/**
- * FloatingTOC Component Logic
- * Refactored to use hooks from ./hooks/useFloatingTOC
- */
+<script>
+import {
+	generateTOCItems,
+	getTOCConfig,
+	scrollToHeading,
+} from "./utils/toc-utils";
 
-/** @typedef {Object} FloatingTOCState
- * @property {HTMLElement|null} btn
- * @property {HTMLElement|null} panel
- * @property {HTMLElement|null} content
- * @property {HTMLElement|null} wrapper
- * @property {boolean} isOpen
- * @property {MutationObserver|null} observer
- * @property {HTMLElement[]} headings
- */
+import { findActiveHeadingIndex } from "./hooks/useTocHighlight";
 
-/** @type {readonly string[]} */
-const JAPANESE_KATAKANA = [
-	"ア", "イ", "ウ", "エ", "オ",
-	"カ", "キ", "ク", "ケ", "コ",
-	"サ", "シ", "ス", "セ", "ソ",
-	"タ", "チ", "ツ", "テ", "ト",
-	"ナ", "ニ", "ヌ", "ネ", "ノ",
-	"ハ", "ヒ", "フ", "ヘ", "ホ",
-	"マ", "ミ", "ム", "メ", "モ",
-	"ヤ", "ユ", "ヨ",
-	"ラ", "リ", "ル", "レ", "ロ",
-	"ワ", "ヲ", "ン"
-];
+import {
+	updateProgressRing,
+	throttle,
+} from "./hooks/useTocScroll";
+
+interface FloatingTOCState {
+	btn: HTMLElement | null;
+	panel: HTMLElement | null;
+	content: HTMLElement | null;
+	wrapper: HTMLElement | null;
+	isOpen: boolean;
+	observer: MutationObserver | null;
+	headings: HTMLElement[];
+}
 
 class FloatingTOC {
-	/** @type {FloatingTOCState} */
-	state;
+	state: FloatingTOCState;
+	navbarOffset = 80;
 
 	constructor() {
 		this.state = {
@@ -294,26 +288,14 @@ class FloatingTOC {
 		this.init();
 	}
 
-	// Internal methods
-	/** @private */
 	init() {
-		window.addEventListener(
-			"scroll",
-			() => {
-				this.updateProgress();
-				this.updateActiveHeading();
-			},
-			{ passive: true }
-		);
+		const handleScroll = throttle(() => {
+			this.updateProgress();
+			this.updateActiveHeading();
+		}, 50);
 
-		window.addEventListener(
-			"resize",
-			() => {
-				this.updateActiveHeading();
-				this.updateProgress();
-			},
-			{ passive: true }
-		);
+		window.addEventListener("scroll", handleScroll, { passive: true });
+		window.addEventListener("resize", handleScroll, { passive: true });
 
 		this.bindEvents();
 		this.generateTOC();
@@ -321,7 +303,6 @@ class FloatingTOC {
 		this.updateProgress();
 	}
 
-	/** @private */
 	observeContent() {
 		const contentWrapper = document.getElementById("post-container");
 		if (contentWrapper) {
@@ -336,51 +317,40 @@ class FloatingTOC {
 		}
 	}
 
-	/** @private */
 	updateProgress() {
-		const { btn } = this.state;
-		if (!btn) return;
+		const circle = this.state.btn?.querySelector(
+			".progress-ring-circle"
+		) as SVGCircleElement | null;
+		if (!circle) return;
 
 		const scrollTop = window.scrollY || document.documentElement.scrollTop;
-		const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-		const scrollPercent = docHeight > 0 ? scrollTop / docHeight : 0;
-
-		const circle = btn.querySelector(".progress-ring-circle");
-		if (circle) {
-			const radius = circle.r.baseVal.value;
-			const circumference = radius * 2 * Math.PI;
-			const offset = Math.max(0, Math.min(circumference, circumference - scrollPercent * circumference));
-			circle.style.strokeDashoffset = offset.toString();
-		}
+		const docHeight =
+			document.documentElement.scrollHeight -
+			document.documentElement.clientHeight;
+		const progress = docHeight > 0 ? scrollTop / docHeight : 0;
+		updateProgressRing(circle, progress);
 	}
 
-	/** @private */
 	updateActiveHeading() {
 		const { content, headings } = this.state;
 		if (!content || headings.length === 0) return;
 
-		const scrollY = window.scrollY;
-		const offsetTop = 150;
-		let activeIndex = -1;
+		const activeIndex = findActiveHeadingIndex(headings, window.scrollY, 150);
+		const links = Array.from(
+			content.querySelectorAll(".floating-toc-item")
+		) as HTMLAnchorElement[];
 
-		for (let i = 0; i < headings.length; i++) {
-			if (headings[i].getBoundingClientRect().top + scrollY < scrollY + offsetTop) {
-				activeIndex = i;
-			} else {
-				break;
-			}
-		}
-
-		const links = Array.from(content.querySelectorAll(".floating-toc-item"));
 		links.forEach((link, index) => {
 			if (index === activeIndex) {
 				link.classList.add("active");
-				if (this.state.isOpen && content) {
-					const linkEl = link;
+				if (this.state.isOpen) {
 					const panelRect = content.getBoundingClientRect();
-					const linkRect = linkEl.getBoundingClientRect();
-					if (linkRect.top < panelRect.top || linkRect.bottom > panelRect.bottom) {
-						linkEl.scrollIntoView({ block: "nearest" });
+					const linkRect = link.getBoundingClientRect();
+					if (
+						linkRect.top < panelRect.top ||
+						linkRect.bottom > panelRect.bottom
+					) {
+						link.scrollIntoView({ block: "nearest" });
 					}
 				}
 			} else {
@@ -389,7 +359,6 @@ class FloatingTOC {
 		});
 	}
 
-	/** @private */
 	generateTOC() {
 		const container = document.getElementById("post-container");
 		const { wrapper } = this.state;
@@ -400,7 +369,9 @@ class FloatingTOC {
 			return;
 		}
 
-		const allHeadings = container.querySelectorAll("h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]");
+		const allHeadings = container.querySelectorAll(
+			"h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]"
+		);
 
 		if (allHeadings.length === 0) {
 			wrapper?.classList.remove("active-toc");
@@ -411,42 +382,35 @@ class FloatingTOC {
 
 		wrapper?.classList.remove("no-toc");
 		wrapper?.classList.add("active-toc");
-		this.state.headings = [];
 
-		const maxLevel = parseInt(wrapper?.dataset.depth || "3");
-		const useJapaneseBadge = wrapper?.dataset.japaneseBadge === "true";
+		const headings = Array.from(allHeadings) as HTMLElement[];
+		const config = getTOCConfig();
+		const tocItems = generateTOCItems(
+			headings.map((h) => ({
+				id: h.id,
+				text: (h.textContent || "").replace(/#+\s*$/, ""),
+				level: parseInt(h.tagName[1], 10),
+			})),
+			config
+		);
 
-		let minLevel = 6;
-		allHeadings.forEach((h) => {
-			const level = parseInt(h.tagName[1]);
-			if (level < minLevel) minLevel = level;
-		});
+		this.state.headings = tocItems.map((item) =>
+			document.getElementById(item.id)!
+		);
 
-		let html = "";
-		let h1Count = 0;
-		allHeadings.forEach((heading) => {
-			const level = parseInt(heading.tagName[1]);
-			if (level >= minLevel + maxLevel) return;
+		const html = tocItems
+			.map((item) => {
+				const indent = 0.5 + item.depth;
+				const badge =
+					item.depth === 0
+						? `<span class="floating-toc-badge">${item.badge || ""}</span>`
+						: item.depth === 1
+							? '<span class="floating-toc-dot"></span>'
+							: '<span class="floating-toc-dot-small"></span>';
 
-			this.state.headings.push(heading);
-			const indent = (level - minLevel) * 1;
-			let badge = "";
-
-			if (level === minLevel) {
-				h1Count++;
-				const badgeText = useJapaneseBadge && h1Count - 1 < JAPANESE_KATAKANA.length
-					? JAPANESE_KATAKANA[h1Count - 1]
-					: h1Count.toString();
-				badge = `<span class="floating-toc-badge">${badgeText}</span>`;
-			} else if (level === minLevel + 1) {
-				badge = '<span class="floating-toc-dot"></span>';
-			} else {
-				badge = '<span class="floating-toc-dot-small"></span>';
-			}
-
-			const text = (heading.textContent || "").replace(/#+\s*$/, "");
-			html += `<a href="#${heading.id}" class="floating-toc-item" style="padding-left: ${0.5 + indent}rem" data-level="${level - minLevel}">${badge}<span class="floating-toc-text">${text}</span></a>`;
-		});
+				return `<a href="#${item.id}" class="floating-toc-item" style="padding-left: ${indent}rem" data-level="${item.depth}">${badge}<span class="floating-toc-text">${item.text}</span></a>`;
+			})
+			.join("");
 
 		if (this.state.content) {
 			this.state.content.innerHTML = html;
@@ -454,7 +418,6 @@ class FloatingTOC {
 		this.updateActiveHeading();
 	}
 
-	/** @private */
 	bindEvents() {
 		const { btn, content, wrapper } = this.state;
 
@@ -464,23 +427,19 @@ class FloatingTOC {
 		});
 
 		document.addEventListener("click", (e) => {
-			if (this.state.isOpen && !wrapper?.contains(e.target)) {
+			if (this.state.isOpen && !wrapper?.contains(e.target as Node)) {
 				this.close();
 			}
 		});
 
 		content?.addEventListener("click", (e) => {
-			const link = e.target.closest("a");
-			if (link) {
+			const link = (e.target as Element).closest("a");
+			if (link instanceof HTMLAnchorElement) {
 				e.preventDefault();
 				const id = link.getAttribute("href")?.slice(1);
 				if (id) {
-					const element = document.getElementById(id);
-					if (element) {
-						const top = element.getBoundingClientRect().top + window.scrollY - 80;
-						window.scrollTo({ top, behavior: "smooth" });
-						this.close();
-					}
+					scrollToHeading(id, this.navbarOffset);
+					this.close();
 				}
 			}
 		});
@@ -496,12 +455,10 @@ class FloatingTOC {
 		}
 	}
 
-	/** @private */
 	toggle() {
 		this.state.isOpen ? this.close() : this.open();
 	}
 
-	/** @private */
 	open() {
 		this.state.isOpen = true;
 		this.state.panel?.classList.add("show");
@@ -509,7 +466,6 @@ class FloatingTOC {
 		this.state.wrapper?.classList.add("active");
 	}
 
-	/** @private */
 	close() {
 		this.state.isOpen = false;
 		this.state.panel?.classList.remove("show");
@@ -517,7 +473,6 @@ class FloatingTOC {
 		this.state.wrapper?.classList.remove("active");
 	}
 
-	/** @private */
 	reinit() {
 		if (this.state.observer) {
 			this.state.observer.disconnect();

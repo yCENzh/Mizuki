@@ -6,10 +6,8 @@
 	import { navigateToPage } from "../../../utils/navigation-utils";
 	import { panelManager } from "../../../utils/panel-manager.js";
 	import {
-		// 类型
 		type TOCItem,
 		type PostItem,
-		// 函数
 		generateTOCItems,
 		generatePostItems,
 		checkIsHomePage,
@@ -17,17 +15,14 @@
 		getTOCConfig,
 	} from "./hooks/useMobileTOC";
 
-	// 状态
 	let tocItems: TOCItem[] = $state([]);
 	let postItems: PostItem[] = $state([]);
 	let activeId = $state("");
 	let isHomePage = $state(false);
 
-	// 交叉观察器
 	let observer: IntersectionObserver | undefined;
 	let swupListenersRegistered = $state(false);
 
-	// 面板切换
 	const togglePanel = async () => {
 		await panelManager.togglePanel("mobile-toc-panel");
 	};
@@ -36,7 +31,6 @@
 		await panelManager.togglePanel("mobile-toc-panel", show);
 	};
 
-	// 导航函数
 	const scrollToHeading = (id: string) => {
 		setPanelVisibility(false);
 		scrollToHeadingUtil(id);
@@ -47,7 +41,6 @@
 		navigateToPage(url);
 	};
 
-	// 更新活动标题
 	const updateActiveHeading = () => {
 		const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
 		const scrollTop = window.scrollY;
@@ -66,7 +59,6 @@
 		activeId = currentActiveId;
 	};
 
-	// 设置交叉观察器
 	const setupIntersectionObserver = () => {
 		const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
 
@@ -85,7 +77,7 @@
 			{
 				rootMargin: "-80px 0px -80% 0px",
 				threshold: 0,
-			},
+			}
 		);
 
 		headings.forEach((heading) => {
@@ -95,10 +87,13 @@
 		});
 	};
 
-	// 设置 Swup 监听器
 	const setupSwupListeners = () => {
-		if (typeof window !== "undefined" && (window as any).swup && !swupListenersRegistered) {
-			const swup = (window as any).swup;
+		if (
+			typeof window !== "undefined" &&
+			(window as unknown as { swup?: { hooks: { on: (event: string, cb: () => void) => void; off: (event: string) => void } } }).swup &&
+			!swupListenersRegistered
+		) {
+			const swup = (window as unknown as { swup: { hooks: { on: (event: string, cb: () => void) => void } } }).swup;
 
 			swup.hooks.on("page:view", () => {
 				setTimeout(() => init(), 200);
@@ -113,14 +108,14 @@
 		}
 	};
 
-	// 检查 Swup 可用性
 	const checkSwupAvailability = () => {
 		if (typeof window !== "undefined") {
-			if ((window as any).swup) {
+			const w = window as unknown as { swup?: { hooks: { on: (event: string, cb: () => void) => void; off: (event: string) => void } } };
+			if (w.swup) {
 				setupSwupListeners();
 			} else {
 				const checkSwup = () => {
-					if ((window as any).swup) {
+					if (w.swup) {
 						setupSwupListeners();
 						document.removeEventListener("swup:enable", checkSwup);
 					}
@@ -128,7 +123,7 @@
 
 				document.addEventListener("swup:enable", checkSwup);
 				setTimeout(() => {
-					if ((window as any).swup) {
+					if (w.swup) {
 						setupSwupListeners();
 						document.removeEventListener("swup:enable", checkSwup);
 					}
@@ -137,7 +132,6 @@
 		}
 	};
 
-	// 初始化
 	const init = () => {
 		isHomePage = checkIsHomePage();
 		checkSwupAvailability();
@@ -154,31 +148,53 @@
 		}
 	};
 
-	// 生命周期
 	onMount(() => {
 		setTimeout(init, 100);
-		window.addEventListener("scroll", updateActiveHeading);
+		window.addEventListener("scroll", updateActiveHeading, { passive: true });
 
 		return () => {
 			observer?.disconnect();
 			window.removeEventListener("scroll", updateActiveHeading);
 
-			if (typeof window !== "undefined" && (window as any).swup) {
-				const swup = (window as any).swup;
-				swup.hooks.off("page:view");
+			const w = window as unknown as { swup?: { hooks: { on: (event: string, cb: () => void) => void; off: (event: string) => void } } };
+			if (w.swup) {
+				w.swup.hooks.off("page:view");
 			}
 
 			swupListenersRegistered = false;
 		};
 	});
 
-	// 导出初始化函数供外部调用
 	if (typeof window !== "undefined") {
-		(window as any).mobileTOCInit = init;
+		(window as unknown as { mobileTOCInit?: () => void }).mobileTOCInit = init;
 	}
+
+	const getLevelPadding = (level: number): string => {
+		const base = "12px";
+		const levelPadding: Record<number, string> = {
+			1: "12px",
+			2: "28px",
+			3: "36px",
+			4: "44px",
+			5: "52px",
+			6: "52px",
+		};
+		return levelPadding[level] || base;
+	};
+
+	const getActivePadding = (level: number): string => {
+		const activePadding: Record<number, string> = {
+			1: "9px",
+			2: "25px",
+			3: "33px",
+			4: "41px",
+			5: "49px",
+			6: "49px",
+		};
+		return activePadding[level] || "9px";
+	};
 </script>
 
-<!-- TOC toggle button for mobile -->
 <button
 	on:click={togglePanel}
 	aria-label="Table of Contents"
@@ -188,11 +204,9 @@
 	<Icon icon="material-symbols:format-list-bulleted" class="text-[1.25rem]" />
 </button>
 
-<!-- Mobile TOC Panel -->
 <div
 	id="mobile-toc-panel"
-	class="float-panel float-panel-closed mobile-toc-panel absolute md:w-[20rem] w-[calc(100vw-2rem)]
-		top-20 left-4 md:left-[unset] right-4 shadow-2xl rounded-2xl p-4"
+	class="float-panel float-panel-closed mobile-toc-panel absolute md:w-[20rem] w-[calc(100vw-2rem)] top-20 left-4 md:left-[unset] right-4 shadow-2xl rounded-2xl p-4"
 >
 	<div class="flex items-center justify-between mb-4">
 		<h3 class="text-lg font-bold text-[var(--primary)]">
@@ -216,10 +230,7 @@
 		{:else}
 			<div class="post-content">
 				{#each postItems as post}
-					<button
-						on:click={() => navigateToPost(post.url)}
-						class="post-item"
-					>
+					<button on:click={() => navigateToPost(post.url)} class="post-item">
 						<div class="post-title">
 							{#if post.pinned}
 								<Icon icon="mdi:pin" class="pinned-icon" />
@@ -243,8 +254,9 @@
 				{#each tocItems as item}
 					<button
 						on:click={() => scrollToHeading(item.id)}
-						class="toc-item level-{item.level} {activeId === item.id ? 'active' : ''}"
+						class="toc-item level-{item.level}"
 						class:active={activeId === item.id}
+						style="padding-left: {activeId === item.id ? getActivePadding(item.level) : getLevelPadding(item.level)}"
 					>
 						{#if item.level === 1}
 							<span class="badge">{item.badge}</span>
@@ -270,20 +282,18 @@
 		backdrop-filter: blur(10px);
 	}
 
-	/* 确保主题切换按钮的背景色即时更新 */
 	:global(.theme-switch-btn)::before {
 		transition: transform 75ms ease-out, background-color 0ms !important;
 	}
 
-	.toc-content {
+	.toc-content,
+	.post-content {
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
 	}
 
 	.post-content {
-		display: flex;
-		flex-direction: column;
 		gap: 4px;
 	}
 
@@ -317,37 +327,30 @@
 		color: var(--primary);
 		font-weight: 600;
 		border-left: 3px solid var(--primary);
-		padding-left: 9px;
 	}
 
-	/* 不同级别的标题缩进 */
 	.toc-item.level-1 {
-		padding-left: 12px;
 		font-weight: 600;
 		font-size: 1rem;
 		gap: 8px;
 	}
 
 	.toc-item.level-2 {
-		padding-left: 28px;
 		gap: 6px;
 	}
 
-	.toc-item.level-3 {
-		padding-left: 36px;
+	.toc-item.level-3,
+	.toc-item.level-4 {
 		font-size: 0.85rem;
 		gap: 6px;
 	}
 
 	.toc-item.level-4 {
-		padding-left: 44px;
 		font-size: 0.8rem;
-		gap: 6px;
 	}
 
 	.toc-item.level-5,
 	.toc-item.level-6 {
-		padding-left: 52px;
 		font-size: 0.75rem;
 		color: rgba(0, 0, 0, 0.5);
 		gap: 6px;
@@ -356,27 +359,6 @@
 	:global(.dark) .toc-item.level-5,
 	:global(.dark) .toc-item.level-6 {
 		color: rgba(255, 255, 255, 0.5);
-	}
-
-	.toc-item.level-1.active {
-		padding-left: 9px;
-	}
-
-	.toc-item.level-2.active {
-		padding-left: 25px;
-	}
-
-	.toc-item.level-3.active {
-		padding-left: 33px;
-	}
-
-	.toc-item.level-4.active {
-		padding-left: 41px;
-	}
-
-	.toc-item.level-5.active,
-	.toc-item.level-6.active {
-		padding-left: 49px;
 	}
 
 	.badge {
@@ -432,10 +414,9 @@
 		padding: 12px;
 		border-radius: 8px;
 		transition: all 0.2s ease;
-		border: none;
+		border: 1px solid var(--line-color);
 		background: transparent;
 		cursor: pointer;
-		border: 1px solid var(--line-color);
 	}
 
 	.post-item:hover {
@@ -493,7 +474,6 @@
 		color: rgba(255, 255, 255, 0.75);
 	}
 
-	/* 滚动条样式 */
 	.mobile-toc-panel::-webkit-scrollbar {
 		width: 4px;
 	}
