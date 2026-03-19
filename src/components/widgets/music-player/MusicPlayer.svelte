@@ -157,13 +157,8 @@
 				audio.currentTime = 0;
 				audio.play().catch(() => {});
 			}
-		} else if (
-			playlistState.isRepeating === 2 ||
-			playlistState.isShuffled
-		) {
-			handleNextSong(true);
 		} else {
-			audioPlayerState.isPlaying = false;
+			handleNextSong(true);
 		}
 	}
 
