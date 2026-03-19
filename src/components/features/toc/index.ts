@@ -19,18 +19,21 @@ export type { TOCItem, TOCConfig, HeadingData, TOCBaseProps } from "./types";
 
 // 工具函数导出
 export {
-  extractHeadings,
-  getMinLevel,
-  generateTOCItems,
-  scrollToHeading,
-  createHeadingObserver,
-  getTOCConfig,
-  calculateReadingProgress,
-  debounce,
+	extractHeadings,
+	getMinLevel,
+	generateTOCItems,
+	scrollToHeading,
+	createHeadingObserver,
+	getTOCConfig,
+	calculateReadingProgress,
+	debounce,
 } from "./utils/toc-utils";
 
+// Hooks 导出
+export * from "./hooks/useFloatingTOC";
+
 export {
-  JAPANESE_KATAKANA,
-  getKatakanaBadge,
-  KATAKANA_COUNT,
+	JAPANESE_KATAKANA,
+	getKatakanaBadge,
+	KATAKANA_COUNT,
 } from "./utils/japanese-katakana";

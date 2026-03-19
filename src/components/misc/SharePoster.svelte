@@ -4,6 +4,17 @@ import QRCode from "qrcode";
 import { onMount } from "svelte";
 import I18nKey from "../../i18n/i18nKey";
 import { i18n } from "../../i18n/translation";
+import {
+	loadImage,
+	getLines,
+	drawRoundedRect,
+	parseDate,
+	calculateDimensions,
+	drawDecorativeCircles,
+	drawDateBadge,
+	type PosterConfig,
+	type SizeConfig,
+} from "./utils/poster-renderer";
 
 export let title: string;
 export let author: string;
@@ -40,89 +51,6 @@ onMount(() => {
 	}
 });
 
-async function loadImage(src: string): Promise<HTMLImageElement | null> {
-	return new Promise((resolve) => {
-		const img = new Image();
-		img.crossOrigin = "anonymous";
-
-		img.onload = () => resolve(img);
-		img.onerror = () => {
-			if (src.includes("images.weserv.nl") || src.startsWith("data:")) {
-				resolve(null);
-				return;
-			}
-
-			const proxyImg = new Image();
-			proxyImg.crossOrigin = "anonymous";
-			proxyImg.onload = () => resolve(proxyImg);
-			proxyImg.onerror = () => resolve(null);
-			proxyImg.src = `https://images.weserv.nl/?url=${encodeURIComponent(src)}&output=png`;
-		};
-
-		img.src = src;
-	});
-}
-
-function getLines(
-	ctx: CanvasRenderingContext2D,
-	text: string,
-	maxWidth: number,
-): string[] {
-	const lines: string[] = [];
-	let currentLine = "";
-
-	for (const char of text) {
-		if (ctx.measureText(currentLine + char).width < maxWidth) {
-			currentLine += char;
-		} else {
-			lines.push(currentLine);
-			currentLine = char;
-		}
-	}
-
-	if (currentLine) lines.push(currentLine);
-	return lines;
-}
-
-function drawRoundedRect(
-	ctx: CanvasRenderingContext2D,
-	x: number,
-	y: number,
-	width: number,
-	height: number,
-	radius: number,
-): void {
-	ctx.beginPath();
-	ctx.moveTo(x + radius, y);
-	ctx.lineTo(x + width - radius, y);
-	ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-	ctx.lineTo(x + width, y + height - radius);
-	ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-	ctx.lineTo(x + radius, y + height);
-	ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-	ctx.lineTo(x, y + radius);
-	ctx.quadraticCurveTo(x, y, x + radius, y);
-	ctx.closePath();
-}
-
-// Type for parsed date
-type DateObj = { day: string; month: string; year: string };
-
-function parseDate(dateStr: string): DateObj | null {
-	try {
-		const d = new Date(dateStr);
-		if (Number.isNaN(d.getTime())) return null;
-
-		return {
-			day: d.getDate().toString().padStart(2, "0"),
-			month: (d.getMonth() + 1).toString().padStart(2, "0"),
-			year: d.getFullYear().toString(),
-		};
-	} catch {
-		return null;
-	}
-}
-
 async function generatePoster() {
 	showModal = true;
 	if (posterImage) return;
@@ -145,27 +73,14 @@ async function generatePoster() {
 		const ctx = canvas.getContext("2d");
 		if (!ctx) throw new Error("Canvas context not available");
 
-		// Calculate layout
-		const coverHeight = (coverImage ? 200 : 120) * SCALE;
-		const titleFontSize = 24 * SCALE;
-		const descFontSize = 14 * SCALE;
-		const qrSize = 80 * SCALE;
-		const footerHeight = qrSize;
-
-		ctx.font = `700 ${titleFontSize}px ${FONT_FAMILY}`;
-		const titleLines = getLines(ctx, title, CONTENT_WIDTH);
-		const titleLineHeight = 30 * SCALE;
-		const titleHeight = titleLines.length * titleLineHeight;
-
-		let descHeight = 0;
-		if (description) {
-			ctx.font = `${descFontSize}px ${FONT_FAMILY}`;
-			const descLines = getLines(ctx, description, CONTENT_WIDTH - 16 * SCALE);
-			descHeight = Math.min(descLines.length, 6) * (25 * SCALE);
-		}
-
-		const canvasHeight = coverHeight + PADDING + titleHeight + 16 * SCALE + descHeight +
-			(description ? 24 * SCALE : 8 * SCALE) + 24 * SCALE + footerHeight + PADDING;
+		const config: SizeConfig = { scale: SCALE, width: WIDTH, padding: PADDING, contentWidth: CONTENT_WIDTH };
+		const { coverHeight, titleHeight, descHeight, canvasHeight } = calculateDimensions(
+			!!coverImage,
+			title,
+			description,
+			ctx,
+			config,
+		);
 
 		canvas.width = WIDTH;
 		canvas.height = canvasHeight;
@@ -175,16 +90,7 @@ async function generatePoster() {
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 		// Decorative circles
-		ctx.save();
-		ctx.globalAlpha = 0.1;
-		ctx.fillStyle = themeColor;
-		ctx.beginPath();
-		ctx.arc(WIDTH - 25 * SCALE, 25 * SCALE, 75 * SCALE, 0, Math.PI * 2);
-		ctx.fill();
-		ctx.beginPath();
-		ctx.arc(10 * SCALE, canvas.height - 10 * SCALE, 50 * SCALE, 0, Math.PI * 2);
-		ctx.fill();
-		ctx.restore();
+		drawDecorativeCircles(ctx, canvas.width, canvas.height, themeColor, SCALE);
 
 		// Cover image
 		if (coverImg) {
@@ -215,38 +121,18 @@ async function generatePoster() {
 		// Date badge
 		const dateObj = parseDate(pubDate);
 		if (dateObj) {
-			const dateBoxW = 60 * SCALE;
-			const dateBoxH = 60 * SCALE;
-			const dateBoxX = PADDING;
-			const dateBoxY = coverHeight - dateBoxH;
-
-			ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
-			drawRoundedRect(ctx, dateBoxX, dateBoxY, dateBoxW, dateBoxH, 4 * SCALE);
-			ctx.fill();
-
-			ctx.fillStyle = "#ffffff";
-			ctx.textAlign = "center";
-			ctx.textBaseline = "middle";
-			ctx.font = `700 ${30 * SCALE}px ${FONT_FAMILY}`;
-			ctx.fillText(dateObj.day, dateBoxX + dateBoxW / 2, dateBoxY + 24 * SCALE);
-
-			ctx.beginPath();
-			ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
-			ctx.lineWidth = 1 * SCALE;
-			ctx.moveTo(dateBoxX + 10 * SCALE, dateBoxY + 42 * SCALE);
-			ctx.lineTo(dateBoxX + dateBoxW - 10 * SCALE, dateBoxY + 42 * SCALE);
-			ctx.stroke();
-
-			ctx.font = `${10 * SCALE}px ${FONT_FAMILY}`;
-			ctx.fillText(`${dateObj.year} ${dateObj.month}`, dateBoxX + dateBoxW / 2, dateBoxY + 51 * SCALE);
+			drawDateBadge(ctx, dateObj, PADDING, coverHeight, SCALE, FONT_FAMILY);
 		}
 
 		// Title
-		let drawY = coverHeight + PADDING;
+		const titleFontSize = 24 * SCALE;
+		const titleLineHeight = 30 * SCALE;
 		ctx.textBaseline = "top";
 		ctx.textAlign = "left";
 		ctx.font = `700 ${titleFontSize}px ${FONT_FAMILY}`;
 		ctx.fillStyle = "#111827";
+		const titleLines = getLines(ctx, title, CONTENT_WIDTH);
+		let drawY = coverHeight + PADDING;
 		for (const line of titleLines) {
 			ctx.fillText(line, PADDING, drawY);
 			drawY += titleLineHeight;
@@ -255,6 +141,7 @@ async function generatePoster() {
 
 		// Description
 		if (description) {
+			const descFontSize = 14 * SCALE;
 			ctx.fillStyle = "#e5e7eb";
 			drawRoundedRect(ctx, PADDING, drawY - 8 * SCALE, 4 * SCALE, descHeight + 8 * SCALE, 2 * SCALE);
 			ctx.fill();
@@ -282,6 +169,7 @@ async function generatePoster() {
 
 		// Footer
 		const footerY = drawY;
+		const qrSize = 80 * SCALE;
 		const qrX = WIDTH - PADDING - qrSize;
 
 		// QR code background

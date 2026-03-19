@@ -6,3 +6,4 @@ export { default as IconifyLoader } from "./IconifyLoader.astro";
 export { default as License } from "./License.astro";
 export { default as Markdown } from "./Markdown.astro";
 export { default as SharePoster } from "./SharePoster.svelte";
+export * from "./utils/poster-renderer";
