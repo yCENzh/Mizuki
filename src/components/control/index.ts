@@ -15,5 +15,4 @@ export { default as LayoutSwitch } from "./LayoutSwitch.svelte";
 export { default as Pagination } from "./Pagination.astro";
 export { default as ThemeSwitch } from "./ThemeSwitch.svelte";
 
-// Re-export types
-export type { ButtonLinkProps, ButtonTagProps } from "../atoms/button/types";
+// Note: Types are defined locally in their respective components
