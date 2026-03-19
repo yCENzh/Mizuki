@@ -1,9 +1,9 @@
 ---
-import { PageHeader } from "../components/features/page-header";
-import { StatsGrid } from "../components/features/stats-grid";
-import { TimelineCurrent } from "../components/features/timeline-current";
-import { TimelineHistory } from "../components/features/timeline-history";
-import IconifyLoader from "../components/misc/IconifyLoader.astro";
+import { PageHeader } from "@components/features/page-header";
+import { StatsGrid } from "@components/features/stats-grid";
+import { TimelineCurrent } from "@components/features/timeline-current";
+import { TimelineHistory } from "@components/features/timeline-history";
+import IconifyLoader from "@components/misc/IconifyLoader.astro";
 import { siteConfig } from "../config";
 import {
 	getCurrentItems,
@@ -14,7 +14,7 @@ import {
 } from "../data/timeline";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
-import MainGridLayout from "../layouts/MainGridLayout.astro";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
 
 if (!siteConfig.featurePages.timeline) {
 	return Astro.redirect("/404/");

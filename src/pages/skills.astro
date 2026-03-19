@@ -1,10 +1,10 @@
 ---
-import { PageHeader } from "../components/features/page-header";
-import { SectionTitle } from "../components/features/section-title";
-import { SkillCard } from "../components/features/skills";
-import { SkillsCategory } from "../components/features/skills-category";
-import IconifyLoader from "../components/misc/IconifyLoader.astro";
-import SkillsChart from "../components/skills/SkillsChart.astro";
+import { PageHeader } from "@components/features/page-header";
+import { SectionTitle } from "@components/features/section-title";
+import { SkillCard } from "@components/features/skills";
+import { SkillsCategory } from "@components/features/skills-category";
+import IconifyLoader from "@components/misc/IconifyLoader.astro";
+import SkillsChart from "@components/skills/SkillsChart.astro";
 import { siteConfig } from "../config";
 import { UNCATEGORIZED } from "../constants/constants";
 import {
@@ -16,7 +16,7 @@ import {
 } from "../data/skills";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
-import MainGridLayout from "../layouts/MainGridLayout.astro";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
 
 if (!siteConfig.featurePages.skills) {
 	return Astro.redirect("/404/");

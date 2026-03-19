@@ -8,7 +8,7 @@ import MusicPlayer from "../../widgets/music-player/MusicPlayer.svelte";
 import Profile from "../profile/Profile.astro";
 import SiteStats from "../site-stats/SiteStats.astro";
 import Tags from "../tags/Tags.astro";
-import TOC from "../toc/TOC.astro";
+import { SidebarTOC } from "@components/features/toc";
 
 interface Props {
 	class?: string;
@@ -30,7 +30,7 @@ const componentMap = {
 	announcement: Announcement,
 	categories: Categories,
 	tags: Tags,
-	toc: TOC,
+	toc: SidebarTOC,
 	"music-player": MusicPlayer,
 	"site-stats": SiteStats,
 	calendar: Calendar,

@@ -1,9 +1,9 @@
 ---
-import { PageHeader } from "../components/features/page-header";
-import { StatsGrid } from "../components/features/stats-grid";
-import { FeaturedProjects } from "../components/features/featured-projects";
-import { ProjectsCategory } from "../components/features/projects-category";
-import { TechStack } from "../components/features/tech-stack";
+import { PageHeader } from "@components/features/page-header";
+import { StatsGrid } from "@components/features/stats-grid";
+import { FeaturedProjects } from "@components/features/featured-projects";
+import { ProjectsCategory } from "@components/features/projects-category";
+import { TechStack } from "@components/features/tech-stack";
 import { siteConfig } from "../config";
 import { UNCATEGORIZED } from "../constants/constants";
 import {
@@ -15,7 +15,7 @@ import {
 } from "../data/projects";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
-import MainGridLayout from "../layouts/MainGridLayout.astro";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
 
 if (!siteConfig.featurePages.projects) {
 	return Astro.redirect("/404/");
