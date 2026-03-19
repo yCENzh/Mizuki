@@ -10,11 +10,7 @@
 	import PlayerBar from "./organisms/PlayerBar.svelte";
 	import Playlist from "./organisms/Playlist.svelte";
 
-	import {
-		STORAGE_KEY_VOLUME,
-		ERROR_DISPLAY_DURATION,
-		SKIP_ERROR_DELAY,
-	} from "./constants";
+	import { SKIP_ERROR_DELAY } from "./constants";
 	import {
 		createAudioPlayerState,
 		togglePlay,
@@ -39,6 +35,22 @@
 		registerInteractionHandler,
 		getAssetPath,
 	} from "./hooks/useKeyboardShortcuts";
+	import {
+		createPlayerUIState,
+		toggleExpandedUI,
+		toggleHiddenUI,
+		togglePlaylistUI,
+		showErrorMessageUI,
+		hideErrorUI,
+	} from "./hooks/usePlayerState";
+	import {
+		createVolumeDragState,
+		loadVolumeFromStorage,
+		startVolumeDrag as startVolumeDragInternal,
+		handleVolumeMove as handleVolumeMoveInternal,
+		stopVolumeDrag as stopVolumeDragInternal,
+		handleVolumeKeyDown as handleVolumeKeyDownInternal,
+	} from "./hooks/useVolumeControl";
 
 	let mode = musicPlayerConfig.mode ?? "meting";
 	let meting_api =
@@ -51,79 +63,31 @@
 	let audioPlayerState = $state(createAudioPlayerState());
 	let playlistState = $state(createPlaylistState());
 
-	let isExpanded = $state(false);
-	let isHidden = $state(false);
-	let showPlaylist = $state(false);
-	let errorMessage = $state("");
-	let showError = $state(false);
+	let playerUiState = $state(createPlayerUIState());
 
 	let audio: HTMLAudioElement | undefined = $state();
 	let volumeBar: HTMLElement | null = null;
 
-	let isVolumeDragging = $state(false);
-	let isPointerDown = $state(false);
-	let volumeBarRect: DOMRect | null = null;
-	let rafId: number | null = null;
-
-	function loadVolumeSettings() {
-		try {
-			if (typeof localStorage !== "undefined") {
-				const savedVolume = localStorage.getItem(STORAGE_KEY_VOLUME);
-				if (savedVolume !== null && !isNaN(parseFloat(savedVolume))) {
-					audioPlayerState.volume = parseFloat(savedVolume);
-				}
-			}
-		} catch (e) {
-			console.warn(
-				"Failed to load volume settings from localStorage:",
-				e,
-			);
-		}
-	}
-
-	function saveVolumeSettings() {
-		try {
-			if (typeof localStorage !== "undefined") {
-				localStorage.setItem(
-					STORAGE_KEY_VOLUME,
-					audioPlayerState.volume.toString(),
-				);
-			}
-		} catch (e) {
-			console.warn("Failed to save volume settings to localStorage:", e);
-		}
-	}
+	let volumeDragState = $state(createVolumeDragState());
 
 	function showErrorMessage(message: string) {
-		errorMessage = message;
-		showError = true;
-		setTimeout(() => {
-			showError = false;
-		}, ERROR_DISPLAY_DURATION);
+		showErrorMessageUI(playerUiState, message);
 	}
 
 	function hideError() {
-		showError = false;
+		hideErrorUI(playerUiState);
 	}
 
 	function toggleExpanded() {
-		isExpanded = !isExpanded;
-		if (isExpanded) {
-			showPlaylist = false;
-			isHidden = false;
-		}
+		toggleExpandedUI(playerUiState);
 	}
 
 	function toggleHidden() {
-		isHidden = !isHidden;
-		if (isHidden) {
-			isExpanded = false;
-			showPlaylist = false;
-		}
+		toggleHiddenUI(playerUiState);
 	}
 
 	function togglePlaylist() {
-		showPlaylist = !showPlaylist;
+		togglePlaylistUI(playerUiState);
 	}
 
 	function handleToggleShuffle() {
@@ -226,67 +190,42 @@
 	}
 
 	function startVolumeDrag(event: PointerEvent) {
-		if (!volumeBar) return;
-		event.preventDefault();
-
-		isPointerDown = true;
-		volumeBar.setPointerCapture(event.pointerId);
-
-		volumeBarRect = volumeBar.getBoundingClientRect();
-		updateVolumeLogic(event.clientX);
+		startVolumeDragInternal(
+			event,
+			volumeDragState,
+			volumeBar,
+			audio,
+			audioPlayerState,
+		);
 	}
 
 	function handleVolumeMove(event: PointerEvent) {
-		if (!isPointerDown) return;
-		event.preventDefault();
-
-		isVolumeDragging = true;
-		if (rafId) return;
-
-		rafId = requestAnimationFrame(() => {
-			updateVolumeLogic(event.clientX);
-			rafId = null;
-		});
+		handleVolumeMoveInternal(
+			event,
+			volumeDragState,
+			volumeBar,
+			audio,
+			audioPlayerState,
+		);
 	}
 
 	function stopVolumeDrag(event: PointerEvent) {
-		if (!isPointerDown) return;
-		isPointerDown = false;
-		isVolumeDragging = false;
-		volumeBarRect = null;
-		if (volumeBar) {
-			volumeBar.releasePointerCapture(event.pointerId);
-		}
-
-		if (rafId) {
-			cancelAnimationFrame(rafId);
-			rafId = null;
-		}
-		saveVolumeSettings();
-	}
-
-	function updateVolumeLogic(clientX: number) {
-		if (!audio || !volumeBar) return;
-
-		const rect = volumeBarRect || volumeBar.getBoundingClientRect();
-		const percent = Math.max(
-			0,
-			Math.min(1, (clientX - rect.left) / rect.width),
+		stopVolumeDragInternal(
+			event,
+			volumeDragState,
+			volumeBar,
+			audioPlayerState,
 		);
-		audioPlayerState.volume = percent;
 	}
 
 	function handleVolumeKeyDown(event: KeyboardEvent) {
-		if (event.key === "Enter" || event.key === " ") {
-			event.preventDefault();
-			if (event.key === "Enter") handleToggleMute();
-		}
+		handleVolumeKeyDownInternal(event, handleToggleMute);
 	}
 
 	let unregister: (() => void) | undefined;
 
 	onMount(() => {
-		loadVolumeSettings();
+		loadVolumeFromStorage(audioPlayerState);
 		const interactionHandler = () =>
 			handleUserInteraction(audioPlayerState, audio);
 		unregister = registerInteractionHandler(interactionHandler);
@@ -358,7 +297,7 @@
 />
 
 {#if musicPlayerConfig.enable}
-	{#if showError}
+	{#if playerUiState.showError}
 		<div class="fixed bottom-20 right-4 z-[60] max-w-sm">
 			<div
 				class="bg-red-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-slide-up"
@@ -367,7 +306,7 @@
 					icon="material-symbols:error"
 					class="text-xl flex-shrink-0"
 				/>
-				<span class="text-sm flex-1">{errorMessage}</span>
+				<span class="text-sm flex-1">{playerUiState.errorMessage}</span>
 				<button
 					onclick={hideError}
 					class="text-white/80 hover:text-white transition-colors"
@@ -380,11 +319,11 @@
 
 	<div
 		class="music-player fixed bottom-4 right-4 z-50 transition-all duration-300 ease-in-out"
-		class:expanded={isExpanded}
-		class:hidden-mode={isHidden}
+		class:expanded={playerUiState.isExpanded}
+		class:hidden-mode={playerUiState.isHidden}
 	>
 		<div
-			class="orb-player-container {isHidden
+			class="orb-player-container {playerUiState.isHidden
 				? 'orb-enter pointer-events-auto'
 				: 'orb-leave pointer-events-none'}"
 		>
@@ -403,7 +342,7 @@
 			duration={audioPlayerState.duration}
 			isPlaying={audioPlayerState.isPlaying}
 			isLoading={audioPlayerState.isLoading}
-			isHidden={isExpanded || isHidden}
+			isHidden={playerUiState.isExpanded || playerUiState.isHidden}
 			onCoverClick={handleTogglePlay}
 			onInfoClick={toggleExpanded}
 			onHideClick={toggleHidden}
@@ -418,12 +357,12 @@
 			isLoading={audioPlayerState.isLoading}
 			isShuffled={playlistState.isShuffled}
 			isRepeating={playlistState.isRepeating}
-			{showPlaylist}
+			showPlaylist={playerUiState.showPlaylist}
 			canSkip={canSkip(playlistState)}
 			volume={audioPlayerState.volume}
 			isMuted={audioPlayerState.isMuted}
-			{isVolumeDragging}
-			isHidden={!isExpanded}
+			isVolumeDragging={volumeDragState.isVolumeDragging}
+			isHidden={!playerUiState.isExpanded}
 			{volumeBarRef}
 			onPlayClick={handleTogglePlay}
 			onPrevClick={handlePreviousSong}
@@ -444,7 +383,7 @@
 			playlist={playlistState.playlist}
 			currentIndex={playlistState.currentIndex}
 			isPlaying={audioPlayerState.isPlaying}
-			show={showPlaylist}
+			show={playerUiState.showPlaylist}
 			onClose={togglePlaylist}
 			onPlaySong={handlePlaySong}
 		/>
