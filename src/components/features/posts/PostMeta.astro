@@ -4,11 +4,11 @@ import { Icon } from "astro-icon/components";
 import I18nKey from "../../../i18n/i18nKey";
 import { i18n } from "../../../i18n/translation";
 import { formatDateToYYYYMMDD } from "../../../utils/date-utils";
-import { getCategoryUrl, getTagUrl } from "../../../utils/url-utils";
-
+import { getTagUrl } from "../../../utils/url-utils";
 import { PublishedDate } from "./atoms";
 import { Category } from "./atoms";
 import { WordCount } from "./atoms";
+import { ReadingTime } from "./atoms";
 
 interface Props {
 	published: Date;
@@ -24,6 +24,7 @@ interface Props {
 	words?: number;
 	minutes?: number;
 	showWordCount?: boolean;
+	showReadingTime?: boolean;
 }
 
 const {
@@ -38,7 +39,9 @@ const {
 	id,
 	showOnlyBasicMeta = false,
 	words,
+	minutes,
 	showWordCount = false,
+	showReadingTime = false,
 } = Astro.props;
 ---
 
@@ -58,6 +61,10 @@ const {
 
     {showWordCount && words && (
         <WordCount words={words} />
+    )}
+
+    {showReadingTime && minutes && (
+        <ReadingTime minutes={minutes} />
     )}
 
     {!showOnlyBasicMeta && (
