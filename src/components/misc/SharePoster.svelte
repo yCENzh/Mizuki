@@ -38,6 +38,29 @@
 	let generating = false;
 	let themeColor = "#558e88";
 
+	function isDarkMode(): boolean {
+		return document.documentElement.classList.contains("dark");
+	}
+
+	function getPosterColors() {
+		const dark = isDarkMode();
+		return {
+			background: dark ? "#1a1a1a" : "#ffffff",
+			title: dark ? "#e5e5e5" : "#111827",
+			descBg: dark ? "#2a2a2a" : "#e5e7eb",
+			descText: dark ? "#a3a3a3" : "#4b5563",
+			separator: dark ? "#2e2e2e" : "#f3f4f6",
+			metaText: dark ? "#6b6b6b" : "#9ca3af",
+			primaryText: dark ? "#d4d4d4" : "#1f2937",
+			qrBg: dark ? "#2a2a2a" : "#ffffff",
+			qrDark: dark ? "#ffffff" : "#000000",
+			qrLight: dark ? "#1a1a1a" : "#ffffff",
+			avatarBorder: dark ? "#2a2a2a" : "#ffffff",
+			dateBg: dark ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.3)",
+			dateText: dark ? "#e5e5e5" : "#ffffff",
+		};
+	}
+
 	onMount(() => {
 		const temp = document.createElement("div");
 		temp.style.color = "var(--primary)";
@@ -49,6 +72,16 @@
 		if (computedColor) {
 			themeColor = computedColor;
 		}
+
+		const observer = new MutationObserver(() => {
+			posterImage = null;
+		});
+		observer.observe(document.documentElement, {
+			attributes: true,
+			attributeFilter: ["class"],
+		});
+
+		return () => observer.disconnect();
 	});
 
 	async function generatePoster() {
@@ -56,12 +89,14 @@
 		if (posterImage) {return;}
 
 		generating = true;
+		const colors = getPosterColors();
+
 		try {
 			const QRCode = await import("qrcode");
 			const qrCodeUrl = await QRCode.toDataURL(url, {
 				margin: 1,
 				width: 100 * SCALE,
-				color: { dark: "#000000", light: "#ffffff" },
+				color: { dark: colors.qrDark, light: colors.qrLight },
 			});
 
 			const [qrImg, coverImg, avatarImg] = await Promise.all([
@@ -93,7 +128,7 @@
 			canvas.height = canvasHeight;
 
 			// Background
-			ctx.fillStyle = "#ffffff";
+			ctx.fillStyle = colors.background;
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 			// Decorative circles
@@ -151,6 +186,7 @@
 					coverHeight,
 					SCALE,
 					FONT_FAMILY,
+					isDarkMode(),
 				);
 			}
 
@@ -160,7 +196,7 @@
 			ctx.textBaseline = "top";
 			ctx.textAlign = "left";
 			ctx.font = `700 ${titleFontSize}px ${FONT_FAMILY}`;
-			ctx.fillStyle = "#111827";
+			ctx.fillStyle = colors.title;
 			const titleLines = getLines(ctx, title, CONTENT_WIDTH);
 			let drawY = coverHeight + PADDING;
 			for (const line of titleLines) {
@@ -172,7 +208,7 @@
 			// Description
 			if (description) {
 				const descFontSize = 14 * SCALE;
-				ctx.fillStyle = "#e5e7eb";
+				ctx.fillStyle = colors.descBg;
 				drawRoundedRect(
 					ctx,
 					PADDING,
@@ -184,7 +220,7 @@
 				ctx.fill();
 
 				ctx.font = `${descFontSize}px ${FONT_FAMILY}`;
-				ctx.fillStyle = "#4b5563";
+				ctx.fillStyle = colors.descText;
 				const descLines = getLines(
 					ctx,
 					description,
@@ -201,7 +237,7 @@
 			// Separator line
 			drawY += 24 * SCALE;
 			ctx.beginPath();
-			ctx.strokeStyle = "#f3f4f6";
+			ctx.strokeStyle = colors.separator;
 			ctx.lineWidth = 1 * SCALE;
 			ctx.moveTo(PADDING, drawY);
 			ctx.lineTo(WIDTH - PADDING, drawY);
@@ -214,8 +250,8 @@
 			const qrX = WIDTH - PADDING - qrSize;
 
 			// QR code background
-			ctx.fillStyle = "#ffffff";
-			ctx.shadowColor = "rgba(0, 0, 0, 0.05)";
+			ctx.fillStyle = colors.qrBg;
+			ctx.shadowColor = "rgba(0, 0, 0, 0.1)";
 			ctx.shadowBlur = 4 * SCALE;
 			ctx.shadowOffsetY = 2 * SCALE;
 			drawRoundedRect(ctx, qrX, footerY, qrSize, qrSize, 4 * SCALE);
@@ -267,7 +303,7 @@
 					0,
 					Math.PI * 2,
 				);
-				ctx.strokeStyle = "#ffffff";
+				ctx.strokeStyle = colors.avatarBorder;
 				ctx.lineWidth = 2 * SCALE;
 				ctx.stroke();
 			}
@@ -276,20 +312,20 @@
 			const avatarOffset = avatar ? 64 * SCALE + 16 * SCALE : 0;
 			const textX = PADDING + avatarOffset;
 
-			ctx.fillStyle = "#9ca3af";
+			ctx.fillStyle = colors.metaText;
 			ctx.font = `${12 * SCALE}px ${FONT_FAMILY}`;
 			ctx.fillText(i18n(I18nKey.author), textX, footerY + 4 * SCALE);
 
-			ctx.fillStyle = "#1f2937";
+			ctx.fillStyle = colors.primaryText;
 			ctx.font = `700 ${20 * SCALE}px ${FONT_FAMILY}`;
 			ctx.fillText(author, textX, footerY + 20 * SCALE);
 
 			// Site title
-			ctx.fillStyle = "#9ca3af";
+			ctx.fillStyle = colors.metaText;
 			ctx.font = `${12 * SCALE}px ${FONT_FAMILY}`;
 			ctx.fillText(i18n(I18nKey.scanToRead), textX, footerY + 44 * SCALE);
 
-			ctx.fillStyle = "#1f2937";
+			ctx.fillStyle = colors.primaryText;
 			ctx.font = `700 ${20 * SCALE}px ${FONT_FAMILY}`;
 			ctx.fillText(siteTitle, textX, footerY + 60 * SCALE);
 

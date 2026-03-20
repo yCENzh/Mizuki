@@ -197,19 +197,24 @@ export function drawDateBadge(
 	coverHeight: number,
 	scale: number,
 	FONT_FAMILY: string,
+	isDarkMode: boolean = false,
 ): void {
 	const dateBoxW = 60 * scale;
 	const dateBoxH = 60 * scale;
 	const dateBoxX = padding;
 	const dateBoxY = coverHeight - dateBoxH;
 
+	const bgColor = isDarkMode ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.3)";
+	const textColor = isDarkMode ? "#e5e5e5" : "#ffffff";
+	const separatorColor = isDarkMode ? "rgba(255, 255, 255, 0.4)" : "rgba(255, 255, 255, 0.6)";
+
 	// Background
-	ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+	ctx.fillStyle = bgColor;
 	drawRoundedRect(ctx, dateBoxX, dateBoxY, dateBoxW, dateBoxH, 4 * scale);
 	ctx.fill();
 
 	// Day number
-	ctx.fillStyle = "#ffffff";
+	ctx.fillStyle = textColor;
 	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
 	ctx.font = `700 ${30 * scale}px ${FONT_FAMILY}`;
@@ -217,7 +222,7 @@ export function drawDateBadge(
 
 	// Separator line
 	ctx.beginPath();
-	ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+	ctx.strokeStyle = separatorColor;
 	ctx.lineWidth = 1 * scale;
 	ctx.moveTo(dateBoxX + 10 * scale, dateBoxY + 42 * scale);
 	ctx.lineTo(dateBoxX + dateBoxW - 10 * scale, dateBoxY + 42 * scale);
