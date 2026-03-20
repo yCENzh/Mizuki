@@ -1,54 +1,18 @@
 ---
 import "../styles/anime.css";
 
-import fs from "node:fs";
-import path from "node:path";
-
 import { AnimeFilters,AnimeGrid } from "@components/features/anime";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 
 import { siteConfig } from "../config";
-import localAnimeList from "../data/anime";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
+import {
+	getAnimeList,
+	getAnimeSourceConfigs,
+	getStatusMap,
+} from "../utils/anime-data";
 import { widgetManager } from "../utils/widget-manager";
-
-interface RawAnimeItem {
-	title?: string;
-	cover?: string;
-	link?: string;
-	status?: string;
-	rating?: number | string;
-	progress?: number | string;
-	totalEpisodes?: number | string;
-	description?: string;
-	year?: string;
-	studio?: string;
-	genre?: string[];
-}
-
-interface AnimeItem {
-	title: string;
-	cover: string;
-	link: string;
-	status: string;
-	rating: number;
-	progress: number;
-	totalEpisodes: number;
-	description: string;
-	year: string;
-	studio: string;
-	genre: string[];
-}
-
-type AnimeSourceConfig =
-	| { type: "local"; data: AnimeItem[] }
-	| {
-			type: "json";
-			filename: string;
-			fetchOnDev?: boolean;
-			emptyDescription?: string;
-	  };
 
 if (!siteConfig.featurePages.anime) {
 	return Astro.redirect("/404/");
@@ -60,92 +24,17 @@ const hasRightSidebars =
 	widgetManager.getComponentsByPosition("sticky", "right", "desktop").length >
 		0;
 
-const BANGUMI_USER_ID = siteConfig.bangumi?.userId || "your-user-id";
-const BILIBILI_VMID = siteConfig.bilibili?.vmid || "";
 const ANIME_MODE = siteConfig.anime?.mode || "bangumi";
+const sourceConfigs = getAnimeSourceConfigs();
+const { animeList, currentConfig } = getAnimeList(ANIME_MODE, sourceConfigs);
 
-const sourceConfigs: Record<string, AnimeSourceConfig> = {
-	local: {
-		type: "local",
-		data: localAnimeList,
-	},
-	bilibili: {
-		type: "json",
-		filename: "bilibili-data.json",
-		fetchOnDev: siteConfig.bilibili?.fetchOnDev,
-		emptyDescription: i18n(I18nKey.animeEmptyBilibili),
-	},
-	bangumi: {
-		type: "json",
-		filename: "bangumi-data.json",
-		fetchOnDev: siteConfig.bangumi?.fetchOnDev,
-		emptyDescription: i18n(I18nKey.animeEmptyBangumi),
-	},
-};
-
-function loadAnimeData(filename: string): AnimeItem[] {
-	const dataPath = path.join(process.cwd(), `src/data/${filename}`);
-
-	if (!fs.existsSync(dataPath)) {
-		console.warn(`[Anime] Data file not found: ${dataPath}`);
-		return [];
-	}
-
-	try {
-		const fileContent = fs.readFileSync(dataPath, "utf-8");
-		const rawData = JSON.parse(fileContent) as RawAnimeItem[];
-
-		return rawData.map((item) => ({
-			title: item.title || "Unknown",
-			cover: item.cover || "",
-			link: item.link || "",
-			status: item.status || "planned",
-			rating: Number(item.rating) || 0,
-			progress: Number(item.progress) || 0,
-			totalEpisodes: Number(item.totalEpisodes) || 12,
-			description: item.description || "",
-			year: item.year || "",
-			studio: item.studio || "",
-			genre: Array.isArray(item.genre) ? item.genre : [],
-		}));
-	} catch (error) {
-		console.error(`[Anime] Failed to parse ${filename}:`, error);
-		return [];
-	}
-}
-
-let animeList: AnimeItem[] = [];
-const currentConfig = sourceConfigs[ANIME_MODE];
-
-if (currentConfig) {
-	if (currentConfig.type === "local") {
-		animeList = currentConfig.data;
-	} else if (currentConfig.type === "json") {
-		const isDev = import.meta.env.DEV;
-		const shouldFetchOnDev = currentConfig.fetchOnDev ?? false;
-		const skipLoad = isDev && !shouldFetchOnDev;
-
-		if (skipLoad) {
-			console.log(
-				`[Dev] Skipping ${ANIME_MODE} data load (fetchOnDev is off).`,
-			);
-			animeList = [];
-		} else {
-			animeList = loadAnimeData(currentConfig.filename);
-		}
-	}
-} else {
-	console.warn(`[Anime] Unknown or unconfigured mode: ${ANIME_MODE}`);
-}
-
-const emptyMessage = i18n(I18nKey.animeEmpty);
 let emptyDescription = "";
 let showEmptyState = false;
 
-if (ANIME_MODE === "bilibili" && (!BILIBILI_VMID || BILIBILI_VMID === "")) {
+if (ANIME_MODE === "bilibili" && (!siteConfig.bilibili?.vmid || siteConfig.bilibili.vmid === "")) {
 	showEmptyState = true;
 	emptyDescription = i18n(I18nKey.animeConfigBilibili);
-} else if (ANIME_MODE === "bangumi" && BANGUMI_USER_ID === "your-user-id") {
+} else if (ANIME_MODE === "bangumi" && siteConfig.bangumi?.userId === "your-user-id") {
 	showEmptyState = true;
 	emptyDescription = i18n(I18nKey.animeConfigBangumi);
 } else if (animeList.length === 0) {
@@ -153,6 +42,7 @@ if (ANIME_MODE === "bilibili" && (!BILIBILI_VMID || BILIBILI_VMID === "")) {
 	if (
 		currentConfig &&
 		currentConfig.type === "json" &&
+		"emptyDescription" in currentConfig &&
 		currentConfig.emptyDescription
 	) {
 		emptyDescription = currentConfig.emptyDescription;
@@ -163,41 +53,12 @@ if (ANIME_MODE === "bilibili" && (!BILIBILI_VMID || BILIBILI_VMID === "")) {
 	}
 }
 
-// 状态样式映射
-const statusMap: Record<string, { text: string; class: string; icon: string }> =
-	{
-		watching: {
-			text: i18n(I18nKey.animeStatusWatching),
-			class: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
-			icon: "▶",
-		},
-		completed: {
-			text: i18n(I18nKey.animeStatusCompleted),
-			class: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-			icon: "✓",
-		},
-		planned: {
-			text: i18n(I18nKey.animeStatusPlanned),
-			class: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
-			icon: "❤",
-		},
-		onhold: {
-			text: i18n(I18nKey.animeStatusOnHold),
-			class: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
-			icon: "⏸",
-		},
-		dropped: {
-			text: i18n(I18nKey.animeStatusDropped),
-			class: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
-			icon: "✗",
-		},
-	};
-
+const statusMap = getStatusMap();
 const INITIAL_DISPLAY_COUNT = 24;
 const visibleAnimeList = animeList.slice(0, INITIAL_DISPLAY_COUNT);
 const hiddenAnimeList = animeList.slice(INITIAL_DISPLAY_COUNT);
-
 const showExtendedFilters = ANIME_MODE === "bangumi";
+const emptyMessage = i18n(I18nKey.animeEmpty);
 ---
 
 <MainGridLayout
@@ -263,58 +124,13 @@ const showExtendedFilters = ANIME_MODE === "bangumi";
 
 	<script is:inline define:vars={{ hasRightSidebars }}>
 		(function () {
-			function initAnimeLayout() {
-				const animeListContainer = document.getElementById(
-					"anime-list-container",
-				);
-				if (!animeListContainer) {return false;}
-				const currentLayout =
-					localStorage.getItem("postListLayout") || "list";
-				updateAnimeListLayout(currentLayout, false);
-				requestAnimationFrame(() => {
-					animeListContainer.classList.remove("opacity-0");
-				});
-				return true;
-			}
-
-			let retryCount = 0;
-			const maxRetries = 10;
-			function tryInit() {
-				if (initAnimeLayout()) {return;}
-				if (retryCount < maxRetries) {
-					retryCount++;
-					const delay = Math.min(
-						100 * Math.pow(1.5, retryCount),
-						1000,
-					);
-					setTimeout(tryInit, delay);
-				} else {
-					setTimeout(() => {
-						const animeListContainer = document.getElementById(
-							"anime-list-container",
-						);
-						if (animeListContainer) {
-							const currentLayout =
-								localStorage.getItem("postListLayout") ||
-								"list";
-							updateAnimeListLayout(currentLayout, false);
-							animeListContainer.classList.remove("opacity-0");
-						}
-					}, 2000);
-				}
-			}
-
-			if (document.readyState === "loading") {
-				document.addEventListener("DOMContentLoaded", tryInit);
-			} else {
-				tryInit();
-			}
+			const containerId = "anime-list-container";
 
 			function updateAnimeListLayout(layout, shouldAnimate = true) {
-				const animeListContainer = document.getElementById(
-					"anime-list-container",
-				);
-				if (!animeListContainer) {return;}
+				const animeListContainer = document.getElementById(containerId);
+				if (!animeListContainer) {
+					return;
+				}
 				animeListContainer.dataset.currentLayout = layout;
 
 				const animeItems = Array.from(
@@ -350,12 +166,14 @@ const showExtendedFilters = ANIME_MODE === "bangumi";
 				);
 				if (layout === "grid") {
 					animeListContainer.classList.add("anime-grid-mode");
-					const rightSidebar = document.querySelector(
-						".right-sidebar-container",
-					);
-					if (rightSidebar) {
-						rightSidebar.style.display = "none";
-						rightSidebar.classList.add("hidden-in-grid-mode");
+					if (hasRightSidebars) {
+						const rightSidebar = document.querySelector(
+							".right-sidebar-container",
+						);
+						if (rightSidebar) {
+							rightSidebar.style.display = "none";
+							rightSidebar.classList.add("hidden-in-grid-mode");
+						}
 					}
 					const mainGrid = document.getElementById("main-grid");
 					if (mainGrid) {
@@ -368,12 +186,14 @@ const showExtendedFilters = ANIME_MODE === "bangumi";
 						"grid-cols-1",
 						"lg:grid-cols-2",
 					);
-					const rightSidebar = document.querySelector(
-						".right-sidebar-container",
-					);
-					if (rightSidebar) {
-						rightSidebar.style.display = "";
-						rightSidebar.classList.remove("hidden-in-grid-mode");
+					if (hasRightSidebars) {
+						const rightSidebar = document.querySelector(
+							".right-sidebar-container",
+						);
+						if (rightSidebar) {
+							rightSidebar.style.display = "";
+							rightSidebar.classList.remove("hidden-in-grid-mode");
+						}
 					}
 					const mainGrid = document.getElementById("main-grid");
 					if (mainGrid) {
@@ -384,16 +204,22 @@ const showExtendedFilters = ANIME_MODE === "bangumi";
 
 				void animeListContainer.offsetHeight;
 				if (!shouldAnimate) {
-					if (style.parentNode) {style.parentNode.removeChild(style);}
+					if (style.parentNode) {
+						style.parentNode.removeChild(style);
+					}
 					return;
 				}
 
 				requestAnimationFrame(() => {
-					if (style.parentNode) {style.parentNode.removeChild(style);}
+					if (style.parentNode) {
+						style.parentNode.removeChild(style);
+					}
 
 					visibleItems.forEach((item) => {
 						const first = firstPositions.get(item);
-						if (!first) {return;}
+						if (!first) {
+							return;
+						}
 						const last = item.getBoundingClientRect();
 
 						const deltaX = Math.round(first.left - last.left);
@@ -406,8 +232,9 @@ const showExtendedFilters = ANIME_MODE === "bangumi";
 							Math.abs(deltaY) < 1 &&
 							Math.abs(deltaW - 1) < 0.01 &&
 							Math.abs(deltaH - 1) < 0.01
-						)
-							{return;}
+						) {
+							return;
+						}
 
 						item.style.willChange = "transform";
 						item.style.transition = "none";
@@ -432,6 +259,58 @@ const showExtendedFilters = ANIME_MODE === "bangumi";
 						}, 500);
 					});
 				});
+			}
+
+			function initAnimeLayout() {
+				const animeListContainer = document.getElementById(
+					containerId,
+				);
+				if (!animeListContainer) {
+					return false;
+				}
+				const currentLayout =
+					localStorage.getItem("postListLayout") || "list";
+				updateAnimeListLayout(currentLayout, false);
+				requestAnimationFrame(() => {
+					animeListContainer.classList.remove("opacity-0");
+				});
+				return true;
+			}
+
+			let retryCount = 0;
+			const maxRetries = 10;
+
+			function tryInit() {
+				if (initAnimeLayout()) {
+					return;
+				}
+				if (retryCount < maxRetries) {
+					retryCount++;
+					const delay = Math.min(
+						100 * Math.pow(1.5, retryCount),
+						1000,
+					);
+					setTimeout(tryInit, delay);
+				} else {
+					setTimeout(() => {
+						const animeListContainer = document.getElementById(
+							containerId,
+						);
+						if (animeListContainer) {
+							const currentLayout =
+								localStorage.getItem("postListLayout") ||
+								"list";
+							updateAnimeListLayout(currentLayout, false);
+							animeListContainer.classList.remove("opacity-0");
+						}
+					}, 2000);
+				}
+			}
+
+			if (document.readyState === "loading") {
+				document.addEventListener("DOMContentLoaded", tryInit);
+			} else {
+				tryInit();
 			}
 
 			window.addEventListener("layoutChange", (event) => {
