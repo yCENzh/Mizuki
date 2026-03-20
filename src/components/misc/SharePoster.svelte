@@ -364,15 +364,18 @@
 {#if showModal}
 	<div
 		use:portal
-		class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-opacity"
+		class="fixed inset-0 z-[9999] flex items-center justify-center p-4 transition-opacity"
+		style="background-color: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);"
 		on:click={closeModal}
 	>
 		<div
-			class="bg-white dark:bg-gray-800 rounded-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto flex flex-col shadow-2xl transform transition-all"
+			class="rounded-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto flex flex-col shadow-2xl transform transition-all"
+			style="background-color: var(--float-panel-bg);"
 			on:click|stopPropagation
 		>
 			<div
-				class="p-6 flex justify-center bg-gray-50 dark:bg-gray-900 min-h-[200px] items-center"
+				class="p-6 flex justify-center min-h-[200px] items-center"
+				style="background-color: var(--card-bg);"
 			>
 				{#if posterImage}
 					<img
@@ -383,10 +386,12 @@
 				{:else}
 					<div class="flex flex-col items-center gap-3">
 						<div
-							class="w-8 h-8 border-2 border-gray-200 rounded-full animate-spin"
-							style="border-top-color: {themeColor}"
+							class="w-8 h-8 border-2 rounded-full animate-spin"
+							style="border-color: oklch(0.35 0.02 var(--hue)); border-top-color: {themeColor};"
 						></div>
-						<span class="text-sm text-gray-500"
+						<span
+							class="text-sm"
+							style="color: var(--content-meta);"
 							>{i18n(I18nKey.generatingPoster)}</span
 						>
 					</div>
@@ -394,10 +399,14 @@
 			</div>
 
 			<div
-				class="p-4 border-t border-gray-100 dark:border-gray-700 grid grid-cols-2 gap-3"
+				class="p-4 grid grid-cols-2 gap-3"
+				style="border-top: 1px solid var(--line-color);"
 			>
 				<button
-					class="py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+					class="py-3 rounded-xl font-medium active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+					style="background-color: var(--btn-card-bg-hover); color: var(--btn-content);"
+					on:mouseenter={(e) => e.currentTarget.style.backgroundColor = 'var(--btn-card-bg-active)'}
+					on:mouseleave={(e) => e.currentTarget.style.backgroundColor = 'var(--btn-card-bg-hover)'}
 					on:click={copyLink}
 				>
 					{#if copied}
@@ -417,8 +426,8 @@
 					{/if}
 				</button>
 				<button
-					class="py-3 text-white rounded-xl font-medium active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:brightness-90"
-					style="background-color: {themeColor};"
+					class="py-3 rounded-xl font-medium active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+					style="background-color: {themeColor}; color: white;"
 					on:click={downloadPoster}
 					disabled={!posterImage}
 				>
