@@ -6,7 +6,6 @@ import {
 	getLines,
 	loadImage,
 	parseDate,
-	type PosterConfig,
 	type SizeConfig,
 } from "../utils/poster-renderer";
 
@@ -70,8 +69,13 @@ export async function generatePosterImage(
 		contentWidth,
 	};
 
-	const { coverHeight, titleHeight, descHeight, canvasHeight } =
-		calculateDimensions(!!coverImage, title, description, ctx, config);
+	const { coverHeight, descHeight, canvasHeight } = calculateDimensions(
+		!!coverImage,
+		title,
+		description,
+		ctx,
+		config,
+	);
 
 	canvas.width = width;
 	canvas.height = canvasHeight;

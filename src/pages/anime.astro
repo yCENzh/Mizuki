@@ -2,6 +2,7 @@
 import "../styles/anime.css";
 
 import { AnimeFilters,AnimeGrid } from "@components/features/anime";
+import { PageHeader } from "@components/features/page-header";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 
 import { siteConfig } from "../config";
@@ -70,18 +71,7 @@ const emptyMessage = i18n(I18nKey.animeEmpty);
 	>
 		<div class="card-base anime-card-base z-10 px-9 py-6 relative w-full">
 			<div class="relative w-full mb-8">
-				<div class="mb-6">
-					<h1
-						class="text-4xl font-bold text-black/90 dark:text-white/90 mb-2 relative
-                    before:w-1 before:h-8 before:rounded-md before:bg-[var(--primary)]
-                    before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-4"
-					>
-						{i18n(I18nKey.animeTitle)}
-					</h1>
-					<p class="text-black/75 dark:text-white/75">
-						{i18n(I18nKey.animeSubtitle)}
-					</p>
-				</div>
+				<PageHeader title={i18n(I18nKey.animeTitle)} subtitle={i18n(I18nKey.animeSubtitle)} />
 
 				<div class="mb-6">
 					<AnimeFilters

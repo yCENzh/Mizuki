@@ -309,7 +309,7 @@ export const navBarConfig: NavBarConfig = {
 				},
 				{
 					name: "Devices",
-					url: "devices/",
+					url: "/devices/",
 					icon: "material-symbols:devices",
 					external: false,
 				},
