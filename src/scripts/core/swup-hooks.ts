@@ -4,14 +4,14 @@
  */
 
 import { pathsEqual, url } from "../../utils/url-utils";
-import {
-	BANNER_HEIGHT,
-	SWUP_SELECTORS,
-	ANIMATION_CONFIG,
-	THEME_CONFIG,
-} from "./swup-config";
 import type { FancyboxHandler } from "../handlers/fancybox-handler";
 import type { ScrollHandler } from "../handlers/scroll-handler";
+import {
+	ANIMATION_CONFIG,
+	BANNER_HEIGHT,
+	SWUP_SELECTORS,
+	THEME_CONFIG,
+} from "./swup-config";
 
 // 钩子处理器接口
 export interface SwupHookHandlers {
@@ -48,7 +48,7 @@ export class SwupHooksManager {
 	 * 注册所有 Swup 钩子
 	 */
 	registerHooks(): void {
-		if (!window.swup) return;
+		if (!window.swup) {return;}
 		this.registerLinkClickHook();
 		this.registerContentReplaceHook();
 		this.registerVisitStartHook();

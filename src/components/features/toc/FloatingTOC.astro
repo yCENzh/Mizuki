@@ -5,6 +5,7 @@
  */
 
 import { Icon } from "astro-icon/components";
+
 import { siteConfig } from "../../../config";
 
 const tocDepth = siteConfig.toc.depth;
@@ -248,18 +249,16 @@ const useJapaneseBadge = siteConfig.toc.useJapaneseBadge;
 </style>
 
 <script>
+import { findActiveHeadingIndex } from "./hooks/useTocHighlight";
+import {
+	throttle,
+	updateProgressRing,
+} from "./hooks/useTocScroll";
 import {
 	generateTOCItems,
 	getTOCConfig,
 	scrollToHeading,
 } from "./utils/toc-utils";
-
-import { findActiveHeadingIndex } from "./hooks/useTocHighlight";
-
-import {
-	updateProgressRing,
-	throttle,
-} from "./hooks/useTocScroll";
 
 interface FloatingTOCState {
 	btn: HTMLElement | null;
@@ -321,7 +320,7 @@ class FloatingTOC {
 		const circle = this.state.btn?.querySelector(
 			".progress-ring-circle"
 		) as SVGCircleElement | null;
-		if (!circle) return;
+		if (!circle) {return;}
 
 		const scrollTop = window.scrollY || document.documentElement.scrollTop;
 		const docHeight =
@@ -333,7 +332,7 @@ class FloatingTOC {
 
 	updateActiveHeading() {
 		const { content, headings } = this.state;
-		if (!content || headings.length === 0) return;
+		if (!content || headings.length === 0) {return;}
 
 		const activeIndex = findActiveHeadingIndex(headings, window.scrollY, 150);
 		const links = Array.from(
@@ -445,7 +444,7 @@ class FloatingTOC {
 		});
 
 		document.addEventListener("keydown", (e) => {
-			if (e.key === "Escape" && this.state.isOpen) this.close();
+			if (e.key === "Escape" && this.state.isOpen) {this.close();}
 		});
 
 		if (window.swup) {

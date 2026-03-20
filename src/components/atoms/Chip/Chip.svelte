@@ -2,7 +2,7 @@
 	import type { ChipProps } from "./types";
 
 	interface Props extends ChipProps {}
-	let {
+	const {
 		href,
 		label,
 		dot = false,

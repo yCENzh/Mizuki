@@ -23,12 +23,12 @@ const textData = Array.isArray(text) ? JSON.stringify(text) : text;
 class TypewriterEffect {
     private element: HTMLElement;
     private texts: string[];
-    private currentTextIndex: number = 0;
+    private currentTextIndex = 0;
     private speed: number;
     private deleteSpeed: number;
     private pauseTime: number;
-    private currentIndex: number = 0;
-    private isDeleting: boolean = false;
+    private currentIndex = 0;
+    private isDeleting = false;
     private timeoutId: number | null = null;
 
     constructor(element: HTMLElement) {
@@ -68,7 +68,7 @@ class TypewriterEffect {
     }
 
     private start() {
-        if (this.texts.length === 0) return;
+        if (this.texts.length === 0) {return;}
         this.type();
     }
 

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
+
 	import type { Song } from "../types";
 
 	interface Props {
@@ -10,12 +11,12 @@
 		onclick: () => void;
 	}
 
-	let { song, index, isCurrent, isPlaying, onclick }: Props = $props();
+	const { song, index, isCurrent, isPlaying, onclick }: Props = $props();
 
 	function getAssetPath(path: string): string {
 		if (path.startsWith("http://") || path.startsWith("https://"))
-			return path;
-		if (path.startsWith("/")) return path;
+			{return path;}
+		if (path.startsWith("/")) {return path;}
 		return `/${path}`;
 	}
 </script>

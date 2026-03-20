@@ -14,7 +14,7 @@
 		onTitleClick: () => void;
 	}
 
-	let {
+	const {
 		monthNames,
 		yearSuffix,
 		currentYear,

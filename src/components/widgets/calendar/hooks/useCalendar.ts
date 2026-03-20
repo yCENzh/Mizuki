@@ -78,9 +78,9 @@ export function getPostsForDate(
 	dateKey: string,
 	postDateMap: Record<
 		string,
-		Array<{ id: string; title: string; date: string }>
+		{ id: string; title: string; date: string }[]
 	>,
-): Array<{ id: string; title: string; date: string }> {
+): { id: string; title: string; date: string }[] {
 	return postDateMap[dateKey] || [];
 }
 
@@ -91,9 +91,9 @@ export function getPostsForMonth(
 	monthKey: string,
 	postsByMonth: Record<
 		string,
-		Array<{ id: string; title: string; date: string }>
+		{ id: string; title: string; date: string }[]
 	>,
-): Array<{ id: string; title: string; date: string }> {
+): { id: string; title: string; date: string }[] {
 	return postsByMonth[monthKey] || [];
 }
 
@@ -101,15 +101,15 @@ export function getPostsForMonth(
  * Process posts data and build indexes
  */
 export function processPostsData(
-	posts: Array<{ date: string; id: string; title: string }>,
+	posts: { date: string; id: string; title: string }[],
 ): {
 	postDateMap: Record<
 		string,
-		Array<{ id: string; title: string; date: string }>
+		{ id: string; title: string; date: string }[]
 	>;
 	postsByMonth: Record<
 		string,
-		Array<{ id: string; title: string; date: string }>
+		{ id: string; title: string; date: string }[]
 	>;
 	stats: {
 		hasPostInYear: Record<string, boolean>;
@@ -120,11 +120,11 @@ export function processPostsData(
 } {
 	const postDateMap: Record<
 		string,
-		Array<{ id: string; title: string; date: string }>
+		{ id: string; title: string; date: string }[]
 	> = {};
 	const postsByMonth: Record<
 		string,
-		Array<{ id: string; title: string; date: string }>
+		{ id: string; title: string; date: string }[]
 	> = {};
 	const stats = {
 		hasPostInYear: {} as Record<string, boolean>,
@@ -143,15 +143,15 @@ export function processPostsData(
 		const month = parseInt(mStr);
 		stats.hasPostInYear[year] = true;
 		stats.hasPostInMonth[`${year}-${month}`] = true;
-		if (year < stats.minYear) stats.minYear = year;
+		if (year < stats.minYear) {stats.minYear = year;}
 
 		const dateKey = post.date;
 		const monthKey = `${year}-${month - 1}`;
 
-		if (!postDateMap[dateKey]) postDateMap[dateKey] = [];
+		if (!postDateMap[dateKey]) {postDateMap[dateKey] = [];}
 		postDateMap[dateKey].push(post);
 
-		if (!postsByMonth[monthKey]) postsByMonth[monthKey] = [];
+		if (!postsByMonth[monthKey]) {postsByMonth[monthKey] = [];}
 		postsByMonth[monthKey].push(post);
 	});
 
@@ -163,9 +163,9 @@ export function processPostsData(
  */
 export function getCurrentPostId(
 	path: string,
-	allPostsData: Array<{ id: string; date: string; title: string }>,
+	allPostsData: { id: string; date: string; title: string }[],
 ): string | null {
-	if (!allPostsData || allPostsData.length === 0) return null;
+	if (!allPostsData || allPostsData.length === 0) {return null;}
 	const decodedPath = decodeURIComponent(path);
 	const normalizedPath = decodedPath.endsWith("/")
 		? decodedPath.slice(0, -1)

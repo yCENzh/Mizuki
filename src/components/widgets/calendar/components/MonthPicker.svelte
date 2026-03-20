@@ -9,7 +9,7 @@
 		onMonthSelect: (month: number) => void;
 	}
 
-	let { monthNames, currentYear, currentMonth, stats, onMonthSelect }: Props = $props();
+	const { monthNames, currentYear, currentMonth, stats, onMonthSelect }: Props = $props();
 
 	function getMonthClass(index: number, hasPost: boolean): string {
 		const isCurrentMonth = index === currentMonth;

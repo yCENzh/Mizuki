@@ -1,18 +1,19 @@
 <script lang="ts">
-	import { onMount } from "svelte";
 	import Icon from "@iconify/svelte";
+	import { onMount } from "svelte";
+
 	import CalendarGrid from "./components/CalendarGrid.svelte";
 	import MonthPicker from "./components/MonthPicker.svelte";
 	import YearPicker from "./components/YearPicker.svelte";
-	import type { CalendarPost, CalendarStats, CalendarGridCell } from "./types/calendar";
 	import {
-		getFirstDayOfMonth,
-		getDaysInMonth,
 		formatDateKey,
 		formatMonthKey,
-		processPostsData,
 		getCurrentPostId,
+		getDaysInMonth,
+		getFirstDayOfMonth,
+		processPostsData,
 	} from "./hooks/useCalendar";
+	import type { CalendarGridCell,CalendarPost, CalendarStats } from "./types/calendar";
 
 	interface Props {
 		monthNames: string[];
@@ -20,7 +21,7 @@
 		yearSuffix: string;
 	}
 
-	let { monthNames, weekDays, yearSuffix }: Props = $props();
+	const { monthNames, weekDays, yearSuffix }: Props = $props();
 
 	// State
 	let allPostsData: CalendarPost[] = $state([]);

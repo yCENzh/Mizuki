@@ -21,7 +21,7 @@ export class ScrollHandler {
 		) as NodeListOf<HTMLElement>;
 
 		katexElements.forEach((element) => {
-			if (!element.parentNode) return;
+			if (!element.parentNode) {return;}
 
 			const container = document.createElement("div");
 			container.className = "katex-display-container";
@@ -46,7 +46,7 @@ export class ScrollHandler {
 	 * 添加 KaTeX 滚动条样式（只添加一次）
 	 */
 	private addKatexScrollbarStyle(): void {
-		if (this.katexScrollbarStyleAdded) return;
+		if (this.katexScrollbarStyleAdded) {return;}
 
 		const style = document.createElement("style");
 		style.textContent = `

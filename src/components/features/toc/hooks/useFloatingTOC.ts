@@ -40,7 +40,7 @@ export function updateProgressRing(
 export function findActiveHeading(
 	headings: HTMLElement[],
 	scrollY: number,
-	offsetTop: number = 150,
+	offsetTop = 150,
 ): number {
 	let activeIndex = -1;
 	for (let i = 0; i < headings.length; i++) {
@@ -76,7 +76,7 @@ export function getHeadings(
 
 	allHeadings.forEach((h) => {
 		const level = parseInt(h.tagName[1]);
-		if (level < minLevel) minLevel = level;
+		if (level < minLevel) {minLevel = level;}
 	});
 
 	allHeadings.forEach((heading) => {

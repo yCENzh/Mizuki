@@ -7,7 +7,7 @@
 		onclick: () => void;
 	}
 
-	let { volume, isMuted, onclick }: Props = $props();
+	const { volume, isMuted, onclick }: Props = $props();
 </script>
 
 <button class="btn-plain w-8 h-8 rounded-lg" {onclick}>

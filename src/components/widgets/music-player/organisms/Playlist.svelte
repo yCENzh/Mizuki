@@ -1,9 +1,10 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
 	import { slide } from "svelte/transition";
-	import PlaylistItem from "../atoms/PlaylistItem.svelte";
-	import { i18n } from "../../../../i18n/translation";
+
 	import Key from "../../../../i18n/i18nKey";
+	import { i18n } from "../../../../i18n/translation";
+	import PlaylistItem from "../atoms/PlaylistItem.svelte";
 	import type { Song } from "../types";
 
 	interface Props {
@@ -15,7 +16,7 @@
 		onPlaySong: (index: number) => void;
 	}
 
-	let {
+	const {
 		playlist,
 		currentIndex,
 		isPlaying,

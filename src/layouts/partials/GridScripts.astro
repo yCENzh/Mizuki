@@ -95,18 +95,18 @@ const {
 
 	// 根据壁纸模式动态设置 banner 和全屏壁纸的显示
 	function applyWallpaperMode() {
-		var wallpaperMode = localStorage.getItem('wallpaperMode') || defaultWallpaperMode;
-		var bannerWrapper = document.getElementById('banner-wrapper');
-		var fullscreenWallpaper = document.querySelector('[data-fullscreen-wallpaper]');
-		var navbar = document.getElementById('navbar');
-		var body = document.body;
-		var mainContent = document.querySelector('.absolute.w-full.z-30.pointer-events-none');
-		var tocWrapper = document.getElementById('toc-wrapper');
+		const wallpaperMode = localStorage.getItem('wallpaperMode') || defaultWallpaperMode;
+		const bannerWrapper = document.getElementById('banner-wrapper');
+		const fullscreenWallpaper = document.querySelector('[data-fullscreen-wallpaper]');
+		const navbar = document.getElementById('navbar');
+		const body = document.body;
+		const mainContent = document.querySelector('.absolute.w-full.z-30.pointer-events-none');
+		const tocWrapper = document.getElementById('toc-wrapper');
 
 		// 强制重排以确保样式正确应用
-		var forceReflow = function() {
-			void document.body.offsetHeight;
-		};
+		const forceReflow = function() {
+		void document.body.offsetHeight;
+	};
 
 		switch(wallpaperMode) {
 			case 'banner':

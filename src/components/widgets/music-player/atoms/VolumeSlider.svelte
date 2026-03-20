@@ -10,7 +10,7 @@
 		ariaLabel: string;
 	}
 
-	let {
+	const {
 		volume,
 		isVolumeDragging,
 		volumeBarRef,

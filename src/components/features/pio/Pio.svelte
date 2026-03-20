@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onDestroy, onMount } from "svelte";
+
 	import { pioConfig } from "@/config";
+
 	import type { PioProps } from "./types";
 
 	export let config: Partial<PioProps["config"]> = {};
@@ -41,7 +43,7 @@
 	}
 
 	function loadPioAssets() {
-		if (typeof window === "undefined") return;
+		if (typeof window === "undefined") {return;}
 
 		const loadScript = (src: string, id: string): Promise<void> => {
 			return new Promise((resolve, reject) => {
@@ -69,7 +71,7 @@
 	}
 
 	onMount(() => {
-		if (!pioConfig.enable) return;
+		if (!pioConfig.enable) {return;}
 
 		if (
 			pioConfig.hiddenOnMobile &&

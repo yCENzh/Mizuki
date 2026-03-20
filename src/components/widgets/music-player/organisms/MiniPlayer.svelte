@@ -15,7 +15,7 @@
 		onExpandClick: () => void;
 	}
 
-	let {
+	const {
 		song,
 		currentTime,
 		duration,

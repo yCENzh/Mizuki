@@ -14,7 +14,7 @@
 		onClose: () => void;
 	}
 
-	let {
+	const {
 		monthNames,
 		currentYear,
 		currentMonth,

@@ -1,12 +1,12 @@
 /**
  * Auth feature exports
  */
-export { default as PasswordProtection } from "./PasswordProtection.astro";
 export { default as Encryptor } from "./Encryptor.astro";
-export type { PasswordProtectionProps, EncryptorProps } from "./types";
+export { default as PasswordProtection } from "./PasswordProtection.astro";
+export type { EncryptorProps,PasswordProtectionProps } from "./types";
 export type {
-	DecryptResult,
-	ValidationMessages,
-	UnlockCallbacks,
 	CopyCodeOptions,
+	DecryptResult,
+	UnlockCallbacks,
+	ValidationMessages,
 } from "./types/auth";

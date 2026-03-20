@@ -6,8 +6,8 @@
  */
 
 // 组件导出（兼容包装器）
-export { default as SidebarTOC } from "./SidebarTOC.astro";
 export { default as FloatingTOC } from "./FloatingTOC.astro";
+export { default as SidebarTOC } from "./SidebarTOC.astro";
 
 // 子组件导出
 export { default as TOCBadge } from "./components/TOCBadge.astro";
@@ -16,24 +16,24 @@ export { default as TOCProgressBar } from "./components/TOCProgressBar.astro";
 
 // 类型导出
 export type {
-	TOCItem,
-	TOCConfig,
 	HeadingData,
 	TOCBaseProps,
+	TOCConfig,
+	TOCItem,
 	TOCObserverOptions,
 	TOCScrollOptions,
 } from "./types/toc";
 
 // 工具函数导出
 export {
-	extractHeadings,
-	getMinLevel,
-	generateTOCItems,
-	scrollToHeading,
-	createHeadingObserver,
-	getTOCConfig,
 	calculateReadingProgress,
+	createHeadingObserver,
 	debounce,
+	extractHeadings,
+	generateTOCItems,
+	getMinLevel,
+	getTOCConfig,
+	scrollToHeading,
 } from "./utils/toc-utils";
 
 // Hooks 导出
@@ -41,48 +41,47 @@ export * from "./hooks/useFloatingTOC";
 
 // Navigation hooks
 export {
-	extractHeadingsFromDOM,
-	scrollToHeading as scrollToTocHeading,
 	createHeadingClickHandler,
+	extractHeadingsFromDOM,
+	getContainerSelector,
 	getTOCConfig as getTocConfig,
 	isPostPage,
-	getContainerSelector,
+	scrollToHeading as scrollToTocHeading,
 } from "./hooks/useTocNavigation";
 
 // Highlight hooks
 export {
-	findActiveHeadingIndex,
-	findActiveHeadingByObserver,
 	calculateActiveHeadingRange,
-	createHeadingVisibilityObserver,
-	isElementInViewport,
 	calculateFallbackActiveHeading,
+	createHeadingVisibilityObserver,
+	findActiveHeadingByObserver,
+	findActiveHeadingIndex,
+	isElementInViewport,
 } from "./hooks/useTocHighlight";
 
 // Scroll hooks
 export {
-	calculateReadingProgress as getReadingProgress,
-	updateProgressRing,
-	createScrollHandler,
-	scrollActiveIntoView,
 	calculateActiveIndicatorPosition,
+	createScrollHandler,
 	debounce as debounceScroll,
+	calculateReadingProgress as getReadingProgress,
+	scrollActiveIntoView,
 	throttle as throttleScroll,
+	updateProgressRing,
 } from "./hooks/useTocScroll";
 
 // Calculator utilities
 export {
-	generateTOCItems as calcTOCItems,
+	getKatakanaBadge,
+	JAPANESE_KATAKANA,
+	KATAKANA_COUNT,
+} from "./utils/japanese-katakana";
+export {
 	getMinLevel as calcMinLevel,
-	getBadgeText,
+	generateTOCItems as calcTOCItems,
 	getBadgeClass,
+	getBadgeText,
 	getIndentClass,
 	getTextClass,
 	isInRange,
 } from "./utils/toc-calculator";
-
-export {
-	JAPANESE_KATAKANA,
-	getKatakanaBadge,
-	KATAKANA_COUNT,
-} from "./utils/japanese-katakana";

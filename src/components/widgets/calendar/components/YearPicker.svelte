@@ -1,6 +1,7 @@
 <script lang="ts">
-	import type { CalendarStats } from "../types/calendar";
 	import { onMount } from "svelte";
+
+	import type { CalendarStats } from "../types/calendar";
 
 	interface Props {
 		currentYear: number;
@@ -8,7 +9,7 @@
 		onYearSelect: (year: number) => void;
 	}
 
-	let { currentYear, stats, onYearSelect }: Props = $props();
+	const { currentYear, stats, onYearSelect }: Props = $props();
 
 	let containerEl: HTMLDivElement;
 

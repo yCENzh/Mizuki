@@ -3,8 +3,9 @@
  * 提供侧边栏组件渲染的通用逻辑
  */
 import type { MarkdownHeading } from "astro";
-import { widgetManager } from "./widget-manager";
+
 import type { WidgetConfig } from "./types/widget";
+import { widgetManager } from "./widget-manager";
 
 /**
  * 组件渲染结果

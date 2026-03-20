@@ -10,7 +10,7 @@ import { JAPANESE_KATAKANA } from "./japanese-katakana";
  * 计算最小标题级别
  */
 export function getMinLevel(headings: HeadingData[]): number {
-	if (headings.length === 0) return 1;
+	if (headings.length === 0) {return 1;}
 	return Math.min(...headings.map((h) => h.level));
 }
 
@@ -41,7 +41,7 @@ export function generateTOCItems(
 	depth: number,
 	useJapaneseBadge: boolean
 ): TOCItem[] {
-	if (headings.length === 0) return [];
+	if (headings.length === 0) {return [];}
 
 	const minLevel = getMinLevel(headings);
 	let h1Count = 0;
@@ -83,8 +83,8 @@ export function getBadgeClass(level: number, minLevel: number): string {
  * 获取缩进类
  */
 export function getIndentClass(depth: number): string {
-	if (depth === 0) return "";
-	if (depth === 1) return "ml-4";
+	if (depth === 0) {return "";}
+	if (depth === 1) {return "ml-4";}
 	return "ml-8";
 }
 

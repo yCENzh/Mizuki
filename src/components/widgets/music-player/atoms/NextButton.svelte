@@ -6,7 +6,7 @@
 		disabled?: boolean;
 	}
 
-	let { onclick, disabled = false }: Props = $props();
+	const { onclick, disabled = false }: Props = $props();
 </script>
 
 <button class="btn-plain w-10 h-10 rounded-lg" {onclick} {disabled}>

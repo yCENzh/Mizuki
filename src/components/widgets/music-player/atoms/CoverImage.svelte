@@ -1,7 +1,8 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
-	import { i18n } from "../../../../i18n/translation";
+
 	import Key from "../../../../i18n/i18nKey";
+	import { i18n } from "../../../../i18n/translation";
 
 	interface Props {
 		cover: string;
@@ -12,7 +13,7 @@
 		interactive?: boolean;
 	}
 
-	let {
+	const {
 		cover,
 		isPlaying,
 		isLoading,
@@ -23,8 +24,8 @@
 
 	function getAssetPath(path: string): string {
 		if (path.startsWith("http://") || path.startsWith("https://"))
-			return path;
-		if (path.startsWith("/")) return path;
+			{return path;}
+		if (path.startsWith("/")) {return path;}
 		return `/${path}`;
 	}
 

@@ -2,7 +2,7 @@
 	import type { BadgeProps } from "./types";
 
 	interface Props extends BadgeProps {}
-	let { value, class: className = "" }: Props = $props();
+	const { value, class: className = "" }: Props = $props();
 </script>
 
 {#if value !== undefined && value !== null && value !== ""}

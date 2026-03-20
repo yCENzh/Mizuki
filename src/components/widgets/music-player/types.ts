@@ -1,17 +1,17 @@
-export type Song = {
+export interface Song {
 	id: number;
 	title: string;
 	artist: string;
 	cover: string;
 	url: string;
 	duration: number;
-};
+}
 
 export type PlayerMode = "local" | "meting";
 
 export type RepeatMode = 0 | 1 | 2;
 
-export type PlayerState = {
+export interface PlayerState {
 	isPlaying: boolean;
 	isExpanded: boolean;
 	isHidden: boolean;
@@ -30,4 +30,4 @@ export type PlayerState = {
 	currentIndex: number;
 	autoplayFailed: boolean;
 	willAutoPlay: boolean;
-};
+}

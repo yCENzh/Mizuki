@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
+
 	import type { RepeatMode } from "../types";
 
 	interface Props {
@@ -10,7 +11,7 @@
 		disabled?: boolean;
 	}
 
-	let {
+	const {
 		mode,
 		isActive,
 		repeatMode = 0,

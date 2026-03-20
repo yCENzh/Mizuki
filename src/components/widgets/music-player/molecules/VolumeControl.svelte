@@ -1,7 +1,8 @@
 <script lang="ts">
+	import type { Action } from "svelte/action";
+
 	import VolumeButton from "../atoms/VolumeButton.svelte";
 	import VolumeSlider from "../atoms/VolumeSlider.svelte";
-	import type { Action } from "svelte/action";
 
 	interface Props {
 		volume: number;
@@ -14,7 +15,7 @@
 		ariaLabel: string;
 	}
 
-	let {
+	const {
 		volume,
 		isMuted,
 		isVolumeDragging,

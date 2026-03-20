@@ -8,7 +8,7 @@
 		onProgressKeyDown: (event: KeyboardEvent) => void;
 	}
 
-	let { currentTime, duration, onProgressClick, onProgressKeyDown }: Props =
+	const { currentTime, duration, onProgressClick, onProgressKeyDown }: Props =
 		$props();
 </script>
 

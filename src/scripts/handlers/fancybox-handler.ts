@@ -69,7 +69,7 @@ export class FancyboxHandler {
 	 * 绑定图片选择器
 	 */
 	private bindImageSelectors(): void {
-		if (!this.Fancybox) return;
+		if (!this.Fancybox) {return;}
 
 		const commonConfig = getDefaultFancyboxConfig();
 
@@ -103,7 +103,7 @@ export class FancyboxHandler {
 	 * 在页面切换前调用
 	 */
 	cleanup(): void {
-		if (!this.Fancybox) return;
+		if (!this.Fancybox) {return;}
 
 		this.boundSelectors.forEach((selector) => {
 			this.Fancybox.unbind(selector);

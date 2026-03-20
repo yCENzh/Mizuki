@@ -1,5 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
+
 import I18nKey from "../../../i18n/i18nKey";
 import { i18n } from "../../../i18n/translation";
 import { formatDateToYYYYMMDD } from "../../../utils/date-utils";
@@ -127,7 +128,7 @@ const {
         }
 
         const id = container?.dataset.id;
-        if (!id) return;
+        if (!id) {return;}
 
         try {
             const stats = await window.oddmisc.getStats(`/posts/${id}/`);

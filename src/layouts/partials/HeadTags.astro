@@ -6,6 +6,8 @@
  * 提取自 Layout.astro 以实现更好的代码组织
  */
 
+import { profileConfig, siteConfig } from "@/config";
+
 import {
 	DARK_MODE,
 	DEFAULT_THEME,
@@ -14,7 +16,6 @@ import {
 import { defaultFavicons } from "../../constants/icon";
 import type { Favicon } from "../../types/config";
 import { url } from "../../utils/url-utils";
-import { profileConfig, siteConfig } from "@/config";
 
 interface Props {
 	// SEO
@@ -174,8 +175,8 @@ const favicons: Favicon[] =
 				const targetWidth = pageScaling.targetWidth || 2000;
 				const currentWidth = document.documentElement.clientWidth;
 				let scale = currentWidth / targetWidth;
-				if (scale > 1) scale = 1;
-				if (scale < 0.85) scale = 0.85;
+				if (scale > 1) {scale = 1;}
+				if (scale < 0.85) {scale = 0.85;}
 				document.documentElement.style.fontSize = `${scale * 100}%`;
 			}
 

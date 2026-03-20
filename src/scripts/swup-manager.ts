@@ -4,29 +4,32 @@
  */
 
 import { siteConfig, widgetConfigs } from "../config";
+import { SWUP_SELECTORS } from "./core/swup-config";
 import { SwupHooksManager } from "./core/swup-hooks";
+import { setupSakuraOnDOMReady } from "./effects/sakura-effect";
+import type {
+	BackToTopHandler} from "./handlers/back-to-top-handler";
 import {
-	FancyboxHandler,
-	getFancyboxHandler,
-	initFancybox,
-	cleanupFancybox,
-} from "./handlers/fancybox-handler";
-import {
-	initCustomScrollbar,
-	checkKatex,
-} from "./handlers/scroll-handler";
-import {
-	BackToTopHandler,
 	getBackToTopHandler,
 	initBackToTopHandler,
 } from "./handlers/back-to-top-handler";
+import type {
+	FancyboxHandler} from "./handlers/fancybox-handler";
 import {
-	PanelHandler,
+	cleanupFancybox,
+	getFancyboxHandler,
+	initFancybox,
+} from "./handlers/fancybox-handler";
+import type {
+	PanelHandler} from "./handlers/panel-handler";
+import {
 	getPanelHandler,
-	initPanelHandler,
+	initPanelHandler
 } from "./handlers/panel-handler";
-import { setupSakuraOnDOMReady } from "./effects/sakura-effect";
-import { SWUP_SELECTORS } from "./core/swup-config";
+import {
+	checkKatex,
+	initCustomScrollbar,
+} from "./handlers/scroll-handler";
 
 /**
  * Swup 管理器类
@@ -56,7 +59,7 @@ export class SwupManager {
 	 * 初始化 Swup 管理器
 	 */
 	async init(): Promise<void> {
-		if (this.initialized) return;
+		if (this.initialized) {return;}
 
 		// 初始化面板处理器
 		await this.initPanelHandler();
@@ -259,7 +262,7 @@ export class SwupManager {
 				carousel.addEventListener(
 					"touchmove",
 					(e: TouchEvent) => {
-						if (!startX || !startY) return;
+						if (!startX || !startY) {return;}
 
 						const diffX = Math.abs(e.touches[0].clientX - startX);
 						const diffY = Math.abs(e.touches[0].clientY - startY);

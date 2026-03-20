@@ -51,12 +51,12 @@ const iconId = `icon-${Math.random().toString(36).substring(2, 9)}`;
 <script is:inline define:vars={{ iconId, icon }}>
   (function() {
     const container = document.querySelector(`[data-icon-container="${iconId}"]`);
-    if (!container) return;
+    if (!container) {return;}
     
     const loadingIndicator = container.querySelector('[data-loading-indicator]');
     const iconElement = container.querySelector('[data-icon-element]');
     
-    if (!loadingIndicator || !iconElement) return;
+    if (!loadingIndicator || !iconElement) {return;}
 
     function checkIconLoaded() {
       const hasContent = iconElement.shadowRoot && 

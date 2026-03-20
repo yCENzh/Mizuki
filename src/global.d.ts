@@ -46,9 +46,9 @@ declare global {
 		closeAnnouncement: () => void;
 		pagefind: {
 			search: (query: string) => Promise<{
-				results: Array<{
+				results: {
 					data: () => Promise<SearchResult>;
-				}>;
+				}[];
 			}>;
 		};
 
@@ -93,17 +93,17 @@ interface SearchResult {
 	content?: string;
 	word_count?: number;
 	filters?: Record<string, unknown>;
-	anchors?: Array<{
+	anchors?: {
 		element: string;
 		id: string;
 		text: string;
 		location: number;
-	}>;
-	weighted_locations?: Array<{
+	}[];
+	weighted_locations?: {
 		weight: number;
 		balanced_score: number;
 		location: number;
-	}>;
+	}[];
 	locations?: number[];
 	raw_content?: string;
 	raw_url?: string;

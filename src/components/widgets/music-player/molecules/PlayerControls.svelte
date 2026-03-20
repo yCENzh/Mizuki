@@ -1,8 +1,8 @@
 <script lang="ts">
+	import ModeButton from "../atoms/ModeButton.svelte";
+	import NextButton from "../atoms/NextButton.svelte";
 	import PlayButton from "../atoms/PlayButton.svelte";
 	import PrevButton from "../atoms/PrevButton.svelte";
-	import NextButton from "../atoms/NextButton.svelte";
-	import ModeButton from "../atoms/ModeButton.svelte";
 	import type { RepeatMode } from "../types";
 
 	interface Props {
@@ -18,7 +18,7 @@
 		onRepeatClick: () => void;
 	}
 
-	let {
+	const {
 		isPlaying,
 		isLoading,
 		isShuffled,

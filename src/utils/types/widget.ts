@@ -1,4 +1,5 @@
 import type { MarkdownHeading } from "astro";
+
 import type { WidgetComponentConfig, WidgetComponentType } from "@/types/config";
 
 /**
@@ -16,9 +17,7 @@ export interface WidgetConfig extends WidgetComponentConfig {
 /**
  * Widget 组件映射表类型
  */
-export type WidgetComponentMap = {
-	[K in WidgetType]?: unknown;
-};
+export type WidgetComponentMap = Partial<Record<WidgetType, unknown>>;
 
 /**
  * 渲染组件选项

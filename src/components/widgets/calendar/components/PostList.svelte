@@ -7,7 +7,7 @@
 		isEmpty: boolean;
 	}
 
-	let { posts, currentPostId, isEmpty }: Props = $props();
+	const { posts, currentPostId, isEmpty }: Props = $props();
 
 	function formatDate(dateStr: string): string {
 		const [, m, d] = dateStr.split("-");
@@ -15,7 +15,7 @@
 	}
 
 	function getContainerClass(isCurrentPost: boolean): string {
-		let baseClass = "flex items-center justify-between text-sm transition-colors px-2 py-2 rounded-lg group border border-transparent";
+		const baseClass = "flex items-center justify-between text-sm transition-colors px-2 py-2 rounded-lg group border border-transparent";
 
 		if (isCurrentPost) {
 			return `${baseClass} bg-[var(--primary)]/10 text-[var(--primary)] border-[var(--primary)]/10`;

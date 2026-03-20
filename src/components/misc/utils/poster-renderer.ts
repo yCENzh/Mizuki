@@ -67,7 +67,7 @@ export function getLines(
 		}
 	}
 
-	if (currentLine) lines.push(currentLine);
+	if (currentLine) {lines.push(currentLine);}
 	return lines;
 }
 
@@ -103,7 +103,7 @@ export function parseDate(
 ): { day: string; month: string; year: string } | null {
 	try {
 		const d = new Date(dateStr);
-		if (Number.isNaN(d.getTime())) return null;
+		if (Number.isNaN(d.getTime())) {return null;}
 
 		return {
 			day: d.getDate().toString().padStart(2, "0"),

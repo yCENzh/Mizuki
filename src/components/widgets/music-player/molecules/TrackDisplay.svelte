@@ -1,9 +1,10 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
+
+	import Key from "../../../../i18n/i18nKey";
+	import { i18n } from "../../../../i18n/translation";
 	import CoverImage from "../atoms/CoverImage.svelte";
 	import TrackInfo from "../atoms/TrackInfo.svelte";
-	import { i18n } from "../../../../i18n/translation";
-	import Key from "../../../../i18n/i18nKey";
 	import type { Song } from "../types";
 
 	interface Props {
@@ -22,7 +23,7 @@
 		onPlaylistClick?: () => void;
 	}
 
-	let {
+	const {
 		song,
 		currentTime,
 		duration,

@@ -1,18 +1,19 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
 	import { onMount } from "svelte";
+
 	import I18nKey from "../../../i18n/i18nKey";
 	import { i18n } from "../../../i18n/translation";
 	import { navigateToPage } from "../../../utils/navigation-utils";
 	import { panelManager } from "../../../utils/panel-manager.js";
 	import {
-		type TOCItem,
-		type PostItem,
-		generateTOCItems,
-		generatePostItems,
 		checkIsHomePage,
-		scrollToHeading as scrollToHeadingUtil,
+		generatePostItems,
+		generateTOCItems,
 		getTOCConfig,
+		type PostItem,
+		scrollToHeading as scrollToHeadingUtil,
+		type TOCItem,
 	} from "./hooks/useMobileTOC";
 
 	let tocItems: TOCItem[] = $state([]);

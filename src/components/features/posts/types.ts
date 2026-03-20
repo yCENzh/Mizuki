@@ -1,5 +1,5 @@
-import type { CollectionEntry } from "astro:content";
 import type { Page } from "astro";
+import type { CollectionEntry } from "astro:content";
 
 export interface PostCardProps {
 	class?: string;

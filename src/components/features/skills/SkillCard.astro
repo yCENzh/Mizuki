@@ -57,7 +57,7 @@ const getLevelWidth = (level: string) => {
 }
 
 const formatExperience = (exp: { years: number; months: number } | string) => {
-	if (typeof exp === "string") return exp
+	if (typeof exp === "string") {return exp}
 	return `${exp.years} ${i18n(I18nKey.skillYears)}${exp.months > 0 ? ` ${exp.months} ${i18n(I18nKey.skillMonths)}` : ''}`
 }
 

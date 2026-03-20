@@ -2,9 +2,9 @@
  * 响应式侧边栏管理器
  * 提供侧边栏响应式显示的通用逻辑
  */
+import type { SidebarElementId } from "./types/widget";
 import { widgetManager } from "./widget-manager";
 import { getDeviceType } from "./widget-renderer";
-import type { SidebarElementId } from "./types/widget";
 
 // Window 扩展接口
 interface WindowWithCustomProps extends Window {
@@ -73,7 +73,7 @@ export function initSidebarManager(config: SidebarDisplayConfig): void {
 	 */
 	function updateDisplay(): void {
 		const sidebar = document.getElementById(config.elementId);
-		if (!sidebar) return;
+		if (!sidebar) {return;}
 
 		const displayProps = getSidebarDisplayProperty(config);
 		for (const [property, value] of Object.entries(displayProps)) {

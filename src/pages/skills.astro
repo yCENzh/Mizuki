@@ -5,18 +5,19 @@ import { SkillCard } from "@components/features/skills";
 import { SkillsCategory } from "@components/features/skills-category";
 import IconifyLoader from "@components/misc/IconifyLoader.astro";
 import SkillsChart from "@components/skills/SkillsChart.astro";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+
 import { siteConfig } from "../config";
 import { UNCATEGORIZED } from "../constants/constants";
 import {
 	getAdvancedSkills,
-	getSkillStats,
 	getSkillsByCategory,
+	getSkillStats,
 	getTotalExperience,
 	skillsData,
 } from "../data/skills";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
-import MainGridLayout from "@layouts/MainGridLayout.astro";
 
 if (!siteConfig.featurePages.skills) {
 	return Astro.redirect("/404/");
@@ -90,7 +91,7 @@ const allIcons = skillsData.map((skill) => skill.icon).filter(Boolean);
 			<div class="space-y-8">
 				{categories.map((category) => {
 					const categorySkills = skillsByCategory[category];
-					if (categorySkills.length === 0) return null;
+					if (categorySkills.length === 0) {return null;}
 
 					return (
 						<SkillsCategory

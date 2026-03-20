@@ -8,7 +8,7 @@
 		onCellClick: (dateKey: string) => void;
 	}
 
-	let { weekDays, emptyCellsCount, cells, onCellClick }: Props = $props();
+	const { weekDays, emptyCellsCount, cells, onCellClick }: Props = $props();
 
 	function getCellClass(cell: CalendarGridCell): string {
 		let bgClass = "hover:bg-[var(--btn-plain-bg-hover)] text-neutral-700 dark:text-neutral-300 border border-transparent";

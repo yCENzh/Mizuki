@@ -1,16 +1,17 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
 	import { onMount } from "svelte";
+
 	import I18nKey from "../../i18n/i18nKey";
 	import { i18n } from "../../i18n/translation";
 	import {
-		loadImage,
-		getLines,
-		drawRoundedRect,
-		parseDate,
 		calculateDimensions,
-		drawDecorativeCircles,
 		drawDateBadge,
+		drawDecorativeCircles,
+		drawRoundedRect,
+		getLines,
+		loadImage,
+		parseDate,
 		type PosterConfig,
 		type SizeConfig,
 	} from "./utils/poster-renderer";
@@ -52,7 +53,7 @@
 
 	async function generatePoster() {
 		showModal = true;
-		if (posterImage) return;
+		if (posterImage) {return;}
 
 		generating = true;
 		try {
@@ -71,7 +72,7 @@
 
 			const canvas = document.createElement("canvas");
 			const ctx = canvas.getContext("2d");
-			if (!ctx) throw new Error("Canvas context not available");
+			if (!ctx) {throw new Error("Canvas context not available");}
 
 			const config: SizeConfig = {
 				scale: SCALE,

@@ -1,15 +1,17 @@
 ---
+import { SidebarTOC } from "@components/features/toc";
 import type { MarkdownHeading } from "astro";
-import { widgetManager } from "../../../utils/widget-manager";
+
 import { buildComponentProps } from "@/utils/widget-renderer";
+
+import { widgetManager } from "../../../utils/widget-manager";
+import MusicPlayer from "../../widgets/music-player/MusicPlayer.svelte";
 import Announcement from "../announcement/Announcement.astro";
 import Calendar from "../calendar/Calendar.astro";
 import Categories from "../categories/Categories.astro";
-import MusicPlayer from "../../widgets/music-player/MusicPlayer.svelte";
 import Profile from "../profile/Profile.astro";
 import SiteStats from "../site-stats/SiteStats.astro";
 import Tags from "../tags/Tags.astro";
-import { SidebarTOC } from "@components/features/toc";
 
 interface Props {
 	class?: string;
@@ -38,10 +40,10 @@ const componentMap: Record<string, unknown> = {
 };
 
 // 渲染组件的辅助函数
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 function renderComponent(component: WidgetComponentConfig, index: number, _components: WidgetComponentConfig[]) {
 	const ComponentToRender = componentMap[component.type] as any;
-	if (!ComponentToRender) return null;
+	if (!ComponentToRender) {return null;}
 
 	const props = buildComponentProps(component, index, headings);
 
@@ -62,7 +64,7 @@ type WidgetComponentConfig = ReturnType<typeof widgetManager.getComponentsByPosi
 			<div class="flex flex-col w-full gap-4 md:hidden">
 				{mobileTopComponents.map((component, index) => {
 					const renderData = renderComponent(component, index, mobileTopComponents);
-					if (!renderData) return null;
+					if (!renderData) {return null;}
 					
 					const { Component, props } = renderData;
 					return <Component {...props} />;
@@ -75,7 +77,7 @@ type WidgetComponentConfig = ReturnType<typeof widgetManager.getComponentsByPosi
 			<div class="sidebar-content hidden md:flex flex-col w-full gap-4">
 				{tabletTopComponents.map((component, index) => {
 					const renderData = renderComponent(component, index, tabletTopComponents);
-					if (!renderData) return null;
+					if (!renderData) {return null;}
 					
 					const { Component, props } = renderData;
 					return <Component {...props} />;
@@ -91,7 +93,7 @@ type WidgetComponentConfig = ReturnType<typeof widgetManager.getComponentsByPosi
 			<div class="flex flex-col w-full gap-4 md:hidden">
 				{mobileStickyComponents.map((component, index) => {
 					const renderData = renderComponent(component, index, mobileStickyComponents);
-					if (!renderData) return null;
+					if (!renderData) {return null;}
 					
 					const { Component, props } = renderData;
 					return <Component {...props} />;
@@ -104,7 +106,7 @@ type WidgetComponentConfig = ReturnType<typeof widgetManager.getComponentsByPosi
 			<div class="sidebar-content hidden md:flex flex-col w-full gap-4">
 				{tabletStickyComponents.map((component, index) => {
 					const renderData = renderComponent(component, index, tabletStickyComponents);
-					if (!renderData) return null;
+					if (!renderData) {return null;}
 					
 					const { Component, props } = renderData;
 					return <Component {...props} />;
@@ -166,7 +168,7 @@ type WidgetComponentConfig = ReturnType<typeof widgetManager.getComponentsByPosi
 					// 延迟执行以确保DOM已更新
 					setTimeout(() => {
 						const sidebar = document.getElementById('sidebar');
-						if (!sidebar) return;
+						if (!sidebar) {return;}
 
 						const width = window.innerWidth;
 						let deviceType;

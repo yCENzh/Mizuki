@@ -2,7 +2,7 @@
 	import type { TagChipProps } from "./types";
 
 	interface Props extends TagChipProps {}
-	let { href, label, class: className = "" }: Props = $props();
+	const { href, label, class: className = "" }: Props = $props();
 </script>
 
 {#if href}

@@ -4,6 +4,8 @@ import { StatsGrid } from "@components/features/stats-grid";
 import { TimelineCurrent } from "@components/features/timeline-current";
 import { TimelineHistory } from "@components/features/timeline-history";
 import IconifyLoader from "@components/misc/IconifyLoader.astro";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+
 import { siteConfig } from "../config";
 import {
 	getCurrentItems,
@@ -14,7 +16,6 @@ import {
 } from "../data/timeline";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
-import MainGridLayout from "@layouts/MainGridLayout.astro";
 
 if (!siteConfig.featurePages.timeline) {
 	return Astro.redirect("/404/");
@@ -111,7 +112,7 @@ const statItems = [
 			});
 		}
 
-		var timelineNodes = document.querySelectorAll(".timeline-node");
+		const timelineNodes = document.querySelectorAll(".timeline-node");
 		timelineNodes.forEach(function(node, index) {
 			(node as HTMLElement).style.animationDelay = index * 0.2 + "s";
 		});

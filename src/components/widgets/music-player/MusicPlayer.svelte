@@ -1,74 +1,74 @@
 <script lang="ts">
-	import Icon from "@iconify/svelte";
-	import { onDestroy, onMount } from "svelte";
-	import { musicPlayerConfig } from "@/config";
 	import Key from "@i18n/i18nKey";
 	import { i18n } from "@i18n/translation";
+	import Icon from "@iconify/svelte";
+	import { onDestroy, onMount } from "svelte";
+
+	import { musicPlayerConfig } from "@/config";
 
 	import CoverImage from "./atoms/CoverImage.svelte";
+	import { SKIP_ERROR_DELAY } from "./constants";
+	import {
+		createAudioPlayerState,
+		handleLoadError,
+		handleLoadSuccess,
+		handleUserInteraction,
+		loadSong,
+		toggleMute,
+		togglePlay,
+	} from "./hooks/useAudioPlayer";
+	import {
+		getAssetPath,
+		registerInteractionHandler,
+	} from "./hooks/useKeyboardShortcuts";
+	import {
+		createPlayerUIState,
+		hideErrorUI,
+		showErrorMessageUI,
+		toggleExpandedUI,
+		toggleHiddenUI,
+		togglePlaylistUI,
+	} from "./hooks/usePlayerState";
+	import {
+		canSkip,
+		createPlaylistState,
+		fetchMetingPlaylist,
+		loadLocalPlaylist,
+		nextSong,
+		playSong,
+		previousSong,
+		toggleRepeat,
+		toggleShuffle,
+	} from "./hooks/usePlaylist";
+	import {
+		createVolumeDragState,
+		handleVolumeKeyDown as handleVolumeKeyDownInternal,
+		handleVolumeMove as handleVolumeMoveInternal,
+		loadVolumeFromStorage,
+		startVolumeDrag as startVolumeDragInternal,
+		stopVolumeDrag as stopVolumeDragInternal,
+	} from "./hooks/useVolumeControl";
 	import MiniPlayer from "./organisms/MiniPlayer.svelte";
 	import PlayerBar from "./organisms/PlayerBar.svelte";
 	import Playlist from "./organisms/Playlist.svelte";
 
-	import { SKIP_ERROR_DELAY } from "./constants";
-	import {
-		createAudioPlayerState,
-		togglePlay,
-		toggleMute,
-		handleLoadSuccess,
-		handleLoadError,
-		loadSong,
-		handleUserInteraction,
-	} from "./hooks/useAudioPlayer";
-	import {
-		createPlaylistState,
-		toggleShuffle,
-		toggleRepeat,
-		previousSong,
-		nextSong,
-		playSong,
-		fetchMetingPlaylist,
-		loadLocalPlaylist,
-		canSkip,
-	} from "./hooks/usePlaylist";
-	import {
-		registerInteractionHandler,
-		getAssetPath,
-	} from "./hooks/useKeyboardShortcuts";
-	import {
-		createPlayerUIState,
-		toggleExpandedUI,
-		toggleHiddenUI,
-		togglePlaylistUI,
-		showErrorMessageUI,
-		hideErrorUI,
-	} from "./hooks/usePlayerState";
-	import {
-		createVolumeDragState,
-		loadVolumeFromStorage,
-		startVolumeDrag as startVolumeDragInternal,
-		handleVolumeMove as handleVolumeMoveInternal,
-		stopVolumeDrag as stopVolumeDragInternal,
-		handleVolumeKeyDown as handleVolumeKeyDownInternal,
-	} from "./hooks/useVolumeControl";
-
-	let mode = musicPlayerConfig.mode ?? "meting";
-	let meting_api =
+	const mode = musicPlayerConfig.mode ?? "meting";
+	const meting_api =
 		musicPlayerConfig.meting_api ??
 		"https://www.bilibili.uno/api?server=:server&type=:type&id=:id&auth=:auth&r=:r";
-	let meting_id = musicPlayerConfig.id ?? "14164869977";
-	let meting_server = musicPlayerConfig.server ?? "netease";
-	let meting_type = musicPlayerConfig.type ?? "playlist";
+	const meting_id = musicPlayerConfig.id ?? "14164869977";
+	const meting_server = musicPlayerConfig.server ?? "netease";
+	const meting_type = musicPlayerConfig.type ?? "playlist";
 
-	let audioPlayerState = $state(createAudioPlayerState());
-	let playlistState = $state(createPlaylistState());
+	const audioPlayerState = $state(createAudioPlayerState());
+	const playlistState = $state(createPlaylistState());
 
-	let playerUiState = $state(createPlayerUIState());
+	const playerUiState = $state(createPlayerUIState());
 
 	let audio: HTMLAudioElement | undefined = $state();
 	let volumeBar: HTMLElement | null = null;
 
-	let volumeDragState = $state(createVolumeDragState());
+	const volumeDragState = $state(createVolumeDragState());
 
 	function showErrorMessage(message: string) {
 		showErrorMessageUI(playerUiState, message);
@@ -164,7 +164,7 @@
 
 	function setProgress(event: MouseEvent) {
 		const progressElement = event.currentTarget as HTMLElement | null;
-		if (!audio || !progressElement) return;
+		if (!audio || !progressElement) {return;}
 		const rect = progressElement.getBoundingClientRect();
 		const percent = (event.clientX - rect.left) / rect.width;
 		const newTime = percent * audioPlayerState.duration;
@@ -278,7 +278,7 @@
 	onplay={() => (audioPlayerState.isPlaying = true)}
 	onpause={() => (audioPlayerState.isPlaying = false)}
 	ontimeupdate={() => {
-		if (audio) audioPlayerState.currentTime = audio.currentTime;
+		if (audio) {audioPlayerState.currentTime = audio.currentTime;}
 	}}
 	onended={handleAudioEnded}
 	onerror={handleAudioLoadError}

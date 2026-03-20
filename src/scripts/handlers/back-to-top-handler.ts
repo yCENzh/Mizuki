@@ -105,7 +105,7 @@ export class BackToTopHandler {
 		scrollTop: number,
 		threshold: number
 	): void {
-		if (!this.backToTopBtn) return;
+		if (!this.backToTopBtn) {return;}
 
 		if (scrollTop > threshold) {
 			this.backToTopBtn.classList.remove('hide');
@@ -118,7 +118,7 @@ export class BackToTopHandler {
 	 * 更新 TOC 可见性
 	 */
 	private updateTOCVisibility(scrollTop: number, bannerHeight: number): void {
-		if (!this.bannerEnabled || !this.toc) return;
+		if (!this.bannerEnabled || !this.toc) {return;}
 
 		const isBannerMode =
 			document.body.classList.contains('enable-banner');
@@ -139,7 +139,7 @@ export class BackToTopHandler {
 	 * 更新 Navbar 可见性
 	 */
 	private updateNavbarVisibility(scrollTop: number): void {
-		if (!this.bannerEnabled || !this.navbar) return;
+		if (!this.bannerEnabled || !this.navbar) {return;}
 
 		const isHome =
 			document.body.classList.contains('lg:is-home') &&

@@ -1,14 +1,15 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
-	import TrackDisplay from "../molecules/TrackDisplay.svelte";
-	import ProgressControl from "../molecules/ProgressControl.svelte";
+	import type { Action } from "svelte/action";
+
+	import Key from "../../../../i18n/i18nKey";
+	import { i18n } from "../../../../i18n/translation";
 	import PlayerControls from "../molecules/PlayerControls.svelte";
+	import ProgressControl from "../molecules/ProgressControl.svelte";
+	import TrackDisplay from "../molecules/TrackDisplay.svelte";
 	import VolumeControl from "../molecules/VolumeControl.svelte";
 	import type { Song } from "../types";
 	import type { RepeatMode } from "../types";
-	import type { Action } from "svelte/action";
-	import { i18n } from "../../../../i18n/translation";
-	import Key from "../../../../i18n/i18nKey";
 
 	interface Props {
 		song: Song;
@@ -40,7 +41,7 @@
 		onCollapseClick: () => void;
 	}
 
-	let {
+	const {
 		song,
 		currentTime,
 		duration,

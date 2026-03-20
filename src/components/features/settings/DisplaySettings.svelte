@@ -4,9 +4,10 @@
 	import Icon from "@iconify/svelte";
 	import { getDefaultHue, getHue, setHue } from "@utils/setting-utils";
 	import { onMount } from "svelte";
+
 	import type { DisplaySettingsProps } from "./types";
 
-	export let className: string = "";
+	export let className = "";
 
 	let hue = 250;
 	let defaultHue = 250;

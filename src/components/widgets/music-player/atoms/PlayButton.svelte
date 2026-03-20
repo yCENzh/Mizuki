@@ -7,7 +7,7 @@
 		onclick: () => void;
 	}
 
-	let { isPlaying, isLoading, onclick }: Props = $props();
+	const { isPlaying, isLoading, onclick }: Props = $props();
 </script>
 
 <button

@@ -1,5 +1,6 @@
 ---
 import { Icon } from "astro-icon/components"
+
 import { LinkPresets } from "../../../constants/link-presets"
 import I18nKey from "../../../i18n/i18nKey"
 import { i18n } from "../../../i18n/translation"
@@ -165,7 +166,7 @@ const hasChildren = children.length > 0
 				".dropdown-item",
 			) as NodeListOf<HTMLElement>
 
-			if (!trigger || !menu) return
+			if (!trigger || !menu) {return}
 
 			const closeMenu = () => {
 				trigger.setAttribute("aria-expanded", "false")
@@ -184,7 +185,7 @@ const hasChildren = children.length > 0
 				} else if (e.key === "ArrowDown") {
 					e.preventDefault()
 					trigger.setAttribute("aria-expanded", "true")
-					if (items.length > 0) items[0].focus()
+					if (items.length > 0) {items[0].focus()}
 				} else if (e.key === "Escape") {
 					closeMenu()
 				}
