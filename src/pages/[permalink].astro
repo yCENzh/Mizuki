@@ -9,7 +9,7 @@
 import Image from "@components/atoms/Image/Image.astro";
 import Comment from "@components/comment/index.astro";
 import PasswordProtection from "@components/features/auth/PasswordProtection.astro";
-import PostMetadata from "@components/features/posts/PostMeta.astro";
+import { LastModified, PostMeta, PostNavigation } from "@components/features/posts";
 import License from "@components/misc/License.astro";
 import Markdown from "@components/misc/Markdown.astro";
 import I18nKey from "@i18n/i18nKey";
@@ -17,13 +17,11 @@ import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getSortedPosts } from "@utils/content-utils";
 import { generatePermalinkSlug,hasCustomPermalink, initPostIdMap } from "@utils/permalink-utils";
-import { getFileDirFromPath, getPostUrlBySlug } from "@utils/url-utils";
+import { getFileDirFromPath } from "@utils/url-utils";
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
 import { Icon } from "astro-icon/components";
 import CryptoJS from "crypto-js";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import { licenseConfig } from "src/config";
 
 import { permalinkConfig } from "@/config";
@@ -84,11 +82,6 @@ if (isEncrypted) {
         String(entry.data.password)
     ).toString();
 }
-
-dayjs.extend(utc);
-const lastModified = dayjs(entry.data.updated || entry.data.published)
-	.utc()
-	.format("YYYY-MM-DDTHH:mm:ss");
 
 const jsonLd = {
 	"@context": "https://schema.org",
@@ -186,7 +179,7 @@ const jsonLd = {
 
             <!-- metadata -->
             <div class="onload-animation">
-                <PostMetadata
+                <PostMeta
                     className="mb-5"
                     published={entry.data.published}
                     updated={entry.data.updated}
@@ -247,143 +240,13 @@ const jsonLd = {
     <Comment post={entry} />
 
     {siteConfig.showLastModified && (
-        <>
-            <div 
-                id="last-modified" 
-                data-last-modified={lastModified}
-                data-prefix={i18n(I18nKey.lastModifiedPrefix)}
-                data-year={i18n(I18nKey.year)}
-                data-month={i18n(I18nKey.month)}
-                data-day={i18n(I18nKey.day)}
-                data-hour={i18n(I18nKey.hour)}
-                data-minute={i18n(I18nKey.minute)}
-                data-second={i18n(I18nKey.second)}
-                style="display: none;"
-            ></div>
-
-            <div class="card-base p-6 mb-4">
-                <script is:inline>
-                    function runtime() {
-                        const lastModifiedElement = document.getElementById('last-modified');
-                        if (!lastModifiedElement) {return;}  // 如果元素不存在，直接返回
-                        
-                        const startDate = new Date(lastModifiedElement.dataset.lastModified);
-                        const currentDate = new Date();
-                        const diff = currentDate - startDate;
-
-                        const seconds = Math.floor(diff / 1000);
-                        const days = Math.floor(seconds / 86400);
-                        const hours = Math.floor((seconds % 86400) / 3600);
-                        const minutes = Math.floor((seconds % 3600) / 60);
-                        const secs = seconds % 60;
-
-                        const years = Math.floor(days / 365);
-                        const months = Math.floor((days % 365) / 30);
-                        const remainingDays = days % 30;
-
-                        const prefix = lastModifiedElement.dataset.prefix;
-                        const yearKey = lastModifiedElement.dataset.year;
-                        const monthKey = lastModifiedElement.dataset.month;
-                        const dayKey = lastModifiedElement.dataset.day;
-                        const hourKey = lastModifiedElement.dataset.hour;
-                        const minuteKey = lastModifiedElement.dataset.minute;
-                        const secondKey = lastModifiedElement.dataset.second;
-
-                        let runtimeString = prefix + ' ';
-                        
-                        if (years > 0) {
-                            runtimeString += `${years} ${yearKey} `;
-                        }
-                        if (months > 0) {
-                            runtimeString += `${months} ${monthKey} `;
-                        }
-                        if (remainingDays > 0) {
-                            runtimeString += `${remainingDays} ${dayKey} `;
-                        }
-                        runtimeString += `${hours} ${hourKey} `;
-                        if (minutes < 10) {
-                            runtimeString += `0${minutes} ${minuteKey} `;
-                        } else {
-                            runtimeString += `${minutes} ${minuteKey} `;
-                        }
-                        if (secs < 10) {
-                            runtimeString += `0${secs} ${secondKey}`;
-                        } else {
-                            runtimeString += `${secs} ${secondKey}`;
-                        }
-
-                        document.getElementById("modifiedtime").innerHTML = runtimeString;
-                    }
-                    setInterval(runtime, 1000);
-                </script>
-                <div class="flex items-center gap-3">
-                    <div class="flex items-center justify-center h-12 w-12 rounded-lg bg-[var(--enter-btn-bg)]">
-                        <Icon
-                            name="material-symbols:history-rounded"
-                            class="text-3xl text-[var(--primary)]"
-                        />
-                    </div>
-                   
-                    <div class="flex flex-col gap-1">
-                        <div id="modifiedtime" class="text-[1.0rem] leading-tight text-black/75 dark:text-white/75"></div>
-                        <p class="text-[0.8rem] leading-tight text-black/75 dark:text-white/75">
-                            {i18n(I18nKey.lastModifiedOutdated)}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </>
+        <LastModified updatedDate={entry.data.updated || entry.data.published} />
     )}
 
-    <div
-        class="flex flex-col md:flex-row justify-between mb-4 gap-4 overflow-hidden w-full"
-    >
-        <a
-            href={entry.data.nextSlug
-                ? getPostUrlBySlug(entry.data.nextSlug)
-                : "#"}
-            class:list={[
-                "w-full font-bold overflow-hidden active:scale-95",
-                { "pointer-events-none": !entry.data.nextSlug },
-            ]}
-        >
-            {
-                entry.data.nextSlug && (
-                    <div class="btn-card rounded-2xl w-full h-[3.75rem] max-w-full px-4 flex items-center !justify-start gap-4">
-                        <Icon
-                            name="material-symbols:chevron-left-rounded"
-                            class="text-[2rem] text-[var(--primary)]"
-                        />
-                        <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_3rem)] text-black/75 dark:text-white/75">
-                            {entry.data.nextTitle}
-                        </div>
-                    </div>
-                )
-            }
-        </a>
-
-        <a
-            href={entry.data.prevSlug
-                ? getPostUrlBySlug(entry.data.prevSlug)
-                : "#"}
-            class:list={[
-                "w-full font-bold overflow-hidden active:scale-95",
-                { "pointer-events-none": !entry.data.prevSlug },
-            ]}
-        >
-            {
-                entry.data.prevSlug && (
-                    <div class="btn-card rounded-2xl w-full h-[3.75rem] max-w-full px-4 flex items-center !justify-end gap-4">
-                        <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_3rem)] text-black/75 dark:text-white/75">
-                            {entry.data.prevTitle}
-                        </div>
-                        <Icon
-                            name="material-symbols:chevron-right-rounded"
-                            class="text-[2rem] text-[var(--primary)]"
-                        />
-                    </div>
-                )
-            }
-        </a>
-    </div>
+    <PostNavigation
+        prevSlug={entry.data.nextSlug}
+        prevTitle={entry.data.nextTitle}
+        nextSlug={entry.data.prevSlug}
+        nextTitle={entry.data.prevTitle}
+    />
 </MainGridLayout>
