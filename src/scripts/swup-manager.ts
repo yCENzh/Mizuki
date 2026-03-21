@@ -7,29 +7,24 @@ import { siteConfig, widgetConfigs } from "../config";
 import { SWUP_SELECTORS } from "./core/swup-config";
 import { SwupHooksManager } from "./core/swup-hooks";
 import { setupSakuraOnDOMReady } from "./effects/sakura-effect";
-import type {
-	BackToTopHandler} from "./handlers/back-to-top-handler";
+import {
+	getTransitionEffect,
+	destroyTransitionEffect,
+} from "./effects/transition-effect";
+import type { BackToTopHandler } from "./handlers/back-to-top-handler";
 import {
 	getBackToTopHandler,
 	initBackToTopHandler,
 } from "./handlers/back-to-top-handler";
-import type {
-	FancyboxHandler} from "./handlers/fancybox-handler";
+import type { FancyboxHandler } from "./handlers/fancybox-handler";
 import {
 	cleanupFancybox,
 	getFancyboxHandler,
 	initFancybox,
 } from "./handlers/fancybox-handler";
-import type {
-	PanelHandler} from "./handlers/panel-handler";
-import {
-	getPanelHandler,
-	initPanelHandler
-} from "./handlers/panel-handler";
-import {
-	checkKatex,
-	initCustomScrollbar,
-} from "./handlers/scroll-handler";
+import type { PanelHandler } from "./handlers/panel-handler";
+import { getPanelHandler, initPanelHandler } from "./handlers/panel-handler";
+import { checkKatex, initCustomScrollbar } from "./handlers/scroll-handler";
 
 /**
  * Swup 管理器类
@@ -59,9 +54,13 @@ export class SwupManager {
 	 * 初始化 Swup 管理器
 	 */
 	async init(): Promise<void> {
-		if (this.initialized) {return;}
+		if (this.initialized) {
+			return;
+		}
 
-		// 初始化面板处理器
+		const transitionEffect = getTransitionEffect();
+		transitionEffect.applyConfig();
+
 		await this.initPanelHandler();
 
 		// 设置 Sakura 特效
@@ -262,7 +261,9 @@ export class SwupManager {
 				carousel.addEventListener(
 					"touchmove",
 					(e: TouchEvent) => {
-						if (!startX || !startY) {return;}
+						if (!startX || !startY) {
+							return;
+						}
 
 						const diffX = Math.abs(e.touches[0].clientX - startX);
 						const diffY = Math.abs(e.touches[0].clientY - startY);
@@ -347,6 +348,7 @@ export class SwupManager {
 		this.fancyboxHandler.destroy();
 		this.backToTopHandler.destroy();
 		this.panelHandler.destroy();
+		destroyTransitionEffect();
 		this.initialized = false;
 	}
 

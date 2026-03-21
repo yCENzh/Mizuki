@@ -11,74 +11,92 @@ export const BANNER_HEIGHT_HOME = BANNER_HEIGHT + BANNER_HEIGHT_EXTEND;
 // 选择器配置
 export const SWUP_SELECTORS = {
 	// 内容容器
-	contentContainer: '#content-wrapper',
+	contentContainer: "#content-wrapper",
 
 	// 动画元素
-	animationScope: '#main-grid',
+	animationScope: "#main-grid",
 
 	// 需要持久化的元素
 	persistElements: [
-		'#navbar-wrapper',
-		'#sidebar',
-		'.music-player',
-		'#pio-container',
+		"#navbar-wrapper",
+		"#sidebar",
+		".music-player",
+		"#pio-container",
 	],
 
 	// Banner 相关
-	bannerWrapper: '#banner-wrapper',
-	banner: '#banner',
-	bannerCarousel: '#banner-carousel',
-	bannerTextOverlay: '.banner-text-overlay',
+	bannerWrapper: "#banner-wrapper",
+	banner: "#banner",
+	bannerCarousel: "#banner-carousel",
+	bannerTextOverlay: ".banner-text-overlay",
 
 	// 导航相关
-	navbar: '#navbar',
-	navbarWrapper: '#navbar-wrapper',
+	navbar: "#navbar",
+	navbarWrapper: "#navbar-wrapper",
 
 	// TOC 相关
-	tocWrapper: '#toc-wrapper',
-	tableOfContents: 'table-of-contents',
+	tocWrapper: "#toc-wrapper",
+	tableOfContents: "table-of-contents",
 
 	// 其他
-	contentWrapper: '#content-wrapper',
-	pageHeightExtend: '#page-height-extend',
-	backToTopBtn: '#back-to-top-btn',
+	contentWrapper: "#content-wrapper",
+	pageHeightExtend: "#page-height-extend",
+	backToTopBtn: "#back-to-top-btn",
+} as const;
+
+// 过渡动画配置类型
+export interface TransitionConfig {
+	duration: number;
+	easing: string;
+	easingOut: string;
+	translateDistance: string;
+	staggerDelay: number;
+}
+
+// 过渡动画默认配置 - 灵感来自 Firefly 主题的快速流畅体验
+export const TRANSITION_CONFIG: TransitionConfig = {
+	duration: 180,
+	easing: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+	easingOut: "cubic-bezier(0.55, 0.055, 0.675, 0.19)",
+	translateDistance: "1.5rem",
+	staggerDelay: 35,
 } as const;
 
 // 动画配置
 export const ANIMATION_CONFIG = {
 	// 页面进入动画时长 (ms)
-	pageEnterDuration: 300,
+	pageEnterDuration: TRANSITION_CONFIG.duration,
 
 	// 页面离开动画时长 (ms)
-	pageLeaveDuration: 200,
+	pageLeaveDuration: 150,
 
 	// 页面高度扩展延迟 (ms)
-	heightExtendDelay: 200,
+	heightExtendDelay: 150,
 
 	// TOC 就绪延迟 (ms)
-	tocReadyDelay: 100,
+	tocReadyDelay: 80,
 
 	// 评论系统初始化延迟 (ms)
-	commentInitDelay: 300,
+	commentInitDelay: 250,
 
 	// 移动端 banner 动画延迟 (ms)
-	mobileBannerDelay: 100,
-	mobileContentDelay: 150,
+	mobileBannerDelay: 80,
+	mobileContentDelay: 120,
 } as const;
 
 // 主题配置
 export const THEME_CONFIG = {
 	// 主题存储键
-	themeStorageKey: 'theme',
-	hueStorageKey: 'hue',
+	themeStorageKey: "theme",
+	hueStorageKey: "hue",
 
 	// 主题值
-	lightMode: 'light',
-	darkMode: 'dark',
+	lightMode: "light",
+	darkMode: "dark",
 
 	// Expressive Code 主题映射
-	lightExpressiveTheme: 'github-light',
-	darkExpressiveTheme: 'github-dark',
+	lightExpressiveTheme: "github-light",
+	darkExpressiveTheme: "github-dark",
 } as const;
 
 // 滚动配置
@@ -127,34 +145,34 @@ export interface FancyboxConfig {
 
 // 默认 Fancybox 配置
 export const getDefaultFancyboxConfig = (): FancyboxConfig => ({
-	Thumbs: { autoStart: true, showOnStart: 'yes' },
+	Thumbs: { autoStart: true, showOnStart: "yes" },
 	Toolbar: {
 		display: {
-			left: ['infobar'],
+			left: ["infobar"],
 			middle: [
-				'zoomIn',
-				'zoomOut',
-				'toggle1to1',
-				'rotateCCW',
-				'rotateCW',
-				'flipX',
-				'flipY',
+				"zoomIn",
+				"zoomOut",
+				"toggle1to1",
+				"rotateCCW",
+				"rotateCW",
+				"flipX",
+				"flipY",
 			],
-			right: ['slideshow', 'thumbs', 'close'],
+			right: ["slideshow", "thumbs", "close"],
 		},
 	},
 	animated: true,
 	dragToClose: true,
 	keyboard: {
-		Escape: 'close',
-		Delete: 'close',
-		Backspace: 'close',
-		PageUp: 'next',
-		PageDown: 'prev',
-		ArrowUp: 'next',
-		ArrowDown: 'prev',
-		ArrowRight: 'next',
-		ArrowLeft: 'prev',
+		Escape: "close",
+		Delete: "close",
+		Backspace: "close",
+		PageUp: "next",
+		PageDown: "prev",
+		ArrowUp: "next",
+		ArrowDown: "prev",
+		ArrowRight: "next",
+		ArrowLeft: "prev",
 	},
 	fitToView: true,
 	preload: 3,
@@ -166,11 +184,11 @@ export const getDefaultFancyboxConfig = (): FancyboxConfig => ({
 // Fancybox 选择器
 export const FANCYBOX_SELECTORS = {
 	// 相册/文章图片
-	albumImages: '.custom-md img, #post-cover img, .moment-images img',
+	albumImages: ".custom-md img, #post-cover img, .moment-images img",
 
 	// 相册链接
-	albumLinks: '.moment-images a[data-fancybox]',
+	albumLinks: ".moment-images a[data-fancybox]",
 
 	// 单独的 fancybox 图片
-	singleFancybox: '[data-fancybox]:not(.moment-images a)',
+	singleFancybox: "[data-fancybox]:not(.moment-images a)",
 } as const;
