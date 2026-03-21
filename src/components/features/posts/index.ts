@@ -3,5 +3,7 @@ export { default as PostCard } from "./PostCard.astro";
 export { default as PostMeta } from "./PostMeta.astro";
 export { default as PostNavigation } from "./PostNavigation.astro";
 export { default as PostPage } from "./PostPage.astro";
+export { default as RandomPosts } from "./RandomPosts.astro";
+export { default as RelatedPosts } from "./RelatedPosts.astro";
 export { default as ShareCard } from "./ShareCard.astro";
 export * from "./types";

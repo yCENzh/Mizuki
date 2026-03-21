@@ -461,3 +461,19 @@ export interface PioConfig {
 export interface ShareConfig {
 	enable: boolean; // 是否启用分享功能
 }
+
+/**
+ * 相关文章组件配置
+ */
+export interface RelatedPostsConfig {
+	enable: boolean; // 是否启用相关文章功能
+	maxCount: number; // 相关文章数量
+}
+
+/**
+ * 随机文章组件配置
+ */
+export interface RandomPostsConfig {
+	enable: boolean; // 是否启用随机文章功能
+	maxCount: number; // 随机文章数量
+}

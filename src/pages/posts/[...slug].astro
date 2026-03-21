@@ -6,18 +6,20 @@ import {
 	LastModified,
 	PostMeta,
 	PostNavigation,
+	RandomPosts,
+	RelatedPosts,
 	ShareCard,
 } from "@components/features/posts";
 import { ReadingTime, WordCount } from "@components/features/posts/atoms";
 import License from "@components/misc/License.astro";
 import Markdown from "@components/misc/Markdown.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getSortedPosts } from "@utils/content-utils";
+import { getSortedPosts, getRelatedPosts } from "@utils/content-utils";
 import { hasCustomPermalink, initPostIdMap } from "@utils/permalink-utils";
 import { getFileDirFromPath, removeFileExtension } from "@utils/url-utils";
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
-import { licenseConfig, permalinkConfig, shareConfig } from "src/config";
+import { licenseConfig, permalinkConfig, relatedPostsConfig, randomPostsConfig, shareConfig } from "src/config";
 
 import Image from "../../components/atoms/Image/Image.astro";
 import Encryptor from "../../components/features/auth/Encryptor.astro";
@@ -90,6 +92,11 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content, headings } = await render(entry);
 const { remarkPluginFrontmatter } = await render(entry);
+
+// 获取相关文章
+const relatedPosts = relatedPostsConfig.enable
+	? await getRelatedPosts(entry, relatedPostsConfig.maxCount)
+	: [];
 
 // Process cover image for SharePoster
 let posterCoverUrl = entry.data.image;
@@ -343,4 +350,24 @@ const jsonLd = {
 		nextSlug={entry.data.prevSlug}
 		nextTitle={entry.data.prevTitle}
 	/>
+
+	<!-- 相关文章与随机文章 -->
+	{(relatedPostsConfig.enable || randomPostsConfig.enable) && (
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+			{relatedPostsConfig.enable && relatedPosts.length > 0 && (
+				<RelatedPosts relatedPosts={relatedPosts} />
+			)}
+			{randomPostsConfig.enable && (
+				<RandomPosts
+					/**
+					 * 随机文章改为只排除当前文章本身
+					 * 这样在文章数量较少时，不会因为相关文章占满所有候选
+					 * 导致随机文章始终为空
+					 */
+					excludeIds={[entry.id]}
+					maxCount={randomPostsConfig.maxCount}
+				/>
+			)}
+		</div>
+	)}
 </MainGridLayout>
