@@ -22,7 +22,7 @@ const getLevelColor = (level: string) => {
 		case "beginner":
 			return "bg-green-600/20 text-green-700 dark:bg-green-900/30 dark:text-green-400"
 		default:
-			return "bg-gray-600/20 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
+			return "btn-regular"
 	}
 }
 
@@ -100,7 +100,7 @@ const sizeClasses = getSizeClasses(size)
 const skillColor = skill.color || "#3B82F6"
 ---
 
-<div class="bg-transparent rounded-lg border border-black/10 dark:border-white/10 overflow-hidden hover:shadow-lg transition-all duration-300 group">
+<div class="bg-transparent rounded-lg border border-[var(--line-divider)] overflow-hidden hover:shadow-lg transition-all duration-300 group">
   <div class={sizeClasses.container}>
     <div class="flex items-start gap-4">
       {showIcon && skill.icon && (
@@ -137,7 +137,7 @@ const skillColor = skill.color || "#3B82F6"
               <span class="text-black/60 dark:text-white/60">{i18n(I18nKey.skillExperience)}</span>
               <span class="text-black/80 dark:text-white/80">{formatExperience(skill.experience)}</span>
             </div>
-            <div class={`w-full bg-gray-200 dark:bg-gray-700 rounded-full ${sizeClasses.progress}`}>
+            <div class={`w-full bg-[var(--btn-regular-bg)] rounded-full ${sizeClasses.progress}`}>
               <div 
                 class={`rounded-full transition-all duration-500 ${sizeClasses.progress}`}
                 style={`width: ${getLevelWidth(skill.level)}; background-color: ${skillColor}`}

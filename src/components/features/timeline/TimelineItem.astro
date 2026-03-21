@@ -38,7 +38,7 @@ const getTypeColor = (type: string) => {
 		case "achievement":
 			return "bg-orange-600/20 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
 		default:
-			return "bg-gray-600/20 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
+			return "btn-regular"
 	}
 }
 
@@ -145,7 +145,7 @@ const itemColor = item.color || "#3B82F6"
       </div>
     )}
     
-    <div class="flex-1 bg-transparent rounded-lg border border-black/10 dark:border-white/10 hover:shadow-lg transition-shadow duration-300">
+    <div class="flex-1 bg-transparent rounded-lg border border-[var(--line-divider)] hover:shadow-lg transition-shadow duration-300">
       <div class={sizeClasses.container}>
         <div class="flex items-start justify-between mb-3">
           <div>
@@ -211,7 +211,7 @@ const itemColor = item.color || "#3B82F6"
           <div class="mb-4">
             <div class="flex flex-wrap gap-1">
               {item.skills.map((skill) => (
-                <span class={`px-2 py-1 bg-gray-600/20 text-gray-700 dark:bg-gray-700 dark:text-gray-300 rounded ${sizeClasses.badge}`}>
+                <span class={`btn-regular px-2 py-1 rounded ${sizeClasses.badge}`}>
                   {skill}
                 </span>
               ))}
@@ -238,7 +238,7 @@ const itemColor = item.color || "#3B82F6"
     </div>
   </div>
 ) : (
-  <div class="bg-transparent rounded-lg border border-black/10 dark:border-white/10 hover:shadow-lg transition-shadow duration-300">
+  <div class="bg-transparent rounded-lg border border-[var(--line-divider)] hover:shadow-lg transition-shadow duration-300">
     <div class={sizeClasses.container}>
       <div class="flex items-start gap-4 mb-3">
         <div class={`rounded-lg flex items-center justify-center shrink-0 ${sizeClasses.node}`} style={`background-color: ${itemColor}20`}>
@@ -309,12 +309,12 @@ const itemColor = item.color || "#3B82F6"
         {item.skills && item.skills.length > 0 && (
           <div class="flex flex-wrap gap-1">
             {item.skills.slice(0, 3).map((skill) => (
-              <span class={`px-2 py-1 bg-gray-600/20 text-gray-700 dark:bg-gray-700 dark:text-gray-300 rounded ${sizeClasses.badge}`}>
+              <span class={`btn-regular px-2 py-1 rounded ${sizeClasses.badge}`}>
                 {skill}
               </span>
             ))}
             {item.skills.length > 3 && (
-              <span class={`px-2 py-1 bg-gray-600/20 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400 rounded ${sizeClasses.badge}`}>
+              <span class={`btn-regular px-2 py-1 rounded ${sizeClasses.badge}`}>
                 +{item.skills.length - 3}
               </span>
             )}

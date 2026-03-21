@@ -200,7 +200,6 @@ if (siteConfig.font) {
 			title={profileConfig.name}
 			href={`${Astro.site}rss.xml`}
 		/>
-
 	</head>
 	<body
 		class="min-h-screen"
@@ -242,31 +241,33 @@ if (siteConfig.font) {
 		"banner-height": `${BANNER_HEIGHT}vh`,
 	}}
 >
-	@tailwind components;
+	@reference "../styles/main.css";
+
 	@layer components {
-		.enable-banner.is-home #banner-wrapper {
-			@apply h-[var(--banner-height-home)] translate-y-[var(--banner-height-extend)];
-		}
-		.enable-banner #banner-wrapper {
-			@apply h-[var(--banner-height-home)];
-		}
-		.enable-banner.is-home #banner {
-			@apply h-[var(--banner-height-home)] translate-y-0;
-		}
-		.enable-banner #banner {
-			@apply h-[var(--banner-height-home)] translate-y-[var(--bannerOffset)];
-		}
-		.enable-banner.is-home #main-grid {
-			@apply translate-y-[var(--banner-height-extend)];
-		}
-		.enable-banner #top-row {
-			@apply h-[calc(var(--banner-height-home)_-_4.5rem)] transition-all duration-300;
-		}
-		.enable-banner.is-home #sidebar-sticky {
-			@apply top-[calc(1rem_-_var(--banner-height-extend))];
-		}
-		.navbar-hidden {
-			@apply opacity-0 -translate-y-16;
+		@media (min-width: 1280px) {
+			.enable-banner.lg\:is-home #banner-wrapper {
+				height: var(--banner-height-home);
+				transform: translateY(var(--banner-height-extend));
+			}
+			.enable-banner #banner-wrapper {
+				height: var(--banner-height-home);
+			}
+
+			.enable-banner.lg\:is-home #banner {
+				height: var(--banner-height-home);
+				transform: translateY(0);
+			}
+			.enable-banner #banner {
+				height: var(--banner-height-home);
+				transform: translateY(var(--bannerOffset));
+			}
+			.enable-banner.lg\:is-home #main-grid {
+				transform: translateY(var(--banner-height-extend));
+			}
+			.enable-banner #top-row {
+				height: calc(var(--banner-height-home) - 4.5rem);
+				@apply transition-all duration-300;
+			}
 		}
 
 		/* Water waves animation */
@@ -280,6 +281,22 @@ if (siteConfig.font) {
 			100% {
 				transform: translate3d(85px, 0, 0);
 			}
+		}
+	}
+	@layer utilities {
+		@media (min-width: 1280px) {
+			.enable-banner.lg\:is-home #sidebar-sticky {
+				top: calc(1rem - var(--banner-height-extend)) !important;
+			}
+			.enable-banner.lg\:is-home #left-sidebar-sticky {
+				top: calc(1rem - var(--banner-height-extend)) !important;
+			}
+			.enable-banner.lg\:is-home #right-sidebar-sticky {
+				top: calc(1rem - var(--banner-height-extend)) !important;
+			}
+		}
+		.navbar-hidden {
+			@apply opacity-0 -translate-y-16;
 		}
 	}
 </style>
