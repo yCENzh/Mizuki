@@ -60,7 +60,7 @@
 		.playlist-panel {
 			width: 280px !important;
 			max-width: 280px !important;
-			right: 0 !important;
+			right: 0.5rem !important;
 		}
 	}
 
@@ -68,7 +68,7 @@
 		.playlist-panel {
 			width: 260px !important;
 			max-width: 260px !important;
-			right: 0 !important;
+			right: 0.5rem !important;
 		}
 	}
 </style>
