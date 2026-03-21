@@ -97,6 +97,7 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 										}
 										position={siteConfig.banner.position}
 										loading={index === 0 ? "eager" : "lazy"}
+										fetchpriority={index === 0 ? "high" : undefined}
 									/>
 								)}
 								<!-- 桌面端/平板端：使用桌面端专用图片 -->
@@ -115,6 +116,7 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 										}
 										position={siteConfig.banner.position}
 										loading={index === 0 ? "eager" : "lazy"}
+										fetchpriority={index === 0 ? "high" : undefined}
 									/>
 								)}
 							</li>
@@ -169,6 +171,7 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 							"block md:hidden object-cover h-full w-full transition duration-700 opacity-100";
 						mobileImg.src = mobileSrc;
 						mobileImg.loading = "eager";
+						mobileImg.fetchPriority = "high";
 						mobileImg.dataset.position = position;
 						container.appendChild(mobileImg);
 					}
@@ -181,6 +184,7 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 							"hidden md:block object-cover h-full w-full transition duration-700 opacity-100";
 						desktopImg.src = desktopSrc;
 						desktopImg.loading = "eager";
+						desktopImg.fetchPriority = "high";
 						desktopImg.dataset.position = position;
 						container.appendChild(desktopImg);
 					}

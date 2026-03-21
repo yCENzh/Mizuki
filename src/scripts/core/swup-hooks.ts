@@ -39,16 +39,39 @@ export class SwupHooksManager {
 	private bannerEnabled: boolean;
 	private handlers: SwupHookHandlers;
 
+	private cachedElements: Map<string, Element | null> = new Map();
+
 	constructor(bannerEnabled: boolean, handlers: SwupHookHandlers = {}) {
 		this.bannerEnabled = bannerEnabled;
 		this.handlers = handlers;
+	}
+
+	private getCachedElement(selector: string): Element | null {
+		if (!this.cachedElements.has(selector)) {
+			const id = selector.startsWith("#") ? selector.slice(1) : selector;
+			if (selector.startsWith("#")) {
+				this.cachedElements.set(selector, document.getElementById(id));
+			} else {
+				this.cachedElements.set(
+					selector,
+					document.querySelector(selector),
+				);
+			}
+		}
+		return this.cachedElements.get(selector) ?? null;
+	}
+
+	private clearCache(): void {
+		this.cachedElements.clear();
 	}
 
 	/**
 	 * 注册所有 Swup 钩子
 	 */
 	registerHooks(): void {
-		if (!window.swup) {return;}
+		if (!window.swup) {
+			return;
+		}
 		this.registerLinkClickHook();
 		this.registerContentReplaceHook();
 		this.registerVisitStartHook();
@@ -81,6 +104,8 @@ export class SwupHooksManager {
 	 */
 	private registerContentReplaceHook(): void {
 		window.swup!.hooks.on("content:replace", () => {
+			this.clearCache();
+
 			// 初始化新页面的图片、公式、滚动条和 TOC
 			this.handlers.initFancybox?.();
 			this.handlers.checkKatex?.();
@@ -163,9 +188,7 @@ export class SwupHooksManager {
 	 * 处理链接点击时的 navbar 隐藏
 	 */
 	private handleNavbarHideOnLinkClick(): void {
-		const navbar = document.getElementById(
-			SWUP_SELECTORS.navbarWrapper.slice(1),
-		);
+		const navbar = this.getCachedElement(SWUP_SELECTORS.navbarWrapper);
 		if (navbar && document.body.classList.contains("lg:is-home")) {
 			const threshold = window.innerHeight * (BANNER_HEIGHT / 100) - 88;
 			if (document.documentElement.scrollTop >= threshold) {
@@ -178,26 +201,26 @@ export class SwupHooksManager {
 	 * 处理 TOC 重新初始化
 	 */
 	private handleTOCReinit(): void {
-		const tocWrapper = document.getElementById(
-			SWUP_SELECTORS.tocWrapper.slice(1),
-		);
+		const tocWrapper = this.getCachedElement(SWUP_SELECTORS.tocWrapper);
 		const isArticlePage = tocWrapper !== null;
 
 		if (isArticlePage) {
-			// 重新初始化 TOC 组件
-			const tocElement = document.querySelector(
+			const tocElement = this.getCachedElement(
 				SWUP_SELECTORS.tableOfContents,
 			);
-			if (tocElement && typeof (tocElement as any).init === "function") {
-				setTimeout(() => {
-					(tocElement as any).init();
-				}, ANIMATION_CONFIG.tocReadyDelay);
-			}
+			const hasDesktopTOC =
+				tocElement && typeof (tocElement as any).init === "function";
+			const hasMobileTOC =
+				typeof (window as any).mobileTOCInit === "function";
 
-			// 重新初始化移动端 TOC 组件
-			if (typeof (window as any).mobileTOCInit === "function") {
+			if (hasDesktopTOC || hasMobileTOC) {
 				setTimeout(() => {
-					(window as any).mobileTOCInit();
+					if (hasDesktopTOC) {
+						(tocElement as any).init();
+					}
+					if (hasMobileTOC) {
+						(window as any).mobileTOCInit();
+					}
 				}, ANIMATION_CONFIG.tocReadyDelay);
 			}
 		}
@@ -207,7 +230,7 @@ export class SwupHooksManager {
 	 * 重新初始化 semifull 模式滚动检测
 	 */
 	private reinitSemifullScrollDetection(): void {
-		const navbar = document.getElementById(SWUP_SELECTORS.navbar.slice(1));
+		const navbar = this.getCachedElement(SWUP_SELECTORS.navbar);
 		if (navbar) {
 			const transparentMode = navbar.getAttribute(
 				"data-transparent-mode",
@@ -227,7 +250,7 @@ export class SwupHooksManager {
 	 * 处理 body class
 	 */
 	private handleBodyClass(isHomePage: boolean): void {
-		const bodyElement = document.querySelector("body");
+		const bodyElement = this.getCachedElement("body");
 		if (bodyElement) {
 			if (isHomePage) {
 				bodyElement.classList.add("lg:is-home");
@@ -241,7 +264,7 @@ export class SwupHooksManager {
 	 * 处理 Banner 文字可见性
 	 */
 	private handleBannerTextVisibility(isHomePage: boolean): void {
-		const bannerTextOverlay = document.querySelector(
+		const bannerTextOverlay = this.getCachedElement(
 			SWUP_SELECTORS.bannerTextOverlay,
 		);
 		if (bannerTextOverlay) {
@@ -257,7 +280,7 @@ export class SwupHooksManager {
 	 * 处理 Navbar 状态
 	 */
 	private handleNavbarState(isHomePage: boolean): void {
-		const navbar = document.getElementById(SWUP_SELECTORS.navbar.slice(1));
+		const navbar = this.getCachedElement(SWUP_SELECTORS.navbar);
 		if (navbar) {
 			navbar.setAttribute("data-is-home", isHomePage.toString());
 
@@ -280,10 +303,10 @@ export class SwupHooksManager {
 	 * 处理移动端 Banner 可见性
 	 */
 	private handleMobileBannerVisibility(isHomePage: boolean): void {
-		const bannerWrapper = document.getElementById(
-			SWUP_SELECTORS.bannerWrapper.slice(1),
+		const bannerWrapper = this.getCachedElement(
+			SWUP_SELECTORS.bannerWrapper,
 		);
-		const mainContentWrapper = document.querySelector(
+		const mainContentWrapper = this.getCachedElement(
 			".absolute.w-full.z-30",
 		);
 
@@ -312,8 +335,8 @@ export class SwupHooksManager {
 	 * 扩展/隐藏页面高度
 	 */
 	private extendPageHeight(hide: boolean): void {
-		const heightExtend = document.getElementById(
-			SWUP_SELECTORS.pageHeightExtend.slice(1),
+		const heightExtend = this.getCachedElement(
+			SWUP_SELECTORS.pageHeightExtend,
 		);
 		if (heightExtend) {
 			if (hide) {
@@ -328,7 +351,7 @@ export class SwupHooksManager {
 	 * 隐藏 TOC
 	 */
 	private hideTOC(): void {
-		const toc = document.getElementById(SWUP_SELECTORS.tocWrapper.slice(1));
+		const toc = this.getCachedElement(SWUP_SELECTORS.tocWrapper);
 		if (toc) {
 			toc.classList.add("toc-not-ready");
 		}
@@ -338,7 +361,7 @@ export class SwupHooksManager {
 	 * 显示 TOC
 	 */
 	private showTOC(): void {
-		const toc = document.getElementById(SWUP_SELECTORS.tocWrapper.slice(1));
+		const toc = this.getCachedElement(SWUP_SELECTORS.tocWrapper);
 		if (toc) {
 			toc.classList.remove("toc-not-ready");
 		}
