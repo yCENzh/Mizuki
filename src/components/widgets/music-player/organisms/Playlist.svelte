@@ -28,7 +28,7 @@
 
 {#if show}
 	<div
-		class="playlist-panel float-panel fixed bottom-20 right-4 w-80 max-h-96 overflow-hidden z-50"
+		class="playlist-panel card-base-transparent fixed bottom-70 right-4 w-80 max-h-96 overflow-hidden z-50"
 		transition:slide={{ duration: 300, axis: "y" }}
 	>
 		<div

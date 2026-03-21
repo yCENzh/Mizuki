@@ -279,15 +279,6 @@ html {
     @apply bg-(--card-bg-transparent) backdrop-blur-sm;
   }
 
-  .wallpaper-transparent ~ * .music-player .mini-player,
-  .wallpaper-transparent ~ * .music-player .expanded-player,
-  .wallpaper-transparent ~ * .music-player .playlist-panel,
-  body.wallpaper-transparent .music-player .mini-player,
-  body.wallpaper-transparent .music-player .expanded-player,
-  body.wallpaper-transparent .music-player .playlist-panel {
-    background-color: var(--card-bg-transparent) !important;
-    backdrop-filter: blur(8px) !important;
-  }
   h1,
   h2,
   h3,
