@@ -30,7 +30,7 @@
 <div class="bottom-controls flex items-center gap-2">
 	<VolumeButton {volume} {isMuted} onclick={onVolumeButtonClick} />
 	<VolumeSlider
-		{volume}
+		volume={isMuted ? 0 : volume}
 		{isVolumeDragging}
 		{volumeBarRef}
 		onpointerdown={onSliderPointerDown}

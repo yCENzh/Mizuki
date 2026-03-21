@@ -7,7 +7,7 @@ import {
 	SKIP_ERROR_DELAY,
 	STORAGE_KEY_VOLUME,
 } from "@/components/widgets/music-player/constants";
-import type { RepeatMode,Song } from "@/components/widgets/music-player/types";
+import type { RepeatMode, Song } from "@/components/widgets/music-player/types";
 import { musicPlayerConfig } from "@/config";
 
 export interface MusicPlayerState {
@@ -49,6 +49,7 @@ class MusicPlayerStore {
 	private state: MusicPlayerState;
 	private isInitialized = false;
 	private unregisterInteraction: (() => void) | undefined;
+	private listeners = new Set<(state: MusicPlayerState) => void>();
 
 	constructor() {
 		this.state = this.createInitialState();
@@ -77,12 +78,28 @@ class MusicPlayerStore {
 		};
 	}
 
+	private createSnapshot(): MusicPlayerState {
+		return {
+			...this.state,
+			currentSong: { ...this.state.currentSong },
+			playlist: this.state.playlist.map((song) => ({ ...song })),
+		};
+	}
+
 	getState(): MusicPlayerState {
-		return this.state;
+		return this.createSnapshot();
 	}
 
 	getAudio(): HTMLAudioElement | null {
 		return this.audio;
+	}
+
+	subscribe(listener: (state: MusicPlayerState) => void): () => void {
+		this.listeners.add(listener);
+		listener(this.createSnapshot());
+		return () => {
+			this.listeners.delete(listener);
+		};
 	}
 
 	async initialize(): Promise<void> {
@@ -123,6 +140,7 @@ class MusicPlayerStore {
 		this.audio.addEventListener("timeupdate", () => {
 			if (this.audio) {
 				this.state.currentTime = this.audio.currentTime;
+				this.broadcastState();
 			}
 		});
 
@@ -501,11 +519,23 @@ class MusicPlayerStore {
 
 	toggleExpanded(): void {
 		this.state.isExpanded = !this.state.isExpanded;
+		// 保持与原先 usePlayerState.toggleExpandedUI 一致的联动行为：
+		// 展开时强制取消隐藏，并关闭播放列表，避免状态组合异常
+		if (this.state.isExpanded) {
+			this.state.showPlaylist = false;
+			this.state.isHidden = false;
+		}
 		this.broadcastState();
 	}
 
 	toggleHidden(): void {
 		this.state.isHidden = !this.state.isHidden;
+		// 保持与原先 usePlayerState.toggleHiddenUI 一致的联动行为：
+		// 隐藏时收起播放器并关闭播放列表，防止展开 UI 悬挂在小球旁边
+		if (this.state.isHidden) {
+			this.state.isExpanded = false;
+			this.state.showPlaylist = false;
+		}
 		this.broadcastState();
 	}
 
@@ -524,11 +554,19 @@ class MusicPlayerStore {
 	}
 
 	private broadcastState(): void {
+		const snapshot = this.createSnapshot();
+
+		for (const listener of this.listeners) {
+			listener(snapshot);
+		}
+
 		if (typeof window === "undefined") {
 			return;
 		}
 		window.dispatchEvent(
-			new CustomEvent("music-sidebar:state", { detail: this.state }),
+			new CustomEvent("music-sidebar:state", {
+				detail: snapshot,
+			}),
 		);
 	}
 

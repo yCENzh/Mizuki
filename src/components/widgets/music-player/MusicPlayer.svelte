@@ -12,8 +12,9 @@
 	import Playlist from "./organisms/Playlist.svelte";
 	import type { RepeatMode, Song } from "./types";
 
-	let state: MusicPlayerState = $state(musicPlayerStore.getState());
+	let state: MusicPlayerState = musicPlayerStore.getState();
 	const showFloatingPlayer = musicPlayerConfig.showFloatingPlayer;
+	let unsubscribe: (() => void) | undefined;
 
 	function togglePlay() {
 		musicPlayerStore.toggle();
@@ -64,10 +65,85 @@
 		musicPlayerStore.toggleMute();
 	}
 
-	function startVolumeDrag(event: PointerEvent) {}
+	function startVolumeDrag(event: PointerEvent) {
+		const slider = event.currentTarget as HTMLElement | null;
+		if (!slider) {
+			return;
+		}
+
+		const updateVolume = (clientX: number) => {
+			const rect = slider.getBoundingClientRect();
+			if (rect.width <= 0) {
+				return;
+			}
+			const percent = Math.max(
+				0,
+				Math.min(1, (clientX - rect.left) / rect.width),
+			);
+			musicPlayerStore.setVolume(percent);
+		};
+
+		updateVolume(event.clientX);
+
+		const pointerId = event.pointerId;
+		slider.setPointerCapture(pointerId);
+
+		const handleMove = (moveEvent: PointerEvent) => {
+			if (moveEvent.pointerId !== pointerId) {
+				return;
+			}
+			updateVolume(moveEvent.clientX);
+		};
+
+		const cleanup = () => {
+			slider.removeEventListener("pointermove", handleMove);
+			slider.removeEventListener("pointerup", handleUp);
+			slider.removeEventListener("pointercancel", handleCancel);
+			if (slider.hasPointerCapture(pointerId)) {
+				slider.releasePointerCapture(pointerId);
+			}
+		};
+
+		const handleUp = (upEvent: PointerEvent) => {
+			if (upEvent.pointerId !== pointerId) {
+				return;
+			}
+			updateVolume(upEvent.clientX);
+			cleanup();
+		};
+
+		const handleCancel = (cancelEvent: PointerEvent) => {
+			if (cancelEvent.pointerId !== pointerId) {
+				return;
+			}
+			cleanup();
+		};
+
+		slider.addEventListener("pointermove", handleMove);
+		slider.addEventListener("pointerup", handleUp);
+		slider.addEventListener("pointercancel", handleCancel);
+	}
 
 	function handleVolumeKeyDown(event: KeyboardEvent) {
-		if (event.key === "m" || event.key === "M") {
+		if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+			event.preventDefault();
+			musicPlayerStore.setVolume(state.volume - 0.05);
+			return;
+		}
+
+		if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+			event.preventDefault();
+			musicPlayerStore.setVolume(state.volume + 0.05);
+			return;
+		}
+
+		if (
+			event.key === "Enter" ||
+			event.key === " " ||
+			event.key === "m" ||
+			event.key === "M"
+		) {
+			event.preventDefault();
 			toggleMute();
 		}
 	}
@@ -94,27 +170,18 @@
 		return musicPlayerStore.canSkip();
 	}
 
-	function handleStateUpdate(event: Event) {
-		const custom = event as CustomEvent<MusicPlayerState>;
-		if (custom.detail) {
-			state = custom.detail;
-		}
-	}
-
 	onMount(() => {
+		unsubscribe = musicPlayerStore.subscribe((nextState) => {
+			state = nextState;
+		});
 		musicPlayerStore.initialize();
-
-		window.addEventListener("music-sidebar:state", handleStateUpdate);
 	});
 
 	onDestroy(() => {
-		musicPlayerStore.destroy();
-		if (typeof window !== "undefined") {
-			window.removeEventListener(
-				"music-sidebar:state",
-				handleStateUpdate,
-			);
+		if (unsubscribe) {
+			unsubscribe();
 		}
+		musicPlayerStore.destroy();
 	});
 </script>
 

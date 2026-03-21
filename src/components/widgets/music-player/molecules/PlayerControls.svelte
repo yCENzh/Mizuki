@@ -33,15 +33,10 @@
 </script>
 
 <div class="controls flex items-center justify-center gap-2 mb-4">
-	<ModeButton
-		mode="shuffle"
-		isActive={isShuffled}
-		onclick={onShuffleClick}
-		disabled={!canSkip}
-	/>
-	<PrevButton onclick={onPrevClick} disabled={!canSkip} />
+	<ModeButton mode="shuffle" isActive={isShuffled} onclick={onShuffleClick} />
+	<PrevButton onclick={onPrevClick} disabled={false} />
 	<PlayButton {isPlaying} {isLoading} onclick={onPlayClick} />
-	<NextButton onclick={onNextClick} disabled={!canSkip} />
+	<NextButton onclick={onNextClick} disabled={false} />
 	<ModeButton
 		mode="repeat"
 		isActive={isRepeating > 0}
