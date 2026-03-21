@@ -1,4 +1,6 @@
 ---
+import "./page-progress-bar.css";
+
 interface Props {
 	enable: boolean;
 	height: number;
@@ -14,10 +16,6 @@ const { enable, height, duration } = Astro.props;
 			id="page-progress-bar"
 			style={`--page-progress-bar-height: ${height}px; --page-progress-bar-duration: ${duration}ms;`}
 		/>
-
-		<style is:global>
-			@import "./page-progress-bar.css";
-		</style>
 
 		<script is:inline define:vars={{ enable }}>
 			if (!enable) return;
