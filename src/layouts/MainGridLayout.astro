@@ -243,6 +243,16 @@ const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
 		</div>
 	</div>
 
+	<style>
+		.right-sidebar-container {
+			align-self: start;
+		}
+
+		.right-sidebar-container #right-sidebar {
+			height: fit-content;
+		}
+	</style>
+
 	<!-- 侧边栏TOC模式 -->
 	{
 		siteConfig.toc.enable && isSidebarTOC && (
