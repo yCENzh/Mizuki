@@ -64,9 +64,9 @@ const picked = shuffled.slice(0, maxCount);
 					<div class="font-bold text-sm text-black/75 dark:text-white/75 truncate transition group-hover:text-(--primary)">
 						{post.data.title}
 					</div>
-					<div class="flex items-center gap-1.5 text-xs text-black/30 dark:text-white/30 transition mt-0.5">
+					<div class="flex items-center gap-1.5 text-xs text-black/30 dark:text-white/30 transition mt-1">
 						{post.data.category && (
-							<span class="shrink-0 px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10 text-black/40 dark:text-white/40">
+							<span class="shrink-0 self-end px-1.5 py-0.5 rounded bg-[var(--btn-regular-bg)] text-[var(--btn-content)]">
 								{post.data.category}
 							</span>
 						)}
