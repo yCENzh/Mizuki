@@ -1,5 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
+
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import { getSortedPostsList } from "@/utils/content-utils";
@@ -17,8 +18,8 @@ const allPosts = await getSortedPostsList();
 
 // 排除当前文章和加密文章
 const candidates = allPosts.filter((p) => {
-	if (excludeIds.includes(p.id)) return false;
-	if (p.data.password) return false;
+	if (excludeIds.includes(p.id)) {return false;}
+	if (p.data.password) {return false;}
 	return true;
 });
 
