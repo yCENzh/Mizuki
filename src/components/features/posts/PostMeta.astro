@@ -9,6 +9,7 @@ import { PublishedDate } from "./atoms";
 import { Category } from "./atoms";
 import { WordCount } from "./atoms";
 import { ReadingTime } from "./atoms";
+import { EncryptedBadge } from "./atoms";
 
 interface Props {
 	published: Date;
@@ -25,6 +26,7 @@ interface Props {
 	minutes?: number;
 	showWordCount?: boolean;
 	showReadingTime?: boolean;
+	showEncrypted?: boolean;
 }
 
 const {
@@ -42,6 +44,7 @@ const {
 	minutes,
 	showWordCount = false,
 	showReadingTime = false,
+	showEncrypted = false,
 } = Astro.props;
 ---
 
@@ -96,9 +99,12 @@ const {
             <span class="text-50 text-sm font-medium page-views-display">{i18n(I18nKey.pageViewsLoading)}</span>
         </div>
     )}
-</div>
 
-{!isHome && id && (
+    {showEncrypted && (
+        <EncryptedBadge />
+    )}
+    
+    {!isHome && id && (
 <script is:inline define:vars={{
     pageViewsText: i18n(I18nKey.profileStatsPageViews),
     visitsText: i18n(I18nKey.profileStatsVisits)

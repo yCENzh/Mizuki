@@ -20,6 +20,9 @@ import { getFileDirFromPath, removeFileExtension } from "@utils/url-utils";
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
 import { licenseConfig, permalinkConfig, randomPostsConfig, relatedPostsConfig, shareConfig } from "src/config";
+import { Icon } from "astro-icon/components";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
 
 import Image from "../../components/atoms/Image/Image.astro";
 import Encryptor from "../../components/features/auth/Encryptor.astro";
@@ -252,6 +255,7 @@ const jsonLd = {
 					tags={entry.data.tags}
 					category={entry.data.category || undefined}
 					id={entry.id}
+					showEncrypted={isEncrypted}
 				/>
 				{
 					(!entry.data.image ||

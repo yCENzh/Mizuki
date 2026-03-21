@@ -4,4 +4,4 @@ export { default as ReadingTime } from "./ReadingTime.astro";
 export type { WordCountProps } from "./types";
 export type { ReadingTimeProps } from "./types";
 export { default as WordCount } from "./WordCount.astro";
-
+export { default as EncryptedBadge } from "./EncryptedBadge.astro";
