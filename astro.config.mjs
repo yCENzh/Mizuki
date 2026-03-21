@@ -175,10 +175,15 @@ export default defineConfig({
 		],
 	},
 	vite: {
+		plugins: [tailwindcss()],
 		build: {
-			// 静态资源处理优化，防止小图片转 base64 导致 HTML 体积过大（可选，根据需要调整）
+			// 静态资源处理优化，防止小图片转 base64 导致 HTML 体积过大
 			assetsInlineLimit: 4096,
-
+			// CSS 代码分割
+			cssCodeSplit: true,
+			cssMinify: "esbuild",
+			// 生产环境移除 console 和 debugger
+			minify: "esbuild",
 			rollupOptions: {
 				onwarn(warning, warn) {
 					if (
@@ -195,8 +200,12 @@ export default defineConfig({
 				},
 			},
 		},
-	},
-	vite: {
-		plugins: [tailwindcss()],
+		// 生产环境移除 console.log 和 debugger
+		esbuildOptions: {
+			drop:
+				process.env.NODE_ENV === "production"
+					? ["console", "debugger"]
+					: [],
+		},
 	},
 });

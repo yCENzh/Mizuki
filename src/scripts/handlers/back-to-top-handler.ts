@@ -8,8 +8,8 @@ import {
 	BANNER_HEIGHT_HOME,
 	SCROLL_CONFIG,
 	SWUP_SELECTORS,
-} from '../core/swup-config';
-import { ScrollHandler } from './scroll-handler';
+} from "../core/swup-config";
+import { ScrollHandler } from "./scroll-handler";
 
 /**
  * 返回顶部处理器类
@@ -26,7 +26,7 @@ export class BackToTopHandler {
 		this.bannerEnabled = bannerEnabled;
 		this.scrollHandler = ScrollHandler.throttle(
 			this.handleScroll.bind(this),
-			SCROLL_CONFIG.throttleInterval
+			SCROLL_CONFIG.throttleInterval,
 		);
 	}
 
@@ -43,11 +43,11 @@ export class BackToTopHandler {
 	 */
 	private cacheElements(): void {
 		this.backToTopBtn = document.getElementById(
-			SWUP_SELECTORS.backToTopBtn.slice(1)
+			SWUP_SELECTORS.backToTopBtn.slice(1),
 		);
 		this.toc = document.getElementById(SWUP_SELECTORS.tocWrapper.slice(1));
 		this.navbar = document.getElementById(
-			SWUP_SELECTORS.navbarWrapper.slice(1)
+			SWUP_SELECTORS.navbarWrapper.slice(1),
 		);
 	}
 
@@ -55,8 +55,13 @@ export class BackToTopHandler {
 	 * 绑定事件监听
 	 */
 	private bindEvents(): void {
-		window.onscroll = this.scrollHandler;
-		window.onresize = this.handleResize.bind(this);
+		// 使用 passive 事件监听器提升滚动性能
+		window.addEventListener("scroll", this.scrollHandler, {
+			passive: true,
+		});
+		window.addEventListener("resize", this.handleResize.bind(this), {
+			passive: true,
+		});
 	}
 
 	/**
@@ -64,8 +69,7 @@ export class BackToTopHandler {
 	 */
 	private handleScroll(): void {
 		const scrollTop = document.documentElement.scrollTop;
-		const bannerHeight =
-			window.innerHeight * (BANNER_HEIGHT / 100);
+		const bannerHeight = window.innerHeight * (BANNER_HEIGHT / 100);
 
 		// 计算返回顶部按钮显示阈值
 		const showBackToTopThreshold = this.calculateShowThreshold(scrollTop);
@@ -83,7 +87,7 @@ export class BackToTopHandler {
 	 */
 	private calculateShowThreshold(scrollTop: number): number {
 		const contentWrapper = document.getElementById(
-			SWUP_SELECTORS.contentWrapper.slice(1)
+			SWUP_SELECTORS.contentWrapper.slice(1),
 		);
 		let threshold =
 			window.innerHeight * (BANNER_HEIGHT / 100) +
@@ -101,16 +105,15 @@ export class BackToTopHandler {
 	/**
 	 * 更新返回顶部按钮可见性
 	 */
-	private updateBackToTopButton(
-		scrollTop: number,
-		threshold: number
-	): void {
-		if (!this.backToTopBtn) {return;}
+	private updateBackToTopButton(scrollTop: number, threshold: number): void {
+		if (!this.backToTopBtn) {
+			return;
+		}
 
 		if (scrollTop > threshold) {
-			this.backToTopBtn.classList.remove('hide');
+			this.backToTopBtn.classList.remove("hide");
 		} else {
-			this.backToTopBtn.classList.add('hide');
+			this.backToTopBtn.classList.add("hide");
 		}
 	}
 
@@ -118,20 +121,21 @@ export class BackToTopHandler {
 	 * 更新 TOC 可见性
 	 */
 	private updateTOCVisibility(scrollTop: number, bannerHeight: number): void {
-		if (!this.bannerEnabled || !this.toc) {return;}
+		if (!this.bannerEnabled || !this.toc) {
+			return;
+		}
 
-		const isBannerMode =
-			document.body.classList.contains('enable-banner');
+		const isBannerMode = document.body.classList.contains("enable-banner");
 
 		if (isBannerMode) {
 			if (scrollTop > bannerHeight) {
-				this.toc.classList.remove('toc-hide');
+				this.toc.classList.remove("toc-hide");
 			} else {
-				this.toc.classList.add('toc-hide');
+				this.toc.classList.add("toc-hide");
 			}
 		} else {
 			// Fullscreen 或 None 模式下始终显示 TOC
-			this.toc.classList.remove('toc-hide');
+			this.toc.classList.remove("toc-hide");
 		}
 	}
 
@@ -139,23 +143,23 @@ export class BackToTopHandler {
 	 * 更新 Navbar 可见性
 	 */
 	private updateNavbarVisibility(scrollTop: number): void {
-		if (!this.bannerEnabled || !this.navbar) {return;}
+		if (!this.bannerEnabled || !this.navbar) {
+			return;
+		}
 
 		const isHome =
-			document.body.classList.contains('lg:is-home') &&
+			document.body.classList.contains("lg:is-home") &&
 			window.innerWidth >= 1280;
-		const currentBannerHeight = isHome
-			? BANNER_HEIGHT_HOME
-			: BANNER_HEIGHT;
+		const currentBannerHeight = isHome ? BANNER_HEIGHT_HOME : BANNER_HEIGHT;
 
 		const threshold =
 			window.innerHeight * (currentBannerHeight / 100) -
 			SCROLL_CONFIG.navbarHideOffset;
 
 		if (scrollTop >= threshold) {
-			this.navbar.classList.add('navbar-hidden');
+			this.navbar.classList.add("navbar-hidden");
 		} else {
-			this.navbar.classList.remove('navbar-hidden');
+			this.navbar.classList.remove("navbar-hidden");
 		}
 	}
 
@@ -166,12 +170,12 @@ export class BackToTopHandler {
 		// 计算 --banner-height-extend
 		// 需要是 4 的倍数以避免模糊文本
 		let offset = Math.floor(
-			window.innerHeight * (30 / 100) // BANNER_HEIGHT_EXTEND
+			window.innerHeight * (30 / 100), // BANNER_HEIGHT_EXTEND
 		);
 		offset = offset - (offset % 4);
 		document.documentElement.style.setProperty(
-			'--banner-height-extend',
-			`${offset}px`
+			"--banner-height-extend",
+			`${offset}px`,
 		);
 	}
 
@@ -179,8 +183,8 @@ export class BackToTopHandler {
 	 * 销毁处理器
 	 */
 	destroy(): void {
-		window.onscroll = null;
-		window.onresize = null;
+		window.removeEventListener("scroll", this.scrollHandler);
+		window.removeEventListener("resize", this.handleResize.bind(this));
 		this.backToTopBtn = null;
 		this.toc = null;
 		this.navbar = null;
