@@ -77,7 +77,6 @@
 			currentSong={state.currentSong}
 			isPlaying={state.isPlaying}
 			isLoading={state.isLoading}
-			onTogglePlay={togglePlay}
 		/>
 		<SidebarTrackInfo
 			currentSong={state.currentSong}

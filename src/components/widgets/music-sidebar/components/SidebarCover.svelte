@@ -6,10 +6,9 @@
 		currentSong: Song;
 		isPlaying: boolean;
 		isLoading: boolean;
-		onTogglePlay: () => void;
 	}
 
-	const { currentSong, isPlaying, isLoading, onTogglePlay }: Props = $props();
+	const { currentSong, isPlaying, isLoading }: Props = $props();
 </script>
 
 <CoverImage
@@ -17,6 +16,5 @@
 	{isPlaying}
 	{isLoading}
 	size="expanded"
-	interactive={true}
-	onclick={onTogglePlay}
+	interactive={false}
 />
