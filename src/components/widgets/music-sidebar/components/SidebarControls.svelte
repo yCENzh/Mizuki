@@ -1,8 +1,9 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
-	import PrevButton from "../../music-player/atoms/PrevButton.svelte";
-	import PlayButton from "../../music-player/atoms/PlayButton.svelte";
+
 	import NextButton from "../../music-player/atoms/NextButton.svelte";
+	import PlayButton from "../../music-player/atoms/PlayButton.svelte";
+	import PrevButton from "../../music-player/atoms/PrevButton.svelte";
 
 	interface Props {
 		isPlaying: boolean;
