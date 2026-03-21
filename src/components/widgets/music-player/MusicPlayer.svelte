@@ -428,19 +428,19 @@
 				width: 280px !important;
 			}
 			:global(.expanded-player) {
-				width: calc(100vw - 16px);
-				max-width: none;
+				width: 280px !important;
+				max-width: 280px !important;
 			}
 			.music-player.expanded {
-				width: calc(100vw - 16px);
-				min-width: calc(100vw - 16px);
-				max-width: none;
+				width: 280px !important;
+				min-width: 280px !important;
+				max-width: 280px !important;
 				right: 0.5rem !important;
 			}
 			:global(.playlist-panel) {
-				width: calc(100vw - 16px) !important;
+				width: 280px !important;
 				right: 0.5rem !important;
-				max-width: none;
+				max-width: 280px !important;
 			}
 			:global(.controls) {
 				gap: 8px;
@@ -457,9 +457,18 @@
 
 		@media (max-width: 480px) {
 			.music-player {
-				width: 260px;
-				min-width: 260px;
-				max-width: 260px;
+				width: 260px !important;
+				min-width: 260px !important;
+				max-width: 260px !important;
+			}
+			:global(.expanded-player) {
+				width: 260px !important;
+				max-width: 260px !important;
+			}
+			:global(.playlist-panel) {
+				width: 260px !important;
+				max-width: 260px !important;
+				right: 0.5rem !important;
 			}
 			:global(.song-title) {
 				font-size: 14px;

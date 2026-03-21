@@ -54,3 +54,21 @@
 		</div>
 	</div>
 {/if}
+
+<style>
+	@media (max-width: 768px) {
+		.playlist-panel {
+			width: 280px !important;
+			max-width: 280px !important;
+			right: 0 !important;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.playlist-panel {
+			width: 260px !important;
+			max-width: 260px !important;
+			right: 0 !important;
+		}
+	}
+</style>
