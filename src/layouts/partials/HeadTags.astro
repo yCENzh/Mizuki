@@ -44,6 +44,12 @@ const keywords = siteConfig.keywords;
 // Favicons
 const favicons: Favicon[] =
 	siteConfig.favicon.length > 0 ? siteConfig.favicon : defaultFavicons;
+
+// CDN 预连接域名（用于 Mermaid 等第三方资源）
+const cdnDomains = [
+	"https://cdn.jsdelivr.net",
+	"https://unpkg.com",
+];
 ---
 
 <!-- SEO Meta Tags -->
@@ -102,6 +108,29 @@ const favicons: Favicon[] =
 		/>
 	))
 }
+
+<!-- CDN 预连接 -->
+{
+	cdnDomains.map((domain) => (
+		<link rel="preconnect" href={domain} crossorigin />
+	))
+}
+
+<!-- 字体预加载（使用压缩后的 woff2 格式） -->
+<link
+	rel="preload"
+	href="/fonts/loli.woff2"
+	as="font"
+	type="font/woff2"
+	crossorigin
+/>
+<link
+	rel="preload"
+	href="/fonts/ZenMaruGothic-Medium.woff2"
+	as="font"
+	type="font/woff2"
+	crossorigin
+/>
 
 <!-- Set the theme before the page is rendered to avoid a flash -->
 <script

@@ -55,9 +55,22 @@
 		});
 	}
 
+	// 存储 MutationObserver 实例
+	let themeObserver = null;
+
+	// 清理 MutationObserver
+	function cleanupMutationObserver() {
+		if (themeObserver) {
+			themeObserver.disconnect();
+			themeObserver = null;
+		}
+	}
+
 	// 设置 MutationObserver 监听 html 元素的 class 属性变化
 	function setupMutationObserver() {
-		const observer = new MutationObserver((mutations) => {
+		cleanupMutationObserver();
+
+		themeObserver = new MutationObserver((mutations) => {
 			mutations.forEach((mutation) => {
 				if (
 					mutation.type === "attributes" &&
@@ -81,7 +94,7 @@
 		});
 
 		// 开始观察 html 元素的 class 属性变化
-		observer.observe(document.documentElement, {
+		themeObserver.observe(document.documentElement, {
 			attributes: true,
 			attributeFilter: ["class"],
 			attributeOldValue: true,
@@ -90,7 +103,9 @@
 
 	// 缩放平移
 	function attachZoomControls(element, svgElement) {
-		if (element.__zoomAttached) {return;}
+		if (element.__zoomAttached) {
+			return;
+		}
 		element.__zoomAttached = true;
 
 		const wrapper = document.createElement("div");
@@ -121,7 +136,9 @@
 		controls.addEventListener("click", (ev) => {
 			const action =
 				ev.target.getAttribute && ev.target.getAttribute("data-action");
-			if (!action) {return;}
+			if (!action) {
+				return;
+			}
 
 			switch (action) {
 				case "zoom-in":
@@ -150,7 +167,9 @@
 		wrapper.style.touchAction = "none";
 
 		wrapper.addEventListener("pointerdown", (ev) => {
-			if (ev.button !== 0) {return;} // 仅左键
+			if (ev.button !== 0) {
+				return;
+			} // 仅左键
 			isPanning = true;
 			wrapper.setPointerCapture(ev.pointerId);
 			startX = ev.clientX;
@@ -160,7 +179,9 @@
 		});
 
 		wrapper.addEventListener("pointermove", (ev) => {
-			if (!isPanning) {return;}
+			if (!isPanning) {
+				return;
+			}
 			const dx = ev.clientX - startX;
 			const dy = ev.clientY - startY;
 			tx = startTx + dx / scale; // 根据当前缩放调整灵敏度
@@ -240,6 +261,16 @@
 		document.addEventListener("visibilitychange", () => {
 			if (!document.hidden) {
 				setTimeout(() => renderMermaidDiagrams(), 200);
+			}
+		});
+
+		// 页面切换前清理
+		document.addEventListener("astro:before-swap", cleanupMutationObserver);
+
+		// Swup 页面切换时重新设置 Observer
+		document.addEventListener("astro:after-swap", () => {
+			if (themeObserver === null) {
+				setupMutationObserver();
 			}
 		});
 	}
