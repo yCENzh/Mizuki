@@ -13,16 +13,19 @@ import {
 import { ReadingTime, WordCount } from "@components/features/posts/atoms";
 import License from "@components/misc/License.astro";
 import Markdown from "@components/misc/Markdown.astro";
-import I18nKey from "@i18n/i18nKey";
-import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getRelatedPosts,getSortedPosts } from "@utils/content-utils";
+import { getRelatedPosts, getSortedPosts } from "@utils/content-utils";
 import { hasCustomPermalink, initPostIdMap } from "@utils/permalink-utils";
 import { getFileDirFromPath, removeFileExtension } from "@utils/url-utils";
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
-import { Icon } from "astro-icon/components";
-import { licenseConfig, permalinkConfig, randomPostsConfig, relatedPostsConfig, shareConfig } from "src/config";
+import {
+	licenseConfig,
+	permalinkConfig,
+	randomPostsConfig,
+	relatedPostsConfig,
+	shareConfig,
+} from "src/config";
 
 import Image from "../../components/atoms/Image/Image.astro";
 import Encryptor from "../../components/features/auth/Encryptor.astro";
@@ -162,7 +165,7 @@ if (profileConfig.avatar) {
 }
 
 // 判断是否为加密文章
-const isEncrypted = entry.data.encrypted && entry.data.password;
+const isEncrypted = !!(entry.data.encrypted && entry.data.password);
 
 const jsonLd = {
 	"@context": "https://schema.org",
@@ -356,17 +359,19 @@ const jsonLd = {
 	/>
 
 	<!-- 相关文章与随机文章 -->
-	{(relatedPostsConfig.enable || randomPostsConfig.enable) && (
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-			{relatedPostsConfig.enable && relatedPosts.length > 0 && (
-				<RelatedPosts relatedPosts={relatedPosts} />
-			)}
-			{randomPostsConfig.enable && (
-				<RandomPosts
-					excludeIds={[entry.id]}
-					maxCount={randomPostsConfig.maxCount}
-				/>
-			)}
-		</div>
-	)}
+	{
+		(relatedPostsConfig.enable || randomPostsConfig.enable) && (
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+				{relatedPostsConfig.enable && relatedPosts.length > 0 && (
+					<RelatedPosts relatedPosts={relatedPosts} />
+				)}
+				{randomPostsConfig.enable && (
+					<RandomPosts
+						excludeIds={[entry.id]}
+						maxCount={randomPostsConfig.maxCount}
+					/>
+				)}
+			</div>
+		)
+	}
 </MainGridLayout>

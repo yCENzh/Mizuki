@@ -29,24 +29,23 @@ const { class: className, style } = Astro.props;
 	style={style}
 >
 	<div class="toc-scroll-container">
-		<div class="toc-content" id="card-toc-content">
-		</div>
+		<div class="toc-content" id="card-toc-content"></div>
 	</div>
 </WidgetLayout>
 
 <style>
-.toc-scroll-container {
-	max-height: 50vh;
-	overflow-y: auto;
-	scrollbar-width: none;
-	-ms-overflow-style: none;
-}
+	.toc-scroll-container {
+		max-height: 50vh;
+		overflow-y: auto;
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+	}
 
-.toc-scroll-container::-webkit-scrollbar {
-	display: none;
-	width: 0;
-	height: 0;
-}
+	.toc-scroll-container::-webkit-scrollbar {
+		display: none;
+		width: 0;
+		height: 0;
+	}
 </style>
 
 <script>
@@ -54,27 +53,38 @@ const { class: className, style } = Astro.props;
 
 	if (typeof window.CardTOC === "undefined") {
 		window.CardTOC = {
-			manager: null
+			manager: null,
 		};
 	}
 
 	async function initCardTOC() {
 		const tocContent = document.getElementById("card-toc-content");
-		if (!tocContent) {return;}
+		if (!tocContent) {
+			return;
+		}
 
 		try {
-			if (window.CardTOC.manager) {
-				window.CardTOC.manager.cleanup();
+			// Ensure window.CardTOC is initialized
+			if (!window.CardTOC) {
+				window.CardTOC = { manager: null };
 			}
 
-			window.CardTOC.manager = new TOCManager({
+			// Cleanup existing manager if present
+			const existingManager = window.CardTOC.manager;
+			if (existingManager && existingManager.cleanup) {
+				existingManager.cleanup();
+			}
+
+			// Create new manager
+			const manager = new TOCManager({
 				contentId: "card-toc-content",
 				indicatorId: "card-active-indicator",
 				maxLevel: 3,
 				scrollOffset: 80,
 			});
 
-			window.CardTOC.manager.init();
+			window.CardTOC.manager = manager;
+			manager.init();
 		} catch (error) {
 			console.error("Failed to load TOCManager for CardTOC:", error);
 		}
@@ -113,3 +123,4 @@ const { class: className, style } = Astro.props;
 		setTimeout(initCardTOC, 200);
 	});
 </script>
+
