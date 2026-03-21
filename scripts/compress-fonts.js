@@ -36,13 +36,17 @@ async function getConfig() {
 			const fontConfig = match[1];
 
 			// 提取 enableCompress
-			const compressMatch = fontConfig.match(/enableCompress:\s*(true|false)/);
+			const compressMatch = fontConfig.match(
+				/enableCompress:\s*(true|false)/,
+			);
 			const enableCompress = compressMatch
 				? compressMatch[1] === "true"
 				: false;
 
 			// 提取 localFonts 数组
-			const localFontsMatch = fontConfig.match(/localFonts:\s*\[(.*?)\]/s);
+			const localFontsMatch = fontConfig.match(
+				/localFonts:\s*\[(.*?)\]/s,
+			);
 			let localFonts = [];
 
 			if (localFontsMatch?.[1].trim()) {
@@ -98,7 +102,9 @@ function extractText(content, ext) {
 
 			// 提取 frontmatter 中的字符串值（包括有引号和无引号的）
 			// 匹配 key: value 格式（无引号）
-			const unquotedMatches = frontmatter.match(/^\s*\w+:\s*([^'"\n]+)$/gm);
+			const unquotedMatches = frontmatter.match(
+				/^\s*\w+:\s*([^'"\n]+)$/gm,
+			);
 			if (unquotedMatches) {
 				unquotedMatches.forEach((match) => {
 					const value = match.replace(/^\s*\w+:\s*/, "").trim();
@@ -279,7 +285,9 @@ async function fetchMetingPlaylistText() {
 			clearTimeout(timeoutId);
 
 			if (!response.ok) {
-				throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+				throw new Error(
+					`HTTP ${response.status}: ${response.statusText}`,
+				);
 			}
 
 			const playlist = await response.json();
@@ -375,7 +383,10 @@ async function fetchBilibiliAnimeText() {
 		}
 
 		// 读取 bilibili-data.json 文件
-		const dataFilePath = path.join(__dirname, "../src/data/bilibili-data.json");
+		const dataFilePath = path.join(
+			__dirname,
+			"../src/data/bilibili-data.json",
+		);
 		if (!fs.existsSync(dataFilePath)) {
 			console.log(
 				"ℹ Bilibili data file not found, skipping Bilibili text collection",
@@ -390,7 +401,9 @@ async function fetchBilibiliAnimeText() {
 		const animeList = JSON.parse(fileContent);
 
 		if (!Array.isArray(animeList)) {
-			console.log("⚠ Bilibili data is not an array, skipping text collection");
+			console.log(
+				"⚠ Bilibili data is not an array, skipping text collection",
+			);
 			return new Set();
 		}
 
@@ -520,7 +533,10 @@ async function fetchBangumiAnimeText() {
 
 				while (hasMore) {
 					const controller = new AbortController();
-					const timeoutId = setTimeout(() => controller.abort(), 10000);
+					const timeoutId = setTimeout(
+						() => controller.abort(),
+						10000,
+					);
 
 					const response = await fetch(
 						`${BANGUMI_API_BASE}/v0/users/${userId}/collections?subject_type=${subjectType}&type=${type}&limit=${limit}&offset=${offset}`,
@@ -535,7 +551,9 @@ async function fetchBangumiAnimeText() {
 					clearTimeout(timeoutId);
 
 					if (!response.ok) {
-						throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+						throw new Error(
+							`HTTP ${response.status}: ${response.statusText}`,
+						);
 					}
 
 					const data = await response.json();
@@ -1012,7 +1030,11 @@ async function compressFonts() {
 			const text = fontConfig.type === "asciiFont" ? asciiText : cjkText;
 
 			for (const fontFile of fontConfig.files) {
-				const fontSrc = path.join(__dirname, "../public/assets/font", fontFile);
+				const fontSrc = path.join(
+					__dirname,
+					"../public/assets/font",
+					fontFile,
+				);
 				const ext = path.extname(fontFile).toLowerCase();
 				const baseName = path.basename(fontFile, ext);
 
@@ -1030,7 +1052,9 @@ async function compressFonts() {
 				// 根据文件类型决定处理方式
 				if (ext === ".woff2" || ext === ".woff") {
 					// woff/woff2 已经是 Web 优化格式，不支持进一步子集化压缩
-					console.log(`⚠ Skipping ${fontFile} (already web-optimized format)`);
+					console.log(
+						`⚠ Skipping ${fontFile} (already web-optimized format)`,
+					);
 
 					// 直接复制到 dist
 					const destFile = path.join(distFontDir, fontFile);
@@ -1067,7 +1091,10 @@ async function compressFonts() {
 					});
 
 					// 检查压缩结果
-					const compressedFile = path.join(distFontDir, `${baseName}.woff2`);
+					const compressedFile = path.join(
+						distFontDir,
+						`${baseName}.woff2`,
+					);
 
 					if (fs.existsSync(compressedFile)) {
 						const compressedSize = fs.statSync(compressedFile).size;
@@ -1083,7 +1110,9 @@ async function compressFonts() {
 						processedCount++;
 					}
 				} else {
-					console.log(`⚠ Unsupported font format, skipping: ${fontFile}`);
+					console.log(
+						`⚠ Unsupported font format, skipping: ${fontFile}`,
+					);
 				}
 			}
 		}
@@ -1133,5 +1162,132 @@ async function compressFonts() {
 	}
 }
 
+// 更新 dist 中的 CSS，将 ttf 引用替换为 woff2（子集优化后）或保持原样
+async function updateCssFontReferences() {
+	try {
+		const { fonts } = await getConfig();
+		const distDir = path.join(__dirname, "../dist/");
+		const publicFontDir = path.join(__dirname, "../public/assets/font");
+
+		// 查找所有 CSS 文件（包括 _astro 目录）
+		const cssFiles = [];
+		function findCssFiles(dir) {
+			if (!fs.existsSync(dir)) return;
+			const files = fs.readdirSync(dir);
+			files.forEach((file) => {
+				const filePath = path.join(dir, file);
+				const stat = fs.statSync(filePath);
+				if (stat.isDirectory()) {
+					findCssFiles(filePath);
+				} else if (file.endsWith(".css")) {
+					cssFiles.push(filePath);
+				}
+			});
+		}
+		findCssFiles(distDir);
+
+		if (cssFiles.length === 0) {
+			console.log("⚠ No CSS files found in dist");
+			return;
+		}
+
+		for (const fontConfig of fonts) {
+			for (const fontFile of fontConfig.files) {
+				const ext = path.extname(fontFile).toLowerCase();
+				const baseName = path.basename(fontFile, ext);
+				const ttfFile = fontFile;
+				const woff2File = `${baseName}.woff2`;
+
+				// 检查 woff2 是否存在（构建生成的或用户提供的）
+				const distWoff2 = path.join(
+					__dirname,
+					`../dist/assets/font/${woff2File}`,
+				);
+				const publicWoff2 = path.join(
+					publicFontDir,
+					`${baseName}.woff2`,
+				);
+				const hasWoff2 =
+					fs.existsSync(distWoff2) || fs.existsSync(publicWoff2);
+
+				if (!hasWoff2) {
+					console.log(
+						`⚠ No woff2 found for ${baseName}, keeping ttf reference`,
+					);
+					continue;
+				}
+
+				// 更新每个 CSS 文件
+				for (const cssFile of cssFiles) {
+					let cssContent = fs.readFileSync(cssFile, "utf-8");
+					const originalContent = cssContent;
+
+					// 匹配 @font-face 规则中引用该字体的 src
+					// 匹配格式: url("/assets/font/xxx.ttf") 或 url("/assets/font/xxx.ttf") format("truetype")
+					const ttfPattern = new RegExp(
+						`url\\(["']?/assets/font/${baseName}\\.ttf["']?\\)\\s*format\\(["']truetype["']\\)`,
+						"g",
+					);
+
+					if (fontConfig.enableCompress) {
+						// 子集优化：直接替换为 woff2（子集化后的）
+						cssContent = cssContent.replace(
+							ttfPattern,
+							`url("/assets/font/${woff2File}") format("woff2")`,
+						);
+					} else {
+						// 未开启子集优化：使用原始 woff2（如果有），降级到 ttf
+						if (fs.existsSync(publicWoff2)) {
+							cssContent = cssContent.replace(
+								ttfPattern,
+								`url("/assets/font/${woff2File}") format("woff2"), url("/assets/font/${baseName}.ttf") format("truetype")`,
+							);
+						}
+					}
+
+					if (cssContent !== originalContent) {
+						fs.writeFileSync(cssFile, cssContent);
+						console.log(`✓ Updated CSS: ${cssFile} (${baseName})`);
+					}
+				}
+			}
+		}
+
+		// 处理未在 config 中配置但用户直接放在 font 目录的 woff2
+		// 扫描 public/font 目录下的 woff2，检查是否有对应的 ttf 被 CSS 引用
+		const publicFiles = fs.readdirSync(publicFontDir);
+		for (const file of publicFiles) {
+			if (file.endsWith(".woff2")) {
+				const baseName = path.basename(file, ".woff2");
+				const ttfFile = `${baseName}.ttf`;
+
+				// 检查是否有 CSS 引用了这个 ttf
+				for (const cssFile of cssFiles) {
+					let cssContent = fs.readFileSync(cssFile, "utf-8");
+					const ttfPattern = new RegExp(
+						`url\\(["']?/assets/font/${baseName}\\.ttf["']?\\)\\s*format\\(["']truetype["']\\)`,
+						"g",
+					);
+
+					if (cssContent.match(ttfPattern)) {
+						// 替换为 woff2 + ttf fallback
+						cssContent = cssContent.replace(
+							ttfPattern,
+							`url("/assets/font/${file}") format("woff2"), url("/assets/font/${ttfFile}") format("truetype")`,
+						);
+						fs.writeFileSync(cssFile, cssContent);
+						console.log(
+							`✓ Updated CSS: ${cssFile} (${baseName} - woff2 fallback)`,
+						);
+					}
+				}
+			}
+		}
+	} catch (error) {
+		console.error("⚠ CSS font reference update failed:", error.message);
+		// 不退出，只是警告
+	}
+}
+
 // 运行压缩
-compressFonts();
+compressFonts().then(() => updateCssFontReferences());
