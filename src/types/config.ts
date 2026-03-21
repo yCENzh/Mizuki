@@ -186,7 +186,8 @@ export interface SiteConfig {
 	showCoverInContent: boolean; // 控制文章封面在文章内容页显示的开关
 	generateOgImages: boolean;
 	favicon: Favicon[];
-	showLastModified: boolean; // 控制“上次编辑”卡片显示的开关
+	showLastModified: boolean; // 控制"上次编辑"卡片显示的开关
+	pageProgressBar?: PageProgressBarConfig; // 页面顶部进度条配置
 }
 
 export interface Favicon {
@@ -476,4 +477,13 @@ export interface RelatedPostsConfig {
 export interface RandomPostsConfig {
 	enable: boolean; // 是否启用随机文章功能
 	maxCount: number; // 随机文章数量
+}
+
+/**
+ * 页面顶部进度条配置
+ */
+export interface PageProgressBarConfig {
+	enable: boolean; // 是否启用页面顶部进度条
+	height?: number; // 进度条高度，默认 3px
+	duration?: number; // 动画时长，默认 8000ms
 }
