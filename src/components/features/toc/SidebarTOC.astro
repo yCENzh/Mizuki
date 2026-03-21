@@ -38,6 +38,7 @@ import {
 
 class TableOfContents extends HTMLElement {
 	tocEl: HTMLElement | null = null;
+	scrollContainer: HTMLElement | null = null;
 	visibleClass = "visible";
 	observer: IntersectionObserver;
 	anchorNavTarget: HTMLElement | null = null;
@@ -110,7 +111,8 @@ class TableOfContents extends HTMLElement {
 	};
 
 	scrollToActiveHeading = throttle(() => {
-		if (this.anchorNavTarget || !this.tocEl) return;
+		const scrollContainer = this.scrollContainer || this.tocEl;
+		if (this.anchorNavTarget || !this.tocEl || !scrollContainer) return;
 
 		const activeEntries = this.tocEntries.filter((entry) =>
 			entry.classList.contains(this.visibleClass)
@@ -119,7 +121,7 @@ class TableOfContents extends HTMLElement {
 
 		const topmost = activeEntries[0];
 		const bottommost = activeEntries[activeEntries.length - 1];
-		const tocHeight = this.tocEl.clientHeight;
+		const tocHeight = scrollContainer.clientHeight;
 
 		const visibleHeight =
 			bottommost.getBoundingClientRect().bottom -
@@ -132,7 +134,7 @@ class TableOfContents extends HTMLElement {
 			top = (bottommost as HTMLElement).offsetTop - tocHeight * 0.8;
 		}
 
-		this.tocEl.scrollTo({ top, left: 0, behavior: "smooth" });
+		scrollContainer.scrollTo({ top, left: 0, behavior: "smooth" });
 	}, 100);
 
 	update = () => {
@@ -200,6 +202,8 @@ class TableOfContents extends HTMLElement {
 	init() {
 		this.regenerateTOC();
 		this.tocEl = this;
+		this.scrollContainer =
+			(this.closest("#toc-inner-wrapper") as HTMLElement | null) || this.tocEl;
 
 		this.tocEl.addEventListener("click", this.handleAnchorClick, {
 			capture: true,
