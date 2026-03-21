@@ -5,6 +5,7 @@
 	import { onDestroy, onMount } from "svelte";
 
 	import { musicPlayerConfig } from "@/config";
+	import type { Song, RepeatMode } from "./types";
 
 	import CoverImage from "./atoms/CoverImage.svelte";
 	import { SKIP_ERROR_DELAY } from "./constants";
@@ -164,7 +165,9 @@
 
 	function setProgress(event: MouseEvent) {
 		const progressElement = event.currentTarget as HTMLElement | null;
-		if (!audio || !progressElement) {return;}
+		if (!audio || !progressElement) {
+			return;
+		}
 		const rect = progressElement.getBoundingClientRect();
 		const percent = (event.clientX - rect.left) / rect.width;
 		const newTime = percent * audioPlayerState.duration;
@@ -218,12 +221,113 @@
 	}
 
 	let unregister: (() => void) | undefined;
+	let sidebarCleanup: (() => void) | undefined;
+
+	// 将播放器状态广播给侧栏组件（仅在浏览器环境中执行）
+	$effect(() => {
+		if (typeof window === "undefined") {
+			return;
+		}
+		const sidebarState = {
+			currentSong: audioPlayerState.currentSong as Song,
+			playlist: playlistState.playlist as Song[],
+			currentIndex: playlistState.currentIndex,
+			isPlaying: audioPlayerState.isPlaying,
+			isLoading: audioPlayerState.isLoading,
+			currentTime: audioPlayerState.currentTime,
+			duration: audioPlayerState.duration,
+			volume: audioPlayerState.volume,
+			isMuted: audioPlayerState.isMuted,
+			isShuffled: playlistState.isShuffled,
+			showPlaylist: playerUiState.showPlaylist,
+			isRepeating: playlistState.isRepeating as RepeatMode,
+		};
+		window.dispatchEvent(
+			new CustomEvent("music-sidebar:state", { detail: sidebarState }),
+		);
+	});
 
 	onMount(() => {
 		loadVolumeFromStorage(audioPlayerState);
 		const interactionHandler = () =>
 			handleUserInteraction(audioPlayerState, audio);
 		unregister = registerInteractionHandler(interactionHandler);
+
+		// 为侧栏组件注册控制事件监听
+		const togglePlayHandler = () => handleTogglePlay();
+		const prevHandler = () => handlePreviousSong();
+		const nextHandler = () => handleNextSong();
+		const togglePlaylistHandler = () => togglePlaylist();
+		const toggleModeHandler = () => {
+			if (playlistState.isShuffled) {
+				toggleShuffle(playlistState);
+				return;
+			}
+			if (playlistState.isRepeating === 2) {
+				toggleRepeat(playlistState);
+				toggleShuffle(playlistState);
+				return;
+			}
+			handleToggleRepeat();
+		};
+		const playIndexHandler = (event: Event) => {
+			const custom = event as CustomEvent<{ index: number }>;
+			if (custom.detail && typeof custom.detail.index === "number") {
+				handlePlaySong(custom.detail.index);
+			}
+		};
+		const seekHandler = (event: Event) => {
+			const custom = event as CustomEvent<{ time: number }>;
+			if (!audio || !custom.detail) {
+				return;
+			}
+			const time = custom.detail.time;
+			if (
+				typeof time === "number" &&
+				time >= 0 &&
+				time <= audioPlayerState.duration
+			) {
+				audio.currentTime = time;
+				audioPlayerState.currentTime = time;
+			}
+		};
+		const toggleMuteHandler = () => handleToggleMute();
+		const setVolumeHandler = (event: Event) => {
+			const custom = event as CustomEvent<{ volume: number }>;
+			if (!audio || !custom.detail) {
+				return;
+			}
+			const volume = custom.detail.volume;
+			if (typeof volume === "number") {
+				audioPlayerState.volume = Math.max(0, Math.min(1, volume));
+				audioPlayerState.isMuted = audioPlayerState.volume === 0;
+			}
+		};
+
+		window.addEventListener("music:toggle-play", togglePlayHandler);
+		window.addEventListener("music:prev", prevHandler);
+		window.addEventListener("music:next", nextHandler);
+		window.addEventListener("music:toggle-playlist", togglePlaylistHandler);
+		window.addEventListener("music:toggle-mode", toggleModeHandler);
+		window.addEventListener("music:play-index", playIndexHandler);
+		window.addEventListener("music:seek", seekHandler);
+		window.addEventListener("music:toggle-mute", toggleMuteHandler);
+		window.addEventListener("music:set-volume", setVolumeHandler);
+
+		sidebarCleanup = () => {
+			window.removeEventListener("music:toggle-play", togglePlayHandler);
+			window.removeEventListener("music:prev", prevHandler);
+			window.removeEventListener("music:next", nextHandler);
+			window.removeEventListener(
+				"music:toggle-playlist",
+				togglePlaylistHandler,
+			);
+			window.removeEventListener("music:toggle-mode", toggleModeHandler);
+			window.removeEventListener("music:play-index", playIndexHandler);
+			window.removeEventListener("music:seek", seekHandler);
+			window.removeEventListener("music:toggle-mute", toggleMuteHandler);
+			window.removeEventListener("music:set-volume", setVolumeHandler);
+		};
 
 		if (!musicPlayerConfig.enable) {
 			return;
@@ -263,6 +367,9 @@
 		if (unregister) {
 			unregister();
 		}
+		if (sidebarCleanup) {
+			sidebarCleanup();
+		}
 	});
 
 	function volumeBarRef(node: HTMLElement) {
@@ -278,7 +385,9 @@
 	onplay={() => (audioPlayerState.isPlaying = true)}
 	onpause={() => (audioPlayerState.isPlaying = false)}
 	ontimeupdate={() => {
-		if (audio) {audioPlayerState.currentTime = audio.currentTime;}
+		if (audio) {
+			audioPlayerState.currentTime = audio.currentTime;
+		}
 	}}
 	onended={handleAudioEnded}
 	onerror={handleAudioLoadError}

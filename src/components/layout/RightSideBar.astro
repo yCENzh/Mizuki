@@ -6,6 +6,7 @@ import Announcement from "@/components/widgets/announcement/Announcement.astro";
 import Calendar from "@/components/widgets/calendar/Calendar.astro";
 import Categories from "@/components/widgets/categories/Categories.astro";
 import MusicPlayer from "@/components/widgets/music-player/MusicPlayer.svelte";
+import { MusicSidebarWidget } from "@/components/widgets/music-sidebar";
 import Profile from "@/components/widgets/profile/Profile.astro";
 import SiteStats from "@/components/widgets/site-stats/SiteStats.astro";
 import Tags from "@/components/widgets/tags/Tags.astro";
@@ -34,6 +35,7 @@ const componentMap: Record<string, unknown> = {
 	tags: Tags,
 	toc: SidebarTOC,
 	"music-player": MusicPlayer,
+	"music-sidebar": MusicSidebarWidget,
 	"site-stats": SiteStats,
 	calendar: Calendar,
 };
