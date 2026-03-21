@@ -14,12 +14,12 @@ import { ReadingTime, WordCount } from "@components/features/posts/atoms";
 import License from "@components/misc/License.astro";
 import Markdown from "@components/misc/Markdown.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getSortedPosts, getRelatedPosts } from "@utils/content-utils";
+import { getRelatedPosts,getSortedPosts } from "@utils/content-utils";
 import { hasCustomPermalink, initPostIdMap } from "@utils/permalink-utils";
 import { getFileDirFromPath, removeFileExtension } from "@utils/url-utils";
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
-import { licenseConfig, permalinkConfig, relatedPostsConfig, randomPostsConfig, shareConfig } from "src/config";
+import { licenseConfig, permalinkConfig, randomPostsConfig, relatedPostsConfig, shareConfig } from "src/config";
 
 import Image from "../../components/atoms/Image/Image.astro";
 import Encryptor from "../../components/features/auth/Encryptor.astro";
@@ -359,11 +359,6 @@ const jsonLd = {
 			)}
 			{randomPostsConfig.enable && (
 				<RandomPosts
-					/**
-					 * 随机文章改为只排除当前文章本身
-					 * 这样在文章数量较少时，不会因为相关文章占满所有候选
-					 * 导致随机文章始终为空
-					 */
 					excludeIds={[entry.id]}
 					maxCount={randomPostsConfig.maxCount}
 				/>

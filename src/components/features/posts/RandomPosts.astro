@@ -1,10 +1,11 @@
 ---
-import { Icon } from "astro-icon/components";
-
+import ListContainer from "@/components/misc/ListContainer.astro";
+import ListDivider from "@/components/misc/ListDivider.astro";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import { getSortedPostsList } from "@/utils/content-utils";
-import { getPostUrlBySlug } from "@/utils/url-utils";
+
+import PostListItem from "./PostListItem.astro";
 
 interface Props {
 	excludeIds?: string[];
@@ -33,55 +34,27 @@ for (let i = shuffled.length - 1; i > 0; i--) {
 const picked = shuffled.slice(0, maxCount);
 ---
 
-<div class="card-base p-5 md:p-6 flex flex-col">
-	<div class="flex items-center gap-2 pb-3 mb-1 border-b border-dashed border-(--line-divider)">
-		<Icon
-			name="material-symbols:recommend"
-			class="text-xl text-(--primary)"
-		/>
-		<span class="text-base font-bold text-black/75 dark:text-white/75 transition">
-			{i18n(I18nKey.randomPosts)}
-		</span>
-		<span class="ml-auto text-xs px-2 py-0.5 rounded-full bg-(--btn-regular-bg) text-(--btn-content) transition">
-			{i18n(I18nKey.randomRecommend)}
-		</span>
-	</div>
-
+<ListContainer
+	title={i18n(I18nKey.randomPosts)}
+	badge={i18n(I18nKey.randomRecommend)}
+	icon="material-symbols:recommend"
+>
 	{picked.length > 0 ? (
-		picked.map((post, idx) => (
-			<a
-				href={getPostUrlBySlug(post.id)}
-				class:list={[
-					"group flex items-center gap-3 px-3 py-3 -mx-1 rounded-lg",
-					"transition-all hover:bg-black/5 dark:hover:bg-white/5 active:scale-[0.98]",
-					idx < picked.length - 1 && "border-b border-dashed border-(--line-divider)",
-				]}
-			>
-				<div class="shrink-0 w-6 h-6 rounded-md bg-(--enter-btn-bg) text-(--primary) flex items-center justify-center text-sm font-bold transition">
-					{idx + 1}
-				</div>
-				<div class="flex-1 min-w-0">
-					<div class="font-bold text-sm text-black/75 dark:text-white/75 truncate transition group-hover:text-(--primary)">
-						{post.data.title}
-					</div>
-					<div class="flex items-center gap-1.5 text-xs text-black/30 dark:text-white/30 transition mt-1">
-						{post.data.category && (
-							<span class="shrink-0 self-end px-1.5 py-0.5 rounded bg-[var(--btn-regular-bg)] text-[var(--btn-content)]">
-								{post.data.category}
-							</span>
-						)}
-						<span class="truncate">{post.data.description || post.data.published.toISOString().substring(0, 10)}</span>
-					</div>
-				</div>
-				<Icon
-					name="material-symbols:chevron-right-rounded"
-					class="shrink-0 text-xl text-black/15 dark:text-white/15 transition group-hover:text-(--primary) group-hover:translate-x-0.5"
-				/>
-			</a>
-		))
+		<div class="flex flex-col -mx-1">
+			{picked.map((post, idx) => (
+				<>
+					<PostListItem
+						post={post}
+						index={idx}
+						dateFormat="iso"
+					/>
+					{idx < picked.length - 1 && <ListDivider />}
+				</>
+			))}
+		</div>
 	) : (
 		<div class="text-sm text-black/30 dark:text-white/30 px-3 py-3">
 			{i18n(I18nKey.noData)}
 		</div>
 	)}
-</div>
+</ListContainer>
