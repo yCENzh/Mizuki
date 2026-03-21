@@ -135,13 +135,34 @@ const componentMap: Record<string, unknown> = {
 2. `src/config.ts` 中 `sidebarLayoutConfig.components` 的对应数组是否包含该类型？
 3. 对应侧栏渲染器的 `componentMap` 是否注册了该类型？
 4. 该侧栏在当前设备宽度下是否被响应式逻辑隐藏了？
-5. 组件自身是否有 `enable` 配置导致不渲染？（如 `musicPlayerConfig.showInSidebar`）
+5. 组件自身是否有 `enable` 配置导致不渲染？
 
-### Q2：只在左侧栏显示，右侧栏不显示
+### Q2：音乐播放器配置说明
+
+音乐播放器有以下配置选项（位于 `musicPlayerConfig`）：
+
+| 配置项 | 类型 | 说明 |
+|--------|------|------|
+| `enable` | boolean | 控制音乐核心是否初始化。为 `false` 时，悬浮 UI 和侧栏均不工作 |
+| `showFloatingPlayer` | boolean | 控制悬浮播放器 UI 是否显示。为 `false` 时仅侧栏可用 |
+| `mode` | "meting" \| "local" | 播放列表数据来源 |
+| `meting_api` | string | Meting API 地址 |
+| `id` | string | 歌单 ID |
+| `server` | string | 音乐源服务器 |
+| `type` | string | 播单类型 |
+
+**验证场景**：
+- `enable=true, showFloatingPlayer=true` — 全功能，悬浮 UI 和侧栏均可用
+- `enable=true, showFloatingPlayer=false` — 仅侧栏可用，悬浮 UI 不显示
+- `enable=false` — 音乐核心不初始化，悬浮 UI 和侧栏均不工作
+
+**注意**：`music-sidebar` 侧栏组件依赖 `musicPlayerStore` 运行，当 `enable=false` 时侧栏也无法工作。
+
+### Q3：只在左侧栏显示，右侧栏不显示
 
 请检查 `RightSideBar.astro` 的 `componentMap` 是否包含该组件类型。左侧栏注册了不等于右侧栏也自动注册。
 
-### Q3：组件在 SSR 时报错 `window is not defined`
+### Q4：组件在 SSR 时报错 `window is not defined`
 
 **原因**：Svelte 组件在服务端渲染阶段访问了 `window` 对象。
 
@@ -155,7 +176,7 @@ const componentMap: Record<string, unknown> = {
 <MyComponent client:only="svelte" />
 ```
 
-### Q4：多个侧栏需要各自独立的状态
+### Q5：多个侧栏需要各自独立的状态
 
 若同一组件在多个侧栏实例中需要独立状态（如侧栏播放列表的展开/收起状态），该状态应存在**组件自身**，而非共享全局状态。
 
@@ -170,7 +191,7 @@ const componentMap: Record<string, unknown> = {
 - [ ] `SideBar.astro`（左侧栏 + 抽屉）的 `componentMap` 中已注册
 - [ ] `RightSideBar.astro`（右侧栏）的 `componentMap` 中已注册
 - [ ] Svelte 组件使用了正确的 `client:*` 指令（避免 SSR window 错误）
-- [ ] 组件自身的功能开关（如 `showInSidebar`）已正确配置
+- [ ] 组件自身的功能开关（如 `enable`、`showFloatingPlayer`）已正确配置
 
 ---
 

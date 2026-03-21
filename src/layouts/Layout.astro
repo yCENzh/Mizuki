@@ -228,8 +228,8 @@ if (siteConfig.font) {
 		/>
 		<slot />
 
-		<!-- Music Player - 仅在启用时加载 -->
-		{musicPlayerConfig.enable && <MusicPlayer client:idle />}
+		<!-- Music Player - 核心始终加载（当enable=true），UI通过showFloatingPlayer控制 -->
+		<MusicPlayer client:idle />
 
 		<!-- Pio 看板娘组件 - 仅在启用时加载 -->
 		{pioConfig.enable && <Pio client:idle />}

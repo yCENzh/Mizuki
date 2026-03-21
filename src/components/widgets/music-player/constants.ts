@@ -7,6 +7,14 @@ export const DEFAULT_VOLUME = 0.7;
 export const LOCAL_PLAYLIST: Song[] = [
 	{
 		id: 1,
+		title: "口笛で愛は歌えない",
+		artist: "Dazbee",
+		cover: "assets/music/cover/dazbee.jpg",
+		url: "assets/music/url/dazbee.mp3",
+		duration: 0,
+	},
+	{
+		id: 2,
 		title: "ひとり上手",
 		artist: "Kaya",
 		cover: "assets/music/cover/hitori.jpg",
@@ -14,15 +22,15 @@ export const LOCAL_PLAYLIST: Song[] = [
 		duration: 240,
 	},
 	{
-		id: 2,
+		id: 3,
 		title: "眩耀夜行",
-		artist: "スリーズブーケ",
+		artist: "ス리즈ブーケ",
 		cover: "assets/music/cover/xryx.jpg",
 		url: "assets/music/url/xryx.mp3",
 		duration: 180,
 	},
 	{
-		id: 3,
+		id: 4,
 		title: "春雷の頃",
 		artist: "22/7",
 		cover: "assets/music/cover/cl.jpg",

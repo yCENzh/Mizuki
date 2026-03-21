@@ -1,407 +1,127 @@
 <script lang="ts">
-	import Key from "@i18n/i18nKey";
-	import { i18n } from "@i18n/translation";
 	import Icon from "@iconify/svelte";
 	import { onDestroy, onMount } from "svelte";
 
 	import { musicPlayerConfig } from "@/config";
-	import type { Song, RepeatMode } from "./types";
+	import type { MusicPlayerState } from "@/stores/musicPlayerStore";
+	import { musicPlayerStore } from "@/stores/musicPlayerStore";
 
 	import CoverImage from "./atoms/CoverImage.svelte";
-	import { SKIP_ERROR_DELAY } from "./constants";
-	import {
-		createAudioPlayerState,
-		handleLoadError,
-		handleLoadSuccess,
-		handleUserInteraction,
-		loadSong,
-		toggleMute,
-		togglePlay,
-	} from "./hooks/useAudioPlayer";
-	import {
-		getAssetPath,
-		registerInteractionHandler,
-	} from "./hooks/useKeyboardShortcuts";
-	import {
-		createPlayerUIState,
-		hideErrorUI,
-		showErrorMessageUI,
-		toggleExpandedUI,
-		toggleHiddenUI,
-		togglePlaylistUI,
-	} from "./hooks/usePlayerState";
-	import {
-		canSkip,
-		createPlaylistState,
-		fetchMetingPlaylist,
-		loadLocalPlaylist,
-		nextSong,
-		playSong,
-		previousSong,
-		toggleRepeat,
-		toggleShuffle,
-	} from "./hooks/usePlaylist";
-	import {
-		createVolumeDragState,
-		handleVolumeKeyDown as handleVolumeKeyDownInternal,
-		handleVolumeMove as handleVolumeMoveInternal,
-		loadVolumeFromStorage,
-		startVolumeDrag as startVolumeDragInternal,
-		stopVolumeDrag as stopVolumeDragInternal,
-	} from "./hooks/useVolumeControl";
 	import MiniPlayer from "./organisms/MiniPlayer.svelte";
 	import PlayerBar from "./organisms/PlayerBar.svelte";
 	import Playlist from "./organisms/Playlist.svelte";
+	import type { RepeatMode, Song } from "./types";
 
-	const mode = musicPlayerConfig.mode ?? "meting";
-	const meting_api =
-		musicPlayerConfig.meting_api ??
-		"https://www.bilibili.uno/api?server=:server&type=:type&id=:id&auth=:auth&r=:r";
-	const meting_id = musicPlayerConfig.id ?? "14164869977";
-	const meting_server = musicPlayerConfig.server ?? "netease";
-	const meting_type = musicPlayerConfig.type ?? "playlist";
+	let state: MusicPlayerState = $state(musicPlayerStore.getState());
+	const showFloatingPlayer = musicPlayerConfig.showFloatingPlayer;
 
-	const audioPlayerState = $state(createAudioPlayerState());
-	const playlistState = $state(createPlaylistState());
-
-	const playerUiState = $state(createPlayerUIState());
-
-	let audio: HTMLAudioElement | undefined = $state();
-	let volumeBar: HTMLElement | null = null;
-
-	const volumeDragState = $state(createVolumeDragState());
-
-	function showErrorMessage(message: string) {
-		showErrorMessageUI(playerUiState, message);
+	function togglePlay() {
+		musicPlayerStore.toggle();
 	}
 
-	function hideError() {
-		hideErrorUI(playerUiState);
+	function prev() {
+		musicPlayerStore.prev();
 	}
 
-	function toggleExpanded() {
-		toggleExpandedUI(playerUiState);
+	function next() {
+		musicPlayerStore.next();
 	}
 
-	function toggleHidden() {
-		toggleHiddenUI(playerUiState);
+	function toggleShuffle() {
+		musicPlayerStore.toggleShuffle();
 	}
 
-	function togglePlaylist() {
-		togglePlaylistUI(playerUiState);
+	function toggleRepeat() {
+		musicPlayerStore.toggleRepeat();
 	}
 
-	function handleToggleShuffle() {
-		toggleShuffle(playlistState);
-	}
-
-	function handleToggleRepeat() {
-		toggleRepeat(playlistState);
-	}
-
-	function handlePreviousSong() {
-		const newIndex = previousSong(playlistState);
-		if (newIndex !== -1) {
-			playSong(playlistState, newIndex);
-			loadSong(
-				audioPlayerState,
-				playlistState.playlist[newIndex],
-				audioPlayerState.isPlaying,
-			);
-		}
-	}
-
-	function handleNextSong(autoPlay = true) {
-		const newIndex = nextSong(playlistState, audioPlayerState.isPlaying);
-		if (newIndex !== -1) {
-			playSong(playlistState, newIndex);
-			loadSong(
-				audioPlayerState,
-				playlistState.playlist[newIndex],
-				autoPlay,
-			);
-		}
-	}
-
-	function handlePlaySong(index: number) {
-		if (playSong(playlistState, index)) {
-			loadSong(audioPlayerState, playlistState.playlist[index], true);
-		}
-	}
-
-	function handleTogglePlay() {
-		togglePlay(audioPlayerState, audio);
-	}
-
-	function handleToggleMute() {
-		toggleMute(audioPlayerState);
-	}
-
-	function handleAudioLoadSuccess() {
-		handleLoadSuccess(audioPlayerState, audio);
-	}
-
-	function handleAudioLoadError(event: Event) {
-		const result = handleLoadError(audioPlayerState);
-		showErrorMessage(i18n(Key.musicPlayerErrorSong));
-
-		if (result.shouldContinue && playlistState.playlist.length > 1) {
-			setTimeout(() => handleNextSong(true), SKIP_ERROR_DELAY);
-		} else if (playlistState.playlist.length <= 1) {
-			showErrorMessage(i18n(Key.musicPlayerErrorEmpty));
-		}
-	}
-
-	function handleAudioEnded() {
-		if (playlistState.isRepeating === 1) {
-			if (audio) {
-				audio.currentTime = 0;
-				audio.play().catch(() => {});
-			}
-		} else {
-			handleNextSong(true);
-		}
+	function playIndex(index: number) {
+		musicPlayerStore.playIndex(index);
 	}
 
 	function setProgress(event: MouseEvent) {
 		const progressElement = event.currentTarget as HTMLElement | null;
-		if (!audio || !progressElement) {
+		if (!progressElement) {
 			return;
 		}
 		const rect = progressElement.getBoundingClientRect();
 		const percent = (event.clientX - rect.left) / rect.width;
-		const newTime = percent * audioPlayerState.duration;
-		audio.currentTime = newTime;
-		audioPlayerState.currentTime = newTime;
+		musicPlayerStore.setProgress(percent);
 	}
 
 	function handleProgressKeyDown(event: KeyboardEvent) {
 		if (event.key === "Enter" || event.key === " ") {
 			event.preventDefault();
-			const percent = 0.5;
-			const newTime = percent * audioPlayerState.duration;
-			if (audio) {
-				audio.currentTime = newTime;
-				audioPlayerState.currentTime = newTime;
-			}
+			musicPlayerStore.setProgress(0.5);
 		}
 	}
 
-	function startVolumeDrag(event: PointerEvent) {
-		startVolumeDragInternal(
-			event,
-			volumeDragState,
-			volumeBar,
-			audio,
-			audioPlayerState,
-		);
+	function toggleMute() {
+		musicPlayerStore.toggleMute();
 	}
 
-	function handleVolumeMove(event: PointerEvent) {
-		handleVolumeMoveInternal(
-			event,
-			volumeDragState,
-			volumeBar,
-			audio,
-			audioPlayerState,
-		);
+	function handleVolumeButtonClick() {
+		musicPlayerStore.toggleMute();
 	}
 
-	function stopVolumeDrag(event: PointerEvent) {
-		stopVolumeDragInternal(
-			event,
-			volumeDragState,
-			volumeBar,
-			audioPlayerState,
-		);
-	}
+	function startVolumeDrag(event: PointerEvent) {}
 
 	function handleVolumeKeyDown(event: KeyboardEvent) {
-		handleVolumeKeyDownInternal(event, handleToggleMute);
+		if (event.key === "m" || event.key === "M") {
+			toggleMute();
+		}
 	}
 
-	let unregister: (() => void) | undefined;
-	let sidebarCleanup: (() => void) | undefined;
+	function togglePlaylist() {
+		musicPlayerStore.togglePlaylist();
+	}
 
-	// 将播放器状态广播给侧栏组件（仅在浏览器环境中执行）
-	$effect(() => {
-		if (typeof window === "undefined") {
-			return;
+	function toggleExpanded() {
+		musicPlayerStore.toggleExpanded();
+	}
+
+	function toggleHidden() {
+		musicPlayerStore.toggleHidden();
+	}
+
+	function hideError() {
+		musicPlayerStore.hideError();
+	}
+
+	function volumeBarRef(node: HTMLElement) {}
+
+	function canSkip(): boolean {
+		return musicPlayerStore.canSkip();
+	}
+
+	function handleStateUpdate(event: Event) {
+		const custom = event as CustomEvent<MusicPlayerState>;
+		if (custom.detail) {
+			state = custom.detail;
 		}
-		const sidebarState = {
-			currentSong: audioPlayerState.currentSong as Song,
-			playlist: playlistState.playlist as Song[],
-			currentIndex: playlistState.currentIndex,
-			isPlaying: audioPlayerState.isPlaying,
-			isLoading: audioPlayerState.isLoading,
-			currentTime: audioPlayerState.currentTime,
-			duration: audioPlayerState.duration,
-			volume: audioPlayerState.volume,
-			isMuted: audioPlayerState.isMuted,
-			isShuffled: playlistState.isShuffled,
-			showPlaylist: playerUiState.showPlaylist,
-			isRepeating: playlistState.isRepeating as RepeatMode,
-		};
-		window.dispatchEvent(
-			new CustomEvent("music-sidebar:state", { detail: sidebarState }),
-		);
-	});
+	}
 
 	onMount(() => {
-		loadVolumeFromStorage(audioPlayerState);
-		const interactionHandler = () =>
-			handleUserInteraction(audioPlayerState, audio);
-		unregister = registerInteractionHandler(interactionHandler);
+		musicPlayerStore.initialize();
 
-		// 为侧栏组件注册控制事件监听
-		const togglePlayHandler = () => handleTogglePlay();
-		const prevHandler = () => handlePreviousSong();
-		const nextHandler = () => handleNextSong();
-		const togglePlaylistHandler = () => togglePlaylist();
-		const toggleModeHandler = () => {
-			if (playlistState.isShuffled) {
-				toggleShuffle(playlistState);
-				return;
-			}
-			if (playlistState.isRepeating === 2) {
-				toggleRepeat(playlistState);
-				toggleShuffle(playlistState);
-				return;
-			}
-			handleToggleRepeat();
-		};
-		const playIndexHandler = (event: Event) => {
-			const custom = event as CustomEvent<{ index: number }>;
-			if (custom.detail && typeof custom.detail.index === "number") {
-				handlePlaySong(custom.detail.index);
-			}
-		};
-		const seekHandler = (event: Event) => {
-			const custom = event as CustomEvent<{ time: number }>;
-			if (!audio || !custom.detail) {
-				return;
-			}
-			const time = custom.detail.time;
-			if (
-				typeof time === "number" &&
-				time >= 0 &&
-				time <= audioPlayerState.duration
-			) {
-				audio.currentTime = time;
-				audioPlayerState.currentTime = time;
-			}
-		};
-		const toggleMuteHandler = () => handleToggleMute();
-		const setVolumeHandler = (event: Event) => {
-			const custom = event as CustomEvent<{ volume: number }>;
-			if (!audio || !custom.detail) {
-				return;
-			}
-			const volume = custom.detail.volume;
-			if (typeof volume === "number") {
-				audioPlayerState.volume = Math.max(0, Math.min(1, volume));
-				audioPlayerState.isMuted = audioPlayerState.volume === 0;
-			}
-		};
-
-		window.addEventListener("music:toggle-play", togglePlayHandler);
-		window.addEventListener("music:prev", prevHandler);
-		window.addEventListener("music:next", nextHandler);
-		window.addEventListener("music:toggle-playlist", togglePlaylistHandler);
-		window.addEventListener("music:toggle-mode", toggleModeHandler);
-		window.addEventListener("music:play-index", playIndexHandler);
-		window.addEventListener("music:seek", seekHandler);
-		window.addEventListener("music:toggle-mute", toggleMuteHandler);
-		window.addEventListener("music:set-volume", setVolumeHandler);
-
-		sidebarCleanup = () => {
-			window.removeEventListener("music:toggle-play", togglePlayHandler);
-			window.removeEventListener("music:prev", prevHandler);
-			window.removeEventListener("music:next", nextHandler);
-			window.removeEventListener(
-				"music:toggle-playlist",
-				togglePlaylistHandler,
-			);
-			window.removeEventListener("music:toggle-mode", toggleModeHandler);
-			window.removeEventListener("music:play-index", playIndexHandler);
-			window.removeEventListener("music:seek", seekHandler);
-			window.removeEventListener("music:toggle-mute", toggleMuteHandler);
-			window.removeEventListener("music:set-volume", setVolumeHandler);
-		};
-
-		if (!musicPlayerConfig.enable) {
-			return;
-		}
-
-		if (mode === "meting") {
-			fetchMetingPlaylist(
-				playlistState,
-				meting_api,
-				meting_server,
-				meting_type,
-				meting_id,
-				() => {
-					audioPlayerState.isLoading = true;
-				},
-				() => {
-					audioPlayerState.isLoading = false;
-				},
-				showErrorMessage,
-			).then(() => {
-				if (playlistState.playlist.length > 0) {
-					loadSong(
-						audioPlayerState,
-						playlistState.playlist[0],
-						false,
-					);
-				}
-			});
-		} else {
-			if (loadLocalPlaylist(playlistState, showErrorMessage)) {
-				loadSong(audioPlayerState, playlistState.playlist[0], false);
-			}
-		}
+		window.addEventListener("music-sidebar:state", handleStateUpdate);
 	});
 
 	onDestroy(() => {
-		if (unregister) {
-			unregister();
-		}
-		if (sidebarCleanup) {
-			sidebarCleanup();
+		musicPlayerStore.destroy();
+		if (typeof window !== "undefined") {
+			window.removeEventListener(
+				"music-sidebar:state",
+				handleStateUpdate,
+			);
 		}
 	});
-
-	function volumeBarRef(node: HTMLElement) {
-		volumeBar = node;
-	}
 </script>
 
-<audio
-	bind:this={audio}
-	src={getAssetPath(audioPlayerState.currentSong.url)}
-	bind:volume={audioPlayerState.volume}
-	bind:muted={audioPlayerState.isMuted}
-	onplay={() => (audioPlayerState.isPlaying = true)}
-	onpause={() => (audioPlayerState.isPlaying = false)}
-	ontimeupdate={() => {
-		if (audio) {
-			audioPlayerState.currentTime = audio.currentTime;
-		}
-	}}
-	onended={handleAudioEnded}
-	onerror={handleAudioLoadError}
-	onloadeddata={handleAudioLoadSuccess}
-	preload="auto"
-></audio>
+<svelte:window on:keydown={handleVolumeKeyDown} />
 
-<svelte:window
-	on:pointermove={handleVolumeMove}
-	on:pointerup={stopVolumeDrag}
-/>
-
-{#if musicPlayerConfig.enable}
-	{#if playerUiState.showError}
+{#if showFloatingPlayer && musicPlayerConfig.enable}
+	{#if state.showError}
 		<div class="fixed bottom-20 right-4 z-[60] max-w-sm">
 			<div
 				class="bg-red-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-slide-up"
@@ -410,7 +130,7 @@
 					icon="material-symbols:error"
 					class="text-xl flex-shrink-0"
 				/>
-				<span class="text-sm flex-1">{playerUiState.errorMessage}</span>
+				<span class="text-sm flex-1">{state.errorMessage}</span>
 				<button
 					onclick={hideError}
 					class="text-white/80 hover:text-white transition-colors"
@@ -423,59 +143,59 @@
 
 	<div
 		class="music-player fixed bottom-4 right-4 z-50 transition-all duration-300 ease-in-out"
-		class:expanded={playerUiState.isExpanded}
-		class:hidden-mode={playerUiState.isHidden}
+		class:expanded={state.isExpanded}
+		class:hidden-mode={state.isHidden}
 	>
 		<div
-			class="orb-player-container {playerUiState.isHidden
+			class="orb-player-container {state.isHidden
 				? 'orb-enter pointer-events-auto'
 				: 'orb-leave pointer-events-none'}"
 		>
 			<CoverImage
-				cover={audioPlayerState.currentSong.cover}
-				isPlaying={audioPlayerState.isPlaying}
-				isLoading={audioPlayerState.isLoading}
+				cover={state.currentSong.cover}
+				isPlaying={state.isPlaying}
+				isLoading={state.isLoading}
 				size="orb"
 				onclick={toggleHidden}
 			/>
 		</div>
 
 		<MiniPlayer
-			song={audioPlayerState.currentSong}
-			currentTime={audioPlayerState.currentTime}
-			duration={audioPlayerState.duration}
-			isPlaying={audioPlayerState.isPlaying}
-			isLoading={audioPlayerState.isLoading}
-			isHidden={playerUiState.isExpanded || playerUiState.isHidden}
-			onCoverClick={handleTogglePlay}
+			song={state.currentSong}
+			currentTime={state.currentTime}
+			duration={state.duration}
+			isPlaying={state.isPlaying}
+			isLoading={state.isLoading}
+			isHidden={state.isExpanded || state.isHidden}
+			onCoverClick={togglePlay}
 			onInfoClick={toggleExpanded}
 			onHideClick={toggleHidden}
 			onExpandClick={toggleExpanded}
 		/>
 
 		<PlayerBar
-			song={audioPlayerState.currentSong}
-			currentTime={audioPlayerState.currentTime}
-			duration={audioPlayerState.duration}
-			isPlaying={audioPlayerState.isPlaying}
-			isLoading={audioPlayerState.isLoading}
-			isShuffled={playlistState.isShuffled}
-			isRepeating={playlistState.isRepeating}
-			showPlaylist={playerUiState.showPlaylist}
-			canSkip={canSkip(playlistState)}
-			volume={audioPlayerState.volume}
-			isMuted={audioPlayerState.isMuted}
-			isVolumeDragging={volumeDragState.isVolumeDragging}
-			isHidden={!playerUiState.isExpanded}
+			song={state.currentSong}
+			currentTime={state.currentTime}
+			duration={state.duration}
+			isPlaying={state.isPlaying}
+			isLoading={state.isLoading}
+			isShuffled={state.isShuffled}
+			isRepeating={state.isRepeating}
+			showPlaylist={state.showPlaylist}
+			canSkip={canSkip()}
+			volume={state.volume}
+			isMuted={state.isMuted}
+			isVolumeDragging={false}
+			isHidden={!state.isExpanded}
 			{volumeBarRef}
-			onPlayClick={handleTogglePlay}
-			onPrevClick={handlePreviousSong}
-			onNextClick={() => handleNextSong()}
-			onShuffleClick={handleToggleShuffle}
-			onRepeatClick={handleToggleRepeat}
+			onPlayClick={togglePlay}
+			onPrevClick={prev}
+			onNextClick={() => next()}
+			onShuffleClick={toggleShuffle}
+			onRepeatClick={toggleRepeat}
 			onProgressClick={setProgress}
 			onProgressKeyDown={handleProgressKeyDown}
-			onVolumeButtonClick={handleToggleMute}
+			onVolumeButtonClick={handleVolumeButtonClick}
 			onSliderPointerDown={startVolumeDrag}
 			onSliderKeyDown={handleVolumeKeyDown}
 			onHideClick={toggleHidden}
@@ -484,12 +204,12 @@
 		/>
 
 		<Playlist
-			playlist={playlistState.playlist}
-			currentIndex={playlistState.currentIndex}
-			isPlaying={audioPlayerState.isPlaying}
-			show={playerUiState.showPlaylist}
+			playlist={state.playlist}
+			currentIndex={state.currentIndex}
+			isPlaying={state.isPlaying}
+			show={state.showPlaylist}
 			onClose={togglePlaylist}
-			onPlaySong={handlePlaySong}
+			onPlaySong={playIndex}
 		/>
 	</div>
 

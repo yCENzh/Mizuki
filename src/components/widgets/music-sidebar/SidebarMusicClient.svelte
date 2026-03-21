@@ -1,108 +1,73 @@
 <script lang="ts">
-	import { onMount, onDestroy } from "svelte";
+	import { onDestroy, onMount } from "svelte";
 
-	import SidebarCover from "./components/SidebarCover.svelte";
-	import SidebarTrackInfo from "./components/SidebarTrackInfo.svelte";
-	import SidebarProgress from "./components/SidebarProgress.svelte";
-	import SidebarControls from "./components/SidebarControls.svelte";
-	import SidebarPlaylist from "./components/SidebarPlaylist.svelte";
+	import type { MusicPlayerState } from "@/stores/musicPlayerStore";
+	import { musicPlayerStore } from "@/stores/musicPlayerStore";
+
 	import type { Song } from "../music-player/types";
+	import SidebarControls from "./components/SidebarControls.svelte";
+	import SidebarCover from "./components/SidebarCover.svelte";
+	import SidebarPlaylist from "./components/SidebarPlaylist.svelte";
+	import SidebarProgress from "./components/SidebarProgress.svelte";
+	import SidebarTrackInfo from "./components/SidebarTrackInfo.svelte";
 
-	interface SidebarState {
-		currentSong: Song;
-		playlist: Song[];
-		currentIndex: number;
-		isPlaying: boolean;
-		isLoading: boolean;
-		currentTime: number;
-		duration: number;
-		volume: number;
-		isMuted: boolean;
-		isShuffled: boolean;
-		isRepeating: number;
-	}
+	let state: MusicPlayerState = $state(musicPlayerStore.getState());
+	let showPlaylist = $state(false);
 
-	const defaultSong: Song = {
-		id: 0,
-		title: "",
-		artist: "",
-		cover: "",
-		url: "",
-		duration: 0,
-	};
-
-	let state: SidebarState = {
-		currentSong: defaultSong,
-		playlist: [],
-		currentIndex: 0,
-		isPlaying: false,
-		isLoading: false,
-		currentTime: 0,
-		duration: 0,
-		volume: 0.7,
-		isMuted: false,
-		isShuffled: false,
-		isRepeating: 0,
-	};
-
-	let showPlaylist = false;
-
-	function handleStateEvent(event: Event) {
-		const custom = event as CustomEvent<SidebarState>;
-		if (!custom.detail) {
-			return;
+	function handleStateUpdate(event: Event) {
+		const custom = event as CustomEvent<MusicPlayerState>;
+		if (custom.detail) {
+			state = custom.detail;
 		}
-		state = custom.detail;
 	}
 
 	onMount(() => {
-		window.addEventListener("music-sidebar:state", handleStateEvent);
+		window.addEventListener("music-sidebar:state", handleStateUpdate);
 	});
 
 	onDestroy(() => {
-		window.removeEventListener("music-sidebar:state", handleStateEvent);
+		if (typeof window !== "undefined") {
+			window.removeEventListener(
+				"music-sidebar:state",
+				handleStateUpdate,
+			);
+		}
 	});
 
 	function togglePlay() {
-		window.dispatchEvent(new CustomEvent("music:toggle-play"));
+		musicPlayerStore.toggle();
 	}
 
 	function prev() {
-		window.dispatchEvent(new CustomEvent("music:prev"));
+		musicPlayerStore.prev();
 	}
 
 	function next() {
-		window.dispatchEvent(new CustomEvent("music:next"));
+		musicPlayerStore.next();
 	}
 
 	function toggleMode() {
-		window.dispatchEvent(new CustomEvent("music:toggle-mode"));
+		musicPlayerStore.toggleMode();
 	}
 
-	function togglePlaylist() {
+	function togglePlaylistView() {
 		showPlaylist = !showPlaylist;
 	}
 
 	function playIndex(index: number) {
-		window.dispatchEvent(
-			new CustomEvent("music:play-index", { detail: { index } }),
-		);
+		musicPlayerStore.playIndex(index);
 	}
 
 	function seek(time: number) {
-		window.dispatchEvent(
-			new CustomEvent("music:seek", { detail: { time } }),
-		);
+		musicPlayerStore.seek(time);
 	}
 
 	function toggleMute() {
-		window.dispatchEvent(new CustomEvent("music:toggle-mute"));
+		musicPlayerStore.toggleMute();
 	}
 
 	function setVolume(volume: number) {
-		window.dispatchEvent(
-			new CustomEvent("music:set-volume", { detail: { volume } }),
-		);
+		musicPlayerStore.setVolume(volume);
 	}
 </script>
 
@@ -139,7 +104,7 @@
 		onPrev={prev}
 		onNext={next}
 		onTogglePlay={togglePlay}
-		onTogglePlaylist={togglePlaylist}
+		onTogglePlaylist={togglePlaylistView}
 	/>
 
 	<SidebarPlaylist
@@ -147,7 +112,7 @@
 		currentIndex={state.currentIndex}
 		isPlaying={state.isPlaying}
 		show={showPlaylist}
-		onClose={togglePlaylist}
+		onClose={togglePlaylistView}
 		onPlaySong={playIndex}
 	/>
 </div>
