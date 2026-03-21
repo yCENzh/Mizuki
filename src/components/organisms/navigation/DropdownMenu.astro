@@ -116,6 +116,9 @@ const hasChildren = children.length > 0
 </div>
 
 <style>
+	@reference "tailwindcss";
+	@custom-variant dark (&:where(.dark, .dark *));
+
 	.dropdown-container {
 		@apply relative;
 	}

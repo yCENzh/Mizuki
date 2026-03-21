@@ -68,7 +68,7 @@ const getSizeClasses = (size: string) => {
 const sizeClasses = getSizeClasses(size)
 ---
 
-<div class="bg-transparent rounded-lg border border-black/10 dark:border-white/10 overflow-hidden hover:shadow-lg transition-all duration-300 group">
+<div class="bg-transparent rounded-lg border border-[var(--line-divider)] overflow-hidden hover:shadow-lg transition-all duration-300 group">
   {showImage && project.image && (
     <div class="aspect-video overflow-hidden">
       <img 
@@ -102,7 +102,7 @@ const sizeClasses = getSizeClasses(size)
           </span>
         ))}
         {project.techStack.length > maxTechStack && (
-          <span class={`px-2 py-1 text-xs bg-gray-600/20 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400 rounded ${sizeClasses.tech}`}>
+          <span class={`btn-regular px-2 py-1 text-xs rounded ${sizeClasses.tech}`}>
             +{project.techStack.length - maxTechStack}
           </span>
         )}
