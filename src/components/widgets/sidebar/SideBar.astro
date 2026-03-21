@@ -8,6 +8,7 @@ import { widgetManager } from "../../../utils/widget-manager";
 import MusicPlayer from "../../widgets/music-player/MusicPlayer.svelte";
 import Announcement from "../announcement/Announcement.astro";
 import Calendar from "../calendar/Calendar.astro";
+import { CardTOC } from "../card-toc";
 import Categories from "../categories/Categories.astro";
 import { MusicSidebarWidget } from "../music-sidebar";
 import Profile from "../profile/Profile.astro";
@@ -35,6 +36,7 @@ const componentMap: Record<string, unknown> = {
 	categories: Categories,
 	tags: Tags,
 	toc: SidebarTOC,
+	"card-toc": CardTOC,
 	"music-player": MusicPlayer,
 	"music-sidebar": MusicSidebarWidget,
 	"site-stats": SiteStats,

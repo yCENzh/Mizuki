@@ -13,16 +13,16 @@ import {
 import { ReadingTime, WordCount } from "@components/features/posts/atoms";
 import License from "@components/misc/License.astro";
 import Markdown from "@components/misc/Markdown.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getRelatedPosts,getSortedPosts } from "@utils/content-utils";
 import { hasCustomPermalink, initPostIdMap } from "@utils/permalink-utils";
 import { getFileDirFromPath, removeFileExtension } from "@utils/url-utils";
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
-import { licenseConfig, permalinkConfig, randomPostsConfig, relatedPostsConfig, shareConfig } from "src/config";
 import { Icon } from "astro-icon/components";
-import I18nKey from "@i18n/i18nKey";
-import { i18n } from "@i18n/translation";
+import { licenseConfig, permalinkConfig, randomPostsConfig, relatedPostsConfig, shareConfig } from "src/config";
 
 import Image from "../../components/atoms/Image/Image.astro";
 import Encryptor from "../../components/features/auth/Encryptor.astro";

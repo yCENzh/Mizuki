@@ -55,6 +55,17 @@ declare global {
 		mobileTOCInit?: () => void;
 		initSemifullScrollDetection?: () => void;
 		iconifyLoaded?: boolean;
+
+		// CardTOC manager
+		CardTOC?: {
+			manager: {
+				init?: () => void;
+				cleanup?: () => void;
+			} | null;
+		};
+
+		// TOC internal navigation flag
+		tocInternalNavigation?: boolean;
 		__iconifyLoader?: {
 			load: () => Promise<void>;
 			addToPreloadQueue: (icons: string[]) => void;

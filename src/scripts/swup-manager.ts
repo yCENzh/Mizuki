@@ -8,8 +8,8 @@ import { SWUP_SELECTORS } from "./core/swup-config";
 import { SwupHooksManager } from "./core/swup-hooks";
 import { setupSakuraOnDOMReady } from "./effects/sakura-effect";
 import {
-	getTransitionEffect,
 	destroyTransitionEffect,
+	getTransitionEffect,
 } from "./effects/transition-effect";
 import type { BackToTopHandler } from "./handlers/back-to-top-handler";
 import {

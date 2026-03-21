@@ -1,0 +1,115 @@
+---
+/**
+ * CardTOC - 卡片式目录组件
+ * 使用 WidgetLayout (竖线+标题封装)
+ * 复用 TOCManager 逻辑
+ */
+
+import "@/styles/toc.css";
+
+import type { MarkdownHeading } from "astro";
+
+import I18nKey from "../../../i18n/i18nKey";
+import { i18n } from "../../../i18n/translation";
+import WidgetLayout from "../common/WidgetLayout.astro";
+
+interface Props {
+	class?: string;
+	style?: string;
+	headings?: MarkdownHeading[];
+}
+
+const { class: className, style } = Astro.props;
+---
+
+<WidgetLayout
+	name={i18n(I18nKey.tableOfContents)}
+	id="card-toc"
+	class={className}
+	style={style}
+>
+	<div class="toc-scroll-container">
+		<div class="toc-content" id="card-toc-content">
+		</div>
+	</div>
+</WidgetLayout>
+
+<style>
+.toc-scroll-container {
+	max-height: 50vh;
+	overflow-y: auto;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+.toc-scroll-container::-webkit-scrollbar {
+	display: none;
+	width: 0;
+	height: 0;
+}
+</style>
+
+<script>
+	import { TOCManager } from "@/utils/tocManager";
+
+	if (typeof window.CardTOC === "undefined") {
+		window.CardTOC = {
+			manager: null
+		};
+	}
+
+	async function initCardTOC() {
+		const tocContent = document.getElementById("card-toc-content");
+		if (!tocContent) {return;}
+
+		try {
+			if (window.CardTOC.manager) {
+				window.CardTOC.manager.cleanup();
+			}
+
+			window.CardTOC.manager = new TOCManager({
+				contentId: "card-toc-content",
+				indicatorId: "card-active-indicator",
+				maxLevel: 3,
+				scrollOffset: 80,
+			});
+
+			window.CardTOC.manager.init();
+		} catch (error) {
+			console.error("Failed to load TOCManager for CardTOC:", error);
+		}
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initCardTOC);
+	} else {
+		initCardTOC();
+	}
+
+	document.addEventListener("swup:contentReplaced", () => {
+		setTimeout(initCardTOC, 100);
+	});
+
+	document.addEventListener("astro:page-load", () => {
+		setTimeout(initCardTOC, 100);
+	});
+
+	document.addEventListener("astro:after-swap", () => {
+		setTimeout(initCardTOC, 100);
+	});
+
+	window.addEventListener("popstate", () => {
+		setTimeout(initCardTOC, 200);
+	});
+
+	window.addEventListener("hashchange", () => {
+		if (!window.tocInternalNavigation) {
+			setTimeout(initCardTOC, 100);
+		}
+		window.tocInternalNavigation = false;
+	});
+
+	document.addEventListener("password:decrypted", () => {
+		setTimeout(initCardTOC, 200);
+	});
+</script>

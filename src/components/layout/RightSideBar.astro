@@ -2,6 +2,7 @@
 import type { MarkdownHeading } from "astro";
 
 import { SidebarTOC } from "@/components/features/toc";
+import { CardTOC } from "@/components/widgets/card-toc";
 import Announcement from "@/components/widgets/announcement/Announcement.astro";
 import Calendar from "@/components/widgets/calendar/Calendar.astro";
 import Categories from "@/components/widgets/categories/Categories.astro";
@@ -34,6 +35,7 @@ const componentMap: Record<string, unknown> = {
 	categories: Categories,
 	tags: Tags,
 	toc: SidebarTOC,
+	"card-toc": CardTOC,
 	"music-player": MusicPlayer,
 	"music-sidebar": MusicSidebarWidget,
 	"site-stats": SiteStats,
