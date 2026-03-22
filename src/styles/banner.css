@@ -553,7 +553,8 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 
   #main-grid[data-layout-mode="grid"] #sidebar > div,
   #main-grid[data-layout-mode="grid"] #sidebar #sidebar-sticky,
-  #main-grid[data-layout-mode="grid"] #sidebar .sidebar-content {
+  /* only flatten tablet-specific .sidebar-content (those with lg:hidden), prevent desktop containers from being forced visible on tablet */
+  #main-grid[data-layout-mode="grid"] #sidebar .sidebar-content.lg\:hidden {
     display: contents !important;
     margin: 0 !important;
     padding: 0 !important;
