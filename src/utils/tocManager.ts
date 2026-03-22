@@ -8,8 +8,8 @@ import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 
 export interface TOCConfig {
-	contentId: string;
-	indicatorId: string;
+	contentId?: string;
+	contentElement?: HTMLElement;
 	maxLevel?: number;
 	scrollOffset?: number;
 }
@@ -20,15 +20,41 @@ export class TOCManager {
 	private minDepth = 10;
 	private maxLevel: number;
 	private scrollTimeout: number | null = null;
-	private contentId: string;
-	private indicatorId: string;
+	private contentId: string | null;
+	private contentElement: HTMLElement | null;
 	private scrollOffset: number;
 
 	constructor(config: TOCConfig) {
-		this.contentId = config.contentId;
-		this.indicatorId = config.indicatorId;
+		this.contentId = config.contentId ?? null;
+		this.contentElement = config.contentElement ?? null;
 		this.maxLevel = config.maxLevel || 3;
 		this.scrollOffset = config.scrollOffset || 80;
+	}
+
+	/**
+	 * 获取当前实例绑定的 TOC 容器。
+	 * 优先使用实例级元素引用，避免多实例时因为重复 id 命中错误节点。
+	 */
+	private getTOCContentElement(): HTMLElement | null {
+		if (this.contentElement) {
+			return this.contentElement;
+		}
+
+		if (!this.contentId) {
+			return null;
+		}
+
+		return document.getElementById(this.contentId);
+	}
+
+	/**
+	 * 获取当前实例内部的活动指示器。
+	 * 指示器限定在当前内容容器内查询，避免多个目录组件互相污染。
+	 */
+	private getIndicatorElement(): HTMLElement | null {
+		return this.getTOCContentElement()?.querySelector(
+			"[data-card-toc-indicator]",
+		) as HTMLElement | null;
 	}
 
 	private getContentContainer(): Element | null {
@@ -177,19 +203,20 @@ export class TOCManager {
       `;
 		});
 
-		tocHTML += `<div id="${this.indicatorId}" style="opacity: 0;" class="toc-active-indicator"></div>`;
+		tocHTML +=
+			'<div data-card-toc-indicator style="opacity: 0;" class="toc-active-indicator"></div>';
 
 		return tocHTML;
 	}
 
 	public updateTOCContent(): void {
-		const tocContent = document.getElementById(this.contentId);
-		if (!tocContent) {return;}
+		const tocContent = this.getTOCContentElement();
+		if (!tocContent) {
+			return;
+		}
 
 		tocContent.innerHTML = this.generateTOCHTML();
-		this.tocItems = Array.from(
-			document.querySelectorAll(`#${this.contentId} a`),
-		);
+		this.tocItems = Array.from(tocContent.querySelectorAll("a"));
 	}
 
 	private getVisibleHeadingIds(): string[] {
@@ -233,7 +260,9 @@ export class TOCManager {
 	}
 
 	public updateActiveState(): void {
-		if (!this.tocItems || this.tocItems.length === 0) {return;}
+		if (!this.tocItems || this.tocItems.length === 0) {
+			return;
+		}
 
 		this.tocItems.forEach((item) => {
 			item.classList.remove("visible");
@@ -254,16 +283,20 @@ export class TOCManager {
 	}
 
 	private updateActiveIndicator(activeItems: HTMLElement[]): void {
-		const indicator = document.getElementById(this.indicatorId);
-		if (!indicator || !this.tocItems.length) {return;}
+		const indicator = this.getIndicatorElement();
+		if (!indicator || !this.tocItems.length) {
+			return;
+		}
 
 		if (activeItems.length === 0) {
 			indicator.style.opacity = "0";
 			return;
 		}
 
-		const tocContent = document.getElementById(this.contentId);
-		if (!tocContent) {return;}
+		const tocContent = this.getTOCContentElement();
+		if (!tocContent) {
+			return;
+		}
 
 		const contentRect = tocContent.getBoundingClientRect();
 		const firstActive = activeItems[0];
@@ -285,12 +318,14 @@ export class TOCManager {
 	}
 
 	private scrollToActiveItem(activeItem: HTMLElement): void {
-		if (!activeItem) {return;}
+		if (!activeItem) {
+			return;
+		}
 
-		const tocContainer = document
-			.querySelector(`#${this.contentId}`)
-			?.closest(".toc-scroll-container");
-		if (!tocContainer) {return;}
+		const tocContainer = activeItem.closest(".toc-scroll-container");
+		if (!tocContainer) {
+			return;
+		}
 
 		if (this.scrollTimeout) {
 			clearTimeout(this.scrollTimeout);
