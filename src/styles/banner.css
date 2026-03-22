@@ -703,7 +703,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
   z-index: 5;
   transform: translateZ(0);
   will-change: transform;
-  contain: layout style paint;
+  contain: none;
 }
 
 .waves svg {
@@ -714,15 +714,10 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
   backface-visibility: hidden;
 }
 
-/* 波浪填充色主题切换优化 */
-.waves use {
-  will-change: fill;
-}
-
 /* 波浪与背景同步切换优化 */
 #header-waves {
   isolation: isolate;
-  contain: layout style paint;
+  contain: none;
   margin-bottom: -1px;
 }
 
@@ -742,18 +737,11 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
   #header-waves {
     overflow: visible;
     z-index: 5;
-    transition:
-      transform 0.3s ease-in,
-      opacity 0.2s ease-in;
   }
 
-  /* 当 Banner 隐藏时，水波纹快速消失 */
+  /* 当 Banner 隐藏时，完全移除水波纹以节省渲染资源 */
   .mobile-hide-banner #header-waves {
-    transform: translateY(-100%);
-    opacity: 0;
-    transition:
-      transform 0.25s ease-in,
-      opacity 0.15s ease-in;
+    display: none !important;
   }
 
   .waves svg {
