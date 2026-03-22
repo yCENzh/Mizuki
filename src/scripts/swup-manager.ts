@@ -25,6 +25,7 @@ import {
 import type { PanelHandler } from "./handlers/panel-handler";
 import { getPanelHandler, initPanelHandler } from "./handlers/panel-handler";
 import { checkKatex, initCustomScrollbar } from "./handlers/scroll-handler";
+import { initLinkPreloading } from "../utils/navigation-utils";
 
 /**
  * Swup 管理器类
@@ -74,6 +75,9 @@ export class SwupManager {
 
 		// 初始化 Banner
 		this.initBanner();
+
+		// 初始化链接预加载
+		this.initPreloading();
 
 		this.initialized = true;
 		console.log("SwupManager: 初始化完成");
@@ -154,6 +158,19 @@ export class SwupManager {
 			});
 		} else {
 			this.showBanner();
+		}
+	}
+
+	/**
+	 * 初始化链接预加载
+	 */
+	private initPreloading(): void {
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", () => {
+				initLinkPreloading();
+			});
+		} else {
+			initLinkPreloading();
 		}
 	}
 
