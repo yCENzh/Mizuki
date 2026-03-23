@@ -318,14 +318,20 @@
 		}
 
 		isRendering = true;
+		window.dispatchEvent(new CustomEvent("mermaid:render:start"));
 
 		try {
-			const mermaidElements = document.querySelectorAll(
-				".mermaid[data-mermaid-code]",
+			const mermaidElements = Array.from(
+				document.querySelectorAll(".mermaid[data-mermaid-code]"),
 			);
 
 			if (mermaidElements.length === 0) {
 				isRendering = false;
+				window.dispatchEvent(
+					new CustomEvent("mermaid:render:done", {
+						detail: { count: 0 },
+					}),
+				);
 				return;
 			}
 
@@ -356,100 +362,131 @@
 				logLevel: "error",
 			});
 
-			// 批量渲染所有图表，添加重试机制
-			const renderPromises = Array.from(mermaidElements).map(
-				async (element, index) => {
-					let attempts = 0;
-					const maxAttempts = 3;
+			// 分批渲染，避免一次性阻塞主线程
+			const BATCH_SIZE = 3;
+			let index = 0;
 
-					while (attempts < maxAttempts) {
-						try {
-							const code =
-								element.getAttribute("data-mermaid-code");
+			async function renderBatch() {
+				const batch = mermaidElements.slice(index, index + BATCH_SIZE);
+				if (batch.length === 0) {
+					return;
+				}
 
-							if (!code) {
-								break;
-							}
+				await Promise.all(
+					batch.map(async (element, localIndex) => {
+						const globalIndex = index + localIndex;
+						let attempts = 0;
+						const maxAttempts = 3;
 
-							// 显示加载状态
-							element.innerHTML =
-								'<div class="mermaid-loading">Rendering diagram...</div>';
+						while (attempts < maxAttempts) {
+							try {
+								const code =
+									element.getAttribute("data-mermaid-code");
 
-							// 渲染图表
-							const { svg } = await window.mermaid.render(
-								`mermaid-${Date.now()}-${index}-${attempts}`,
-								code,
-							);
-
-							const parser = new DOMParser();
-							const doc = parser.parseFromString(
-								svg,
-								"image/svg+xml",
-							);
-							const svgElement = doc.documentElement;
-
-							element.innerHTML = "";
-							element.__zoomAttached = false;
-							element.appendChild(svgElement);
-
-							// 添加响应式支持
-							const insertedSvg = element.querySelector("svg");
-							if (insertedSvg) {
-								insertedSvg.setAttribute("width", "100%");
-								insertedSvg.removeAttribute("height");
-								insertedSvg.style.maxWidth = "100%";
-								insertedSvg.style.height = "auto";
-								//Todo 需要根据实际情况
-								insertedSvg.style.minHeight = "300px";
-
-								// 强制应用样式
-								if (isDark) {
-									svgElement.style.filter =
-										"brightness(0.9) contrast(1.1)";
-								} else {
-									svgElement.style.filter = "none";
+								if (!code) {
+									break;
 								}
-								attachZoomControls(element, insertedSvg);
-							}
 
-							// 渲染成功，跳出重试循环
-							break;
-						} catch (error) {
-							attempts++;
-							console.warn(
-								`Mermaid rendering attempt ${attempts} failed for element ${index}:`,
-								error,
-							);
+								// 显示加载状态
+								element.innerHTML =
+									'<div class="mermaid-loading">Rendering diagram...</div>';
 
-							if (attempts >= maxAttempts) {
-								console.error(
-									`Failed to render Mermaid diagram after ${maxAttempts} attempts:`,
+								// 渲染图表
+								const { svg } = await window.mermaid.render(
+									`mermaid-${Date.now()}-${globalIndex}-${attempts}`,
+									code,
+								);
+
+								const parser = new DOMParser();
+								const doc = parser.parseFromString(
+									svg,
+									"image/svg+xml",
+								);
+								const svgElement = doc.documentElement;
+
+								element.innerHTML = "";
+								element.__zoomAttached = false;
+								element.appendChild(svgElement);
+
+								// 添加响应式支持
+								const insertedSvg =
+									element.querySelector("svg");
+								if (insertedSvg) {
+									insertedSvg.setAttribute("width", "100%");
+									insertedSvg.removeAttribute("height");
+									insertedSvg.style.maxWidth = "100%";
+									insertedSvg.style.height = "auto";
+									//Todo 需要根据实际情况
+									insertedSvg.style.minHeight = "300px";
+
+									// 强制应用样式
+									if (isDark) {
+										svgElement.style.filter =
+											"brightness(0.9) contrast(1.1)";
+									} else {
+										svgElement.style.filter = "none";
+									}
+									attachZoomControls(element, insertedSvg);
+								}
+
+								// 渲染成功，跳出重试循环
+								break;
+							} catch (error) {
+								attempts++;
+								console.warn(
+									`Mermaid rendering attempt ${attempts} failed for element ${globalIndex}:`,
 									error,
 								);
-								element.innerHTML = `
-									<div class="mermaid-error">
-										<p>Failed to render diagram after ${maxAttempts} attempts.</p>
-										<button onclick="location.reload()" style="margin-top: 8px; padding: 4px 8px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">
-											Retry Page
-										</button>
-									</div>
-								`;
-							} else {
-								// 等待一段时间后重试
-								await new Promise((resolve) =>
-									setTimeout(resolve, 500 * attempts),
-								);
+
+								if (attempts >= maxAttempts) {
+									console.error(
+										`Failed to render Mermaid diagram after ${maxAttempts} attempts:`,
+										error,
+									);
+									element.innerHTML = `
+										<div class="mermaid-error">
+											<p>Failed to render diagram after ${maxAttempts} attempts.</p>
+											<button onclick="location.reload()" style="margin-top: 8px; padding: 4px 8px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">
+												Retry Page
+											</button>
+										</div>
+									`;
+								} else {
+									// 等待一段时间后重试
+									await new Promise((resolve) =>
+										setTimeout(resolve, 500 * attempts),
+									);
+								}
 							}
 						}
-					}
-				},
-			);
+					}),
+				);
 
-			// 等待所有渲染完成
-			await Promise.all(renderPromises);
+				index += BATCH_SIZE;
+
+				if (index < mermaidElements.length) {
+					// 在空闲时间继续渲染下一批，避免长时间阻塞主线程
+					await new Promise((resolve) => {
+						if ("requestIdleCallback" in window) {
+							window.requestIdleCallback(() => resolve());
+						} else {
+							setTimeout(resolve, 50);
+						}
+					});
+					return renderBatch();
+				}
+			}
+
+			await renderBatch();
 			retryCount = 0; // 重置重试计数
+			window.dispatchEvent(
+				new CustomEvent("mermaid:render:done", {
+					detail: { count: mermaidElements.length },
+				}),
+			);
 		} catch (error) {
 			console.error("Error in renderMermaidDiagrams:", error);
+			window.dispatchEvent(new CustomEvent("mermaid:render:done"));
 
 			// 如果渲染失败，尝试重新渲染
 			if (retryCount < MAX_RETRIES) {
