@@ -20,7 +20,6 @@ const config = {
 		const ROOT_MARGIN = "200px";
 
 		let observer = null;
-		let giscusLoaded = false;
 
 		function getCurrentPath() {
 			const pathname = window.location.pathname;
@@ -82,7 +81,6 @@ const config = {
 			script.async = true;
 
 			container.appendChild(script);
-			giscusLoaded = true;
 		}
 
 		function cleanup() {
