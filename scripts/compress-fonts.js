@@ -764,7 +764,59 @@ async function collectText() {
 		}
 	});
 
-	// 2. 读取 src/config.ts 文件
+	// 2. 读取音乐播放器本地播放列表 constants 文件
+	const musicConstantsFile = path.join(
+		__dirname,
+		"../src/components/widgets/music-player/constants.ts",
+	);
+	if (fs.existsSync(musicConstantsFile)) {
+		const content = fs.readFileSync(musicConstantsFile, "utf-8");
+
+		const patterns = [
+			/"([^"\\]|\\.|\\n|\\t)*"/g,
+			/'([^'\\]|\\.|\\n|\\t)*'/g,
+			/`([^`\\]|\\.|\\n|\\t)*`/g,
+		];
+
+		patterns.forEach((pattern) => {
+			const matches = content.match(pattern);
+			if (matches) {
+				matches.forEach((match) => {
+					let text = match;
+
+					if (
+						(text.startsWith('"') && text.endsWith('"')) ||
+						(text.startsWith("'") && text.endsWith("'")) ||
+						(text.startsWith("`") && text.endsWith("`"))
+					) {
+						text = text.slice(1, -1);
+					}
+
+					text = text
+						.replace(/\\n/g, "\n")
+						.replace(/\\t/g, "\t")
+						.replace(/\\"/g, '"')
+						.replace(/\\'/g, "'");
+
+					for (const char of text) {
+						textSet.add(char);
+					}
+				});
+			}
+		});
+
+		const stringMatches = content.match(/["'`]([^"'`]+)["'`]/g);
+		if (stringMatches) {
+			stringMatches.forEach((match) => {
+				const text = match.slice(1, -1);
+				for (const char of text) {
+					textSet.add(char);
+				}
+			});
+		}
+	}
+
+	// 3. 读取 src/config.ts 文件
 	const configFile = path.join(__dirname, "../src/config.ts");
 	if (fs.existsSync(configFile)) {
 		const content = fs.readFileSync(configFile, "utf-8");
@@ -822,7 +874,7 @@ async function collectText() {
 		}
 	}
 
-	// 3. 读取对应语言的 i18n 文件
+	// 4. 读取对应语言的 i18n 文件
 	const i18nFile = path.join(__dirname, `../src/i18n/languages/${lang}.ts`);
 	if (fs.existsSync(i18nFile)) {
 		const content = fs.readFileSync(i18nFile, "utf-8");
@@ -874,7 +926,7 @@ async function collectText() {
 		}
 	}
 
-	// 4. 读取 content 目录（根据环境变量决定路径）
+	// 5. 读取 content 目录（根据环境变量决定路径）
 	let contentDir;
 	if (process.env.ENABLE_CONTENT_SYNC === "true" && process.env.CONTENT_DIR) {
 		// 使用环境变量指定的目录（以项目根目录为基准）
@@ -925,7 +977,7 @@ async function collectText() {
 		textSet.add(char);
 	}
 
-	// 5. 从 Meting API 获取歌单数据中的文字
+	// 6. 从 Meting API 获取歌单数据中的文字
 	const metingTextSet = await fetchMetingPlaylistText();
 
 	// 将 Meting API 的文字添加到主文字集合中
@@ -939,7 +991,7 @@ async function collectText() {
 		);
 	}
 
-	// 6. 从 Bangumi API 获取番剧数据中的文字
+	// 7. 从 Bangumi API 获取番剧数据中的文字
 	const bangumiTextSet = await fetchBangumiAnimeText();
 
 	// 将 Bangumi API 的文字添加到主文字集合中
@@ -953,7 +1005,7 @@ async function collectText() {
 		);
 	}
 
-	// 7. 从 Bilibili 数据文件获取番剧数据中的文字
+	// 8. 从 Bilibili 数据文件获取番剧数据中的文字
 	const bilibiliTextSet = await fetchBilibiliAnimeText();
 
 	// 将 Bilibili 数据的文字添加到主文字集合中
