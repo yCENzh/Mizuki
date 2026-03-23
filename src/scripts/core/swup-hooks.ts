@@ -338,12 +338,22 @@ export class SwupHooksManager {
 		const heightExtend = this.getCachedElement(
 			SWUP_SELECTORS.pageHeightExtend,
 		);
-		if (heightExtend) {
-			if (hide) {
-				heightExtend.classList.add("hidden");
-			} else {
-				heightExtend.classList.remove("hidden");
-			}
+		if (!heightExtend) {
+			return;
+		}
+
+		// 只在 Banner 模式下启用高度扩展
+		// fullscreen/none 模式内容往往不足一屏，如果强行扩展高度，
+		// 会导致滚动条在页面过渡期间闪现，引发布局左右抖动
+		const isBannerMode = document.body.classList.contains("enable-banner");
+		if (!isBannerMode) {
+			return;
+		}
+
+		if (hide) {
+			heightExtend.classList.add("hidden");
+		} else {
+			heightExtend.classList.remove("hidden");
 		}
 	}
 
