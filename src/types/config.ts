@@ -349,6 +349,7 @@ export interface AnnouncementConfig {
 export interface MusicPlayerConfig {
 	enable: boolean; // 是否启用音乐播放器功能
 	showFloatingPlayer: boolean; // 是否显示悬浮播放器 UI
+	floatingEntryMode?: "default" | "fab"; // 悬浮入口模式：默认独立播放器或集成到 FAB 组
 	mode: "meting" | "local"; // 音乐播放器模式
 	meting_api: string; // Meting API 地址
 	id: string; // 歌单ID
