@@ -423,7 +423,7 @@ export class SwupHooksManager {
 	 */
 	private dispatchPageLoadedEvent(): void {
 		setTimeout(() => {
-			if (document.getElementById("tcomment")) {
+			if (document.getElementById("tcomment") || document.getElementById("giscus-container")) {
 				const pageLoadedEvent = new CustomEvent("mizuki:page:loaded", {
 					detail: {
 						path: window.location.pathname,
