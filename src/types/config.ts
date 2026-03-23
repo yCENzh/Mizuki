@@ -181,8 +181,10 @@ export interface SiteConfig {
 		};
 	};
 	toc: {
-		enable: boolean;
-		mode: "float" | "sidebar"; // 目录显示模式："float" 悬浮按钮模式，"sidebar" 侧边栏模式
+		enable: boolean; // 总开关，false 时所有 TOC 都不显示
+		mobileTop: boolean; // 手机端顶部 TOC 按钮
+		desktopSidebar: boolean; // 电脑端右侧边栏 TOC
+		floating: boolean; // 悬浮 TOC 按钮
 		depth: 1 | 2 | 3;
 		useJapaneseBadge?: boolean; // 使用日语假名标记（あいうえお...）代替数字
 	};
