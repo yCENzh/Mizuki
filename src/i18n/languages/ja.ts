@@ -289,6 +289,7 @@ export const ja: Translation = {
 	[Key.syntaxHighlightFailed]: "構文の強調表示が失敗しました:",
 	[Key.autoSyntaxHighlightFailed]: "自動構文強調表示が失敗しました:",
 	[Key.decryptionError]: "復号中にエラーが発生しました:",
+	[Key.passwordHint]: "ヒント",
 
 	// 最終更新時間カード
 	[Key.lastModifiedPrefix]: "最終編集からの時間: ",

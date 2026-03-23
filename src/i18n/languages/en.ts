@@ -286,6 +286,7 @@ export const en: Translation = {
 	[Key.autoSyntaxHighlightFailed]:
 		"Automatic syntax highlighting also failed:",
 	[Key.decryptionError]: "An error occurred during decryption:",
+	[Key.passwordHint]: "Hint",
 
 	// Last Modified Time Card
 	[Key.lastModifiedPrefix]: "Time since last edit: ",

@@ -228,6 +228,7 @@ export const zh_CN: Translation = {
 	[Key.syntaxHighlightFailed]: "语法高亮失败:",
 	[Key.autoSyntaxHighlightFailed]: "自动语法高亮也失败:",
 	[Key.decryptionError]: "解密过程中发生错误:",
+	[Key.passwordHint]: "提示",
 
 	//最后编辑时间卡片
 	[Key.lastModifiedPrefix]: "距离上次编辑: ",

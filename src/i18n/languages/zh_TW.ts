@@ -270,6 +270,7 @@ export const zh_TW: Translation = {
 	[Key.syntaxHighlightFailed]: "語法高亮失敗:",
 	[Key.autoSyntaxHighlightFailed]: "自動語法高亮也失敗:",
 	[Key.decryptionError]: "解密過程中發生錯誤:",
+	[Key.passwordHint]: "提示",
 
 	//最後編輯時間卡片
 	[Key.lastModifiedPrefix]: "距離上次編輯: ",
