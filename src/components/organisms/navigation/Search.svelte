@@ -41,6 +41,12 @@
 	const togglePanel = () => {
 		const panel = document.getElementById("search-panel");
 		panel?.classList.toggle("float-panel-closed");
+		if (
+			!panel?.classList.contains("float-panel-closed") &&
+			typeof window.loadPagefind === "function"
+		) {
+			window.loadPagefind();
+		}
 	};
 
 	const toggleDesktopSearch = () => {
@@ -50,6 +56,9 @@
 		}
 		isDesktopSearchExpanded = !isDesktopSearchExpanded;
 		if (isDesktopSearchExpanded) {
+			if (typeof window.loadPagefind === "function") {
+				window.loadPagefind();
+			}
 			setTimeout(() => {
 				const input = document.getElementById(
 					"search-input-desktop",
