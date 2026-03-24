@@ -49,6 +49,7 @@
 					isCurrent={index === currentIndex}
 					{isPlaying}
 					onclick={() => onPlaySong(index)}
+					lazy={index !== 0}
 				/>
 			{/each}
 		</div>
