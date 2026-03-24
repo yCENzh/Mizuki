@@ -69,6 +69,7 @@ const config = {
 				const script = document.createElement("script");
 				script.id = "twikoo-script-loaded";
 				script.src = TWIKOO_SCRIPT_URL;
+				script.async = true;
 				script.onload = () => {
 					twikooLoaded = true;
 					resolve();
