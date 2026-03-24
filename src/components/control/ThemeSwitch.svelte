@@ -86,36 +86,34 @@
 	}
 </script>
 
-<div class="relative z-50">
-	<button
-		aria-label="Light/Dark Mode"
-		class="relative btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 theme-switch-btn"
-		id="scheme-switch"
-		onclick={toggleScheme}
-		data-mode={mode}
+<button
+	aria-label="Light/Dark Mode"
+	class="relative btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 theme-switch-btn z-50"
+	id="scheme-switch"
+	onclick={toggleScheme}
+	data-mode={mode}
+>
+	<div
+		class="absolute transition-all duration-300 ease-in-out"
+		class:opacity-0={mode !== LIGHT_MODE}
+		class:rotate-180={mode !== LIGHT_MODE}
 	>
-		<div
-			class="absolute transition-all duration-300 ease-in-out"
-			class:opacity-0={mode !== LIGHT_MODE}
-			class:rotate-180={mode !== LIGHT_MODE}
-		>
-			<Icon
-				icon="material-symbols:wb-sunny-outline-rounded"
-				class="text-[1.25rem]"
-			></Icon>
-		</div>
-		<div
-			class="absolute transition-all duration-300 ease-in-out"
-			class:opacity-0={mode !== DARK_MODE}
-			class:rotate-180={mode !== DARK_MODE}
-		>
-			<Icon
-				icon="material-symbols:dark-mode-outline-rounded"
-				class="text-[1.25rem]"
-			></Icon>
-		</div>
-	</button>
-</div>
+		<Icon
+			icon="material-symbols:wb-sunny-outline-rounded"
+			class="text-[1.25rem]"
+		></Icon>
+	</div>
+	<div
+		class="absolute transition-all duration-300 ease-in-out"
+		class:opacity-0={mode !== DARK_MODE}
+		class:rotate-180={mode !== DARK_MODE}
+	>
+		<Icon
+			icon="material-symbols:dark-mode-outline-rounded"
+			class="text-[1.25rem]"
+		></Icon>
+	</div>
+</button>
 
 <style>
 	/* 确保主题切换按钮的背景色即时更新 */
