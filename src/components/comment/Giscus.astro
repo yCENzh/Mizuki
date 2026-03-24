@@ -49,7 +49,7 @@ const config = {
 
 		async function initGiscus() {
 			const container = document.getElementById(GISCUS_CONTAINER_ID);
-			if (!container) return;
+			if (!container) {return;}
 
 			await loadScrollProtection();
 			
@@ -95,7 +95,7 @@ const config = {
 
 		function setupLazyLoad() {
 			const container = document.getElementById(GISCUS_CONTAINER_ID);
-			if (!container) return;
+			if (!container) {return;}
 
 			observer = new IntersectionObserver(
 				(entries) => {

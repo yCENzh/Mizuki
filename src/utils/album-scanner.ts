@@ -70,7 +70,7 @@ async function processAlbumFolder(
 	} else {
 		// 本地模式：检查本地文件
 		let coverPath = path.join(folderPath, "cover.webp");
-		let hasWebpCover = fs.existsSync(coverPath);
+		const hasWebpCover = fs.existsSync(coverPath);
 		if (!hasWebpCover) {
 			coverPath = path.join(folderPath, "cover.jpg");
 			if (!fs.existsSync(coverPath)) {
