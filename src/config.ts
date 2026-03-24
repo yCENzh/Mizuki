@@ -15,6 +15,7 @@
 	ShareConfig,
 	SidebarLayoutConfig,
 	SiteConfig,
+	ThirdPartyAnalyticsConfig,
 } from "./types/config";
 import { LinkPreset } from "./types/config";
 
@@ -239,6 +240,11 @@ export const siteConfig: SiteConfig = {
 		enable: true, // 启用页面顶部进度条
 		height: 3, // 进度条高度 3px
 		duration: 6000, // 动画时长 6s
+	},
+
+	thirdPartyAnalytics: {
+		enable: false, // 是否启用第三方统计（Microsoft Clarity），默认关闭，启用可能影响 Lighthouse 评分
+		clarityId: "", // Clarity 项目 ID
 	},
 };
 export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
