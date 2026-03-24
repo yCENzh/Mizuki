@@ -187,10 +187,10 @@ if (siteConfig.font) {
 			}}
 		></style>
 
-		<!-- Pio 看板娘样式 - 仅在启用时加载 -->
+		<!-- Pio 看板娘样式 - 非渲染阻塞加载 -->
 		{
 			pioConfig.enable && (
-				<link rel="stylesheet" href="/pio/static/pio.css" />
+				<link rel="stylesheet" href="/pio/static/pio.css" media="print" onload="this.media='all'" />
 			)
 		}
 
