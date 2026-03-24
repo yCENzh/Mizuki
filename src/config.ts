@@ -56,10 +56,10 @@ export const siteConfig: SiteConfig = {
 		mode: "logo",
 		// 顶栏标题文本
 		text: "MizukiUI",
-		// 顶栏标题图标路径，默认使用 public/assets/home/home.png
-		icon: "assets/home/home.png",
+		// 顶栏标题图标路径，默认使用 public/assets/home/home.webp
+		icon: "assets/home/home.webp",
 		// 网站Logo图片路径
-		logo: "assets/home/default-logo.png",
+		logo: "assets/home/default-logo.webp",
 	},
 
 	// 页面自动缩放配置
