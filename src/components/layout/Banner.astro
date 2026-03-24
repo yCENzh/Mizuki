@@ -98,6 +98,8 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 										position={siteConfig.banner.position}
 										loading={index === 0 ? "eager" : "lazy"}
 										fetchpriority={index === 0 ? "high" : undefined}
+										widths={[640, 1024, 1536]}
+										sizes="100vw"
 									/>
 								)}
 								<!-- 桌面端/平板端：使用桌面端专用图片 -->
@@ -117,6 +119,8 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 										position={siteConfig.banner.position}
 										loading={index === 0 ? "eager" : "lazy"}
 										fetchpriority={index === 0 ? "high" : undefined}
+										widths={[1024, 1536, 2048, 2560]}
+										sizes="100vw"
 									/>
 								)}
 							</li>
