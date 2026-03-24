@@ -9,7 +9,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = path.join(__dirname, "..");
 const publicDir = path.join(rootDir, "public");
 
-const targets = ["assets/home/*.png", "assets/home/*.jpg", "sakura.png"];
+const targets = [
+	"assets/home/*.png",
+	"assets/home/*.jpg",
+	"sakura.png",
+	"images/albums/**/*.jpg",
+	"images/albums/**/*.jpeg",
+];
 
 async function convertToWebP(inputPath, quality = 85) {
 	const ext = extname(inputPath);
