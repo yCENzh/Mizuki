@@ -15,6 +15,8 @@ const targets = [
 	"sakura.png",
 	"images/albums/**/*.jpg",
 	"images/albums/**/*.jpeg",
+	"images/diary/*.jpg",
+	"images/device/*.png",
 ];
 
 async function convertToWebP(inputPath, quality = 85) {
