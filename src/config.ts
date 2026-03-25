@@ -431,15 +431,17 @@ export const permalinkConfig: PermalinkConfig = {
 	 * - %minute% : 2位分钟 (00-59)
 	 * - %second% : 2位秒数 (00-59)
 	 * - %post_id% : 文章序号（按发布时间升序排列，最早的文章为1）
-	 * - %postname% : 文章文件名（slug）
+	 * - %postname% : 文章文件名（slug，通常为全小写）
+	 * - %raw_postname% : 文章原始文件名（保留大小写）
 	 * - %category% : 分类名（无分类时为 "uncategorized"）
 	 *
 	 * 示例：
 	 * - "%year%-%monthnum%-%postname%" => "/2024-12-my-post/"
 	 * - "%post_id%-%postname%" => "/42-my-post/"
 	 * - "%category%-%postname%" => "/tech-my-post/"
+	 * - "%year%/%monthnum%/%day%/%postname%" => "/2024/12/01/my-post/"
 	 *
-	 * 注意：不支持斜杠 "/"，所有生成的链接都在根目录下
+	 * 注意：支持使用斜杠 "/" 构建嵌套路径。
 	 */
 	format: "%postname%", // 默认使用文件名
 };
