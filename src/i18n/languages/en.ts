@@ -137,6 +137,8 @@ export const en: Translation = {
 	[Key.devicesViewDetails]: "View Details",
 	[Key.albumsPhotoCount]: "photo",
 	[Key.albumsPhotosCount]: "photos",
+	[Key.albumsFilterAll]: "All",
+	[Key.albumsNoResults]: "No matching albums",
 
 	// Projects Page
 	[Key.projects]: "Projects",

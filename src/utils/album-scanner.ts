@@ -100,8 +100,6 @@ async function processAlbumFolder(
 		date: info.date || new Date().toISOString().split("T")[0],
 		location: info.location || "",
 		tags: info.tags || [],
-		layout: info.layout || "grid",
-		columns: info.columns || 3,
 		photos,
 	};
 }

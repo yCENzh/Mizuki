@@ -138,6 +138,8 @@ export const ja: Translation = {
 	[Key.devicesViewDetails]: "詳細を表示",
 	[Key.albumsPhotoCount]: "件の写真",
 	[Key.albumsPhotosCount]: "件の写真",
+	[Key.albumsFilterAll]: "すべて",
+	[Key.albumsNoResults]: "一致するアルバムがありません",
 
 	// プロジェクトページ
 	[Key.projects]: "プロジェクト",

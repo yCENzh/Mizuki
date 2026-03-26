@@ -35,7 +35,7 @@
 					items.forEach(function (item) {
 						var itemValue = item.dataset[filterAttr];
 						var match =
-							activeValue === "all" || itemValue === activeValue;
+							activeValue === "all" || (itemValue && itemValue.split(",").indexOf(activeValue) !== -1);
 
 						if (match) {
 							item.classList.remove("filtered-out");

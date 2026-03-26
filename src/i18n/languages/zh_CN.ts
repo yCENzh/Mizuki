@@ -127,6 +127,8 @@ export const zh_CN: Translation = {
 	[Key.albumsBackToList]: "返回相册",
 	[Key.albumsPhotoCount]: "张照片",
 	[Key.albumsPhotosCount]: "张照片",
+	[Key.albumsFilterAll]: "全部",
+	[Key.albumsNoResults]: "没有匹配的相册",
 
 	// 设备页面
 	[Key.devices]: "我的设备",
