@@ -1,4 +1,5 @@
 ---
+import { FilterTabs } from "@components/atoms/filter-tabs";
 import { ProjectCard } from "@components/features/projects";
 import { PageHeader } from "@components/features/page-header";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
@@ -49,6 +50,21 @@ const getCategoryIcon = (category: string) => {
 	}
 };
 
+const filterTabs = [
+	{
+		value: "all",
+		label: i18n(I18nKey.friendsFilterAll),
+		icon: "material-symbols:apps",
+		count: projectsData.length,
+	},
+	...categories.map((category) => ({
+		value: category,
+		label: getCategoryText(category),
+		icon: getCategoryIcon(category),
+		count: projectsData.filter((p) => p.category === category).length,
+	})),
+];
+
 const title = i18n(I18nKey.projects);
 const subtitle = i18n(I18nKey.projectsSubtitle);
 ---
@@ -63,7 +79,7 @@ const subtitle = i18n(I18nKey.projectsSubtitle);
 		});
 	</script>
 
-	<script is:inline src="/js/projects-page-handler.js"></script>
+	<script is:inline src="/js/filter-tabs-handler.js"></script>
 
 	<div
 		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32"
@@ -71,25 +87,8 @@ const subtitle = i18n(I18nKey.projectsSubtitle);
 		<div class="card-base z-10 px-6 sm:px-9 py-6 relative w-full">
 			<PageHeader title={title} subtitle={subtitle} />
 
-			<div class="filter-area mb-8">
-				<div class="flex flex-wrap gap-2">
-					<button class="filter-tag active" data-category="all">
-						<iconify-icon icon="material-symbols:apps" width="16" height="16"></iconify-icon>
-						{i18n(I18nKey.friendsFilterAll)}
-					</button>
-					{
-						categories.map((category) => {
-							const count = projectsData.filter((p) => p.category === category).length;
-							return (
-								<button class="filter-tag" data-category={category}>
-									<iconify-icon icon={getCategoryIcon(category)} width="16" height="16"></iconify-icon>
-									{getCategoryText(category)}
-									<span class="filter-count">({count})</span>
-								</button>
-							);
-						})
-					}
-				</div>
+			<div class="mb-8">
+				<FilterTabs tabs={filterTabs} dataAttr="category" />
 			</div>
 
 			<div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
@@ -115,69 +114,3 @@ const subtitle = i18n(I18nKey.projectsSubtitle);
 		</div>
 	</div>
 </MainGridLayout>
-
-<style>
-	.filter-tag {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.375rem;
-		padding: 0.5rem 1rem;
-		border: 1px solid var(--line-divider);
-		border-radius: var(--radius-large);
-		background: var(--btn-regular-bg);
-		color: var(--btn-content);
-		font-size: 0.875rem;
-		font-weight: 500;
-		cursor: pointer;
-		transition: all 0.2s ease;
-		white-space: nowrap;
-	}
-
-	.filter-tag iconify-icon {
-		flex-shrink: 0;
-		opacity: 0.7;
-		transition: opacity 0.2s ease;
-	}
-
-	.filter-tag:hover:not(.active) {
-		background: var(--btn-regular-bg-hover);
-		border-color: var(--primary);
-		transform: translateY(-1px);
-	}
-
-	.filter-tag:hover:not(.active) iconify-icon {
-		opacity: 1;
-	}
-
-	.filter-tag.active {
-		background: var(--primary);
-		color: white;
-		border-color: var(--primary);
-		box-shadow: 0 2px 8px oklch(from var(--primary) l c h / 0.3);
-	}
-
-	.filter-tag.active iconify-icon {
-		opacity: 1;
-	}
-
-	.filter-tag.active:hover {
-		transform: translateY(-1px);
-		box-shadow: 0 4px 12px oklch(from var(--primary) l c h / 0.4);
-	}
-
-	.filter-count {
-		opacity: 0.6;
-		font-size: 0.8rem;
-	}
-
-	@media (max-width: 768px) {
-		.filter-tag {
-			padding: 0.375rem 0.75rem;
-			font-size: 0.8125rem;
-		}
-
-		.filter-count {
-			display: none;
-		}
-	}
-</style>
