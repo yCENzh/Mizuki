@@ -78,8 +78,9 @@ enum I18nKey {
 
 	// 短文页面
 	diarySubtitle = "diarySubtitle",
+	diaryNoResults = "diaryNoResults",
 	diaryCount = "diaryCount",
-	diaryReply = "diaryReply",
+
 	diaryTips = "diaryTips",
 	diaryMinutesAgo = "diaryMinutesAgo",
 	diaryHoursAgo = "diaryHoursAgo",

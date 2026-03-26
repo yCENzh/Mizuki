@@ -87,8 +87,9 @@ export const zh_TW: Translation = {
 
 	// 短文頁面
 	[Key.diarySubtitle]: "隨時隨地，分享生活",
-	[Key.diaryCount]: "條短文",
-	[Key.diaryReply]: "回復",
+	[Key.diaryNoResults]: "沒有匹配的日記",
+	[Key.diaryCount]: "條日記",
+
 	[Key.diaryTips]: "只展示最近30條日記",
 	[Key.diaryMinutesAgo]: "分鐘前",
 	[Key.diaryHoursAgo]: "小時前",
