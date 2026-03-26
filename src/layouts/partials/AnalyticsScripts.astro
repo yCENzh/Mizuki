@@ -53,8 +53,8 @@ const clarityEnable =
 					"gtm.start": new Date().getTime(),
 					event: "gtm.js",
 				});
-				var f = d.getElementsByTagName(s)[0],
-					j = d.createElement(s);
+				const f = d.getElementsByTagName(s)[0],
+				j = d.createElement(s);
 				j.async = true;
 				j.src = "https://www.googletagmanager.com/gtm.js?id=" + i;
 				f.parentNode.insertBefore(j, f);
@@ -78,8 +78,8 @@ const clarityEnable =
 		}
 
 		// 仅在用户交互后加载分析脚本，减少初始页面加载负担
-		var events = ["scroll", "mousemove", "keydown", "touchstart", "click"];
-		var loaded = false;
+		const events = ["scroll", "mousemove", "keydown", "touchstart", "click"];
+		let loaded = false;
 
 		function onInteraction() {
 			if (loaded) {
