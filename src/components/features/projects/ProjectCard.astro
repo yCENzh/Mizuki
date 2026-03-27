@@ -25,21 +25,6 @@ const getStatusText = (status: string) => {
 			return status;
 	}
 };
-
-const getCategoryText = (category: string) => {
-	switch (category) {
-		case "web":
-			return i18n(I18nKey.projectsWeb);
-		case "mobile":
-			return i18n(I18nKey.projectsMobile);
-		case "desktop":
-			return i18n(I18nKey.projectsDesktop);
-		case "other":
-			return i18n(I18nKey.projectsOther);
-		default:
-			return category;
-	}
-};
 ---
 
 <div

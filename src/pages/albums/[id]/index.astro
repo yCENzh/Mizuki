@@ -1,13 +1,13 @@
 ---
-import { Icon } from "astro-icon/components";
 import { PhotoCard } from "@components/features/albums";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { Icon } from "astro-icon/components";
 
 import { siteConfig } from "../../../config";
-import type { AlbumGroup, Photo } from "../../../types/album";
-import { scanAlbums } from "../../../utils/album-scanner";
 import I18nKey from "../../../i18n/i18nKey";
 import { i18n } from "../../../i18n/translation";
+import type { AlbumGroup, Photo } from "../../../types/album";
+import { scanAlbums } from "../../../utils/album-scanner";
 
 if (!siteConfig.featurePages.albums) {
 	return Astro.redirect("/404/");
