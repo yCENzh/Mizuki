@@ -61,6 +61,9 @@ const carouselIntervalMs = Math.max(
 // 淡入淡出时间：间隔的 40%，范围 500ms ~ 1500ms
 const fadeMs = Math.min(Math.max(Math.round(carouselIntervalMs * 0.4), 500), 1500);
 
+// Ken Burns 动画时长 = 间隔 + 淡入，确保旧图在 crossfade 期间仍在运动，消除停顿感
+const kbDurationMs = carouselIntervalMs + fadeMs;
+
 const hasBannerCredit = siteConfig.banner.credit.enable;
 const hasBannerLink = !!siteConfig.banner.credit.url;
 ---
@@ -214,11 +217,11 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 	{isCarouselEnabled && (
 		<Fragment set:html={`<style>
 			@keyframes bannerKenBurns {
-				0% { transform: scale(1); }
-				100% { transform: scale(1.1); }
+				0% { transform: scale(1.03); }
+				100% { transform: scale(1.13); }
 			}
 			.banner-kb {
-				animation: bannerKenBurns ${carouselIntervalMs}ms ease-out forwards;
+				animation: bannerKenBurns ${kbDurationMs}ms ease-out forwards;
 			}
 		</style>`} />
 	)}
