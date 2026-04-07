@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Action } from "svelte/action";
 	import type { Snippet } from "svelte";
+	import type { Action } from "svelte/action";
 
 	import VolumeButton from "../atoms/VolumeButton.svelte";
 	import VolumeSlider from "../atoms/VolumeSlider.svelte";

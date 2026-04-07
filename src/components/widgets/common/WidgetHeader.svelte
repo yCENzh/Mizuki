@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Snippet } from "svelte";
 	import Icon from "@iconify/svelte";
+	import type { Snippet } from "svelte";
 
 	interface Props {
 		name: string;

@@ -1,7 +1,8 @@
 ---
+import { Icon } from "astro-icon/components";
+
 import { formatRelativeTime } from "../../../utils/timeFormat";
 import type { MomentCardProps } from "./types";
-import { Icon } from "astro-icon/components";
 
 const { moment, index, minutesAgo, hoursAgo, daysAgo } =
 	Astro.props as MomentCardProps;

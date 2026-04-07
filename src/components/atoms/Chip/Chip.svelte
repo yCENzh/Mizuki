@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
+
 	import type { ChipProps } from "./types";
 
 	interface Props extends ChipProps {
