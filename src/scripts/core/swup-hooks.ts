@@ -125,7 +125,7 @@ export class SwupHooksManager {
 	 */
 	private registerVisitStartHook(): void {
 		window.swup!.hooks.on("visit:start", ((...args: unknown[]) => {
-  			const visit = args[0] as VisitObject;
+			const visit = args[0] as VisitObject;
 			// 清理上一页的 Fancybox
 			this.handlers.cleanupFancybox?.();
 
@@ -172,8 +172,7 @@ export class SwupHooksManager {
 	 * 处理页面访问结束时的清理
 	 */
 	private registerVisitEndHook(): void {
-		window.swup!.hooks.on("visit:end", ((...args: unknown[]) => {
-  		const _visit = args[0] as VisitObject;
+		window.swup!.hooks.on("visit:end", (() => {
 			setTimeout(() => {
 				// 隐藏高度扩展元素
 				this.extendPageHeight(true);

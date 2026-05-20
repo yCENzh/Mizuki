@@ -185,12 +185,11 @@ export function initAnimeLayoutHandler(options: LayoutHandlerOptions) {
 		tryInit();
 	}
 
-	window.addEventListener(
-		"layoutChange",
-  		((event: CustomEvent<{ layout: string }>) => {
-    		updateAnimeListLayout(event.detail.layout);
-  		}) as EventListener,
-	);
+	window.addEventListener("layoutChange", ((
+		event: CustomEvent<{ layout: string }>,
+	) => {
+		updateAnimeListLayout(event.detail.layout);
+	}) as EventListener);
 }
 
 export function initLayoutListener(
