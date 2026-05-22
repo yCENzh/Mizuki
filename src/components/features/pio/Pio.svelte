@@ -133,7 +133,9 @@
 			}
 			widgetInstance = null;
 		}
-		document.getElementById("l2d-hide-about")?.remove();
+		if (typeof document !== "undefined") {
+			document.getElementById("l2d-hide-about")?.remove();
+		}
 	});
 </script>
 
