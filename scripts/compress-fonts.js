@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 // 读取配置文件获取语言设置和字体配置
 async function getConfig() {
-	const configPath = path.join(__dirname, "../src/config.ts");
+	const configPath = path.join(__dirname, "../src/config/siteConfig.ts");
 	const configContent = fs.readFileSync(configPath, "utf-8");
 
 	// 提取语言设置
@@ -195,7 +195,7 @@ function getAsciiCharset() {
 async function fetchMetingPlaylistText() {
 	try {
 		// 读取配置文件获取音乐播放器配置
-		const configPath = path.join(__dirname, "../src/config.ts");
+		const configPath = path.join(__dirname, "../src/config/siteConfig.ts");
 		const configContent = fs.readFileSync(configPath, "utf-8");
 
 		// 检查音乐播放器是否启用
@@ -351,7 +351,7 @@ async function fetchMetingPlaylistText() {
 async function fetchBilibiliAnimeText() {
 	try {
 		// 读取配置文件获取番剧配置
-		const configPath = path.join(__dirname, "../src/config.ts");
+		const configPath = path.join(__dirname, "../src/config/siteConfig.ts");
 		const configContent = fs.readFileSync(configPath, "utf-8");
 
 		// 检查番剧页面是否启用
@@ -478,7 +478,7 @@ async function fetchBilibiliAnimeText() {
 async function fetchBangumiAnimeText() {
 	try {
 		// 读取配置文件获取番剧配置
-		const configPath = path.join(__dirname, "../src/config.ts");
+		const configPath = path.join(__dirname, "../src/config/siteConfig.ts");
 		const configContent = fs.readFileSync(configPath, "utf-8");
 
 		// 检查番剧页面是否启用
@@ -816,8 +816,8 @@ async function collectText() {
 		}
 	}
 
-	// 3. 读取 src/config.ts 文件
-	const configFile = path.join(__dirname, "../src/config.ts");
+	// 3. 读取 src/config/siteConfig.ts 文件
+	const configFile = path.join(__dirname, "../src/config/siteConfig.ts");
 	if (fs.existsSync(configFile)) {
 		const content = fs.readFileSync(configFile, "utf-8");
 
@@ -1091,7 +1091,7 @@ async function compressFonts() {
 				const baseName = path.basename(fontFile, ext);
 
 				if (!fs.existsSync(fontSrc)) {
-					const errorMsg = `❌ Config error [${fontConfig.type}]: Font file does not exist   In config: "${fontFile}"\n   Expected path: public/assets/font/${fontFile}\n   \n   Please check:\n   1. Is the filename correct (case sensitive)?\n   2. Is the file in public/assets/font/?\n   3. Is ${fontConfig.type}.localFonts in src/config.ts correct?`;
+					const errorMsg = `❌ Config error [${fontConfig.type}]: Font file does not exist   In config: "${fontFile}"\n   Expected path: public/assets/font/${fontFile}\n   \n   Please check:\n   1. Is the filename correct (case sensitive)?\n   2. Is the file in public/assets/font/?\n   3. Is ${fontConfig.type}.localFonts in src/config/siteConfig.ts correct?`;
 
 					errors.push(errorMsg);
 					console.log(`\n${errorMsg}\n`);
