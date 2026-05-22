@@ -131,8 +131,8 @@ async function fetchCalendarData() {
 				);
 				if (matchedPost) {
 					const [y, m] = matchedPost.date.split("-");
-					currentYear = Number.parseInt(y);
-					currentMonth = Number.parseInt(m) - 1;
+					currentYear = Number.parseInt(y, 10);
+					currentMonth = Number.parseInt(m, 10) - 1;
 				}
 			}
 		}

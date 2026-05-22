@@ -11,7 +11,7 @@ const { posts, currentPostId, isEmpty }: Props = $props();
 
 function formatDate(dateStr: string): string {
 	const [, m, d] = dateStr.split("-");
-	return `${Number.parseInt(m)}-${Number.parseInt(d)}`;
+	return `${Number.parseInt(m, 10)}-${Number.parseInt(d, 10)}`;
 }
 
 function getContainerClass(isCurrentPost: boolean): string {

@@ -159,7 +159,8 @@ function tokenize(text: string): Set<string> {
 	const hasSegmenter =
 		typeof Intl !== "undefined" &&
 		"Segmenter" in Intl &&
-		typeof (Intl as any).Segmenter === "function";
+		typeof (Intl as unknown as { Segmenter?: unknown }).Segmenter ===
+			"function";
 
 	if (!hasSegmenter) {
 		const basicTokens = text
@@ -172,7 +173,18 @@ function tokenize(text: string): Set<string> {
 		return tokens;
 	}
 
-	const segmenter = new (Intl as any).Segmenter("zh", {
+	const segmenter = new (
+		Intl as unknown as {
+			Segmenter: new (
+				locale: string,
+				options: { granularity: string },
+			) => {
+				segment: (
+					text: string,
+				) => Iterable<{ segment: unknown; isWordLike: boolean | undefined }>;
+			};
+		}
+	).Segmenter("zh", {
 		granularity: "word",
 	});
 	for (const { segment, isWordLike } of segmenter.segment(text)) {

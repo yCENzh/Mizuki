@@ -56,7 +56,7 @@ export function remarkContent() {
 
 			// 累加文本
 			if (node.type === "text" && node.value) {
-				fullText += node.value + " ";
+				fullText += `${node.value} `;
 			}
 		});
 

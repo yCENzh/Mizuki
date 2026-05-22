@@ -137,7 +137,9 @@ class SakuraList {
 }
 
 // 获取随机值的函数
+// biome-ignore lint/suspicious/noExplicitAny: polymorphic return based on option string
 function getRandom(option: string, config: SakuraConfig): any {
+	// biome-ignore lint/suspicious/noExplicitAny: polymorphic return
 	let ret: any;
 	let random: number;
 

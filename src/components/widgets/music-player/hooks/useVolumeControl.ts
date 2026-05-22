@@ -21,7 +21,10 @@ export function loadVolumeFromStorage(state: AudioPlayerState) {
 	try {
 		if (typeof localStorage !== "undefined") {
 			const savedVolume = localStorage.getItem(STORAGE_KEY_VOLUME);
-			if (savedVolume !== null && !isNaN(Number.parseFloat(savedVolume))) {
+			if (
+				savedVolume !== null &&
+				!Number.isNaN(Number.parseFloat(savedVolume))
+			) {
 				state.volume = Number.parseFloat(savedVolume);
 			}
 		}

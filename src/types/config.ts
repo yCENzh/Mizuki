@@ -383,7 +383,7 @@ export interface WidgetComponentConfig {
 		hidden?: ("mobile" | "tablet" | "desktop")[]; // 在指定设备上隐藏
 		collapseThreshold?: number; // 折叠阈值
 	};
-	customProps?: Record<string, any>; // 自定义属性，用于扩展组件功能
+	customProps?: Record<string, unknown>; // 自定义属性，用于扩展组件功能
 }
 
 export interface SidebarLayoutConfig {

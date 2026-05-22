@@ -212,7 +212,7 @@ class MusicPlayerStore {
 			const savedVolume = localStorage.getItem(STORAGE_KEY_VOLUME);
 			if (savedVolume) {
 				const volume = Number.parseFloat(savedVolume);
-				if (!isNaN(volume) && volume >= 0 && volume <= 1) {
+				if (!Number.isNaN(volume) && volume >= 0 && volume <= 1) {
 					this.state.volume = volume;
 					this.state.isMuted = volume === 0;
 					if (this.audio) {
@@ -291,24 +291,29 @@ class MusicPlayerStore {
 			if (!res.ok) {
 				throw new Error("meting api error");
 			}
-			const list: any[] = await res.json();
+			const list: Record<string, unknown>[] = await res.json();
 			this.state.playlist = list.map((song) => this.convertMetingSong(song));
 			this.state.isLoading = false;
 
 			if (this.state.playlist.length > 0) {
 				this.loadSong(this.state.playlist[0], false);
 			}
-		} catch (e) {
+		} catch (_e) {
 			this.showError(i18n(Key.musicPlayerErrorPlaylist));
 			this.state.isLoading = false;
 		}
 		this.broadcastState();
 	}
 
-	private convertMetingSong(song: any): Song {
-		const title = song.name ?? song.title ?? i18n(Key.unknownSong);
-		const artist = song.artist ?? song.author ?? i18n(Key.unknownArtist);
-		let dur = song.duration ?? 0;
+	private convertMetingSong(song: Record<string, unknown>): Song {
+		const name = typeof song.name === "string" ? song.name : undefined;
+		const songTitle = typeof song.title === "string" ? song.title : undefined;
+		const title = name ?? songTitle ?? i18n(Key.unknownSong);
+		const artistField =
+			typeof song.artist === "string" ? song.artist : undefined;
+		const author = typeof song.author === "string" ? song.author : undefined;
+		const artist = artistField ?? author ?? i18n(Key.unknownArtist);
+		let dur = (song.duration as number | undefined) ?? 0;
 		if (typeof dur === "string") {
 			dur = Number.parseInt(dur, 10);
 		}
@@ -323,11 +328,11 @@ class MusicPlayerStore {
 			id:
 				typeof song.id === "string"
 					? Number.parseInt(song.id, 10)
-					: (song.id ?? 0),
+					: ((song.id as number | undefined) ?? 0),
 			title,
 			artist,
-			cover: song.pic ?? "",
-			url: song.url ?? "",
+			cover: (song.pic as string | undefined) ?? "",
+			url: (song.url as string | undefined) ?? "",
 			duration: dur,
 		};
 	}

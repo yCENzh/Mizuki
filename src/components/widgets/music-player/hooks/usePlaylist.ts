@@ -144,7 +144,7 @@ export async function fetchMetingPlaylist(
 		const list: MetingSong[] = await res.json();
 		state.playlist = list.map(convertMetingSong);
 		onLoadEnd();
-	} catch (e) {
+	} catch (_e) {
 		showError(i18n(Key.musicPlayerErrorPlaylist));
 		onLoadEnd();
 	}

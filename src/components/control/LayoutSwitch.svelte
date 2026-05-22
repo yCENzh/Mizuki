@@ -113,7 +113,7 @@ onMount(() => {
 	window.addEventListener("layoutChange", handleCustomEvent as EventListener);
 
 	const setupSwup = () => {
-		const swup = (window as any).swup;
+		const swup = window.swup;
 		if (swup?.hooks) {
 			swup.hooks.on("content:replace", handleSwupEvent);
 			swup.hooks.on("page:view", handleSwupEvent);
@@ -122,7 +122,7 @@ onMount(() => {
 		}
 	};
 
-	if ((window as any).swup) {
+	if (window.swup) {
 		setupSwup();
 	} else {
 		setTimeout(setupSwup, 200);
@@ -142,7 +142,7 @@ onMount(() => {
 		);
 		window.removeEventListener("popstate", handleSwupEvent);
 
-		const swup = (window as any).swup;
+		const swup = window.swup;
 		if (swup?.hooks) {
 			swup.hooks.off("content:replace", handleSwupEvent);
 			swup.hooks.off("page:view", handleSwupEvent);

@@ -41,6 +41,7 @@ export function getPostUrl(post: {
 	id: string;
 	data: { alias?: string; permalink?: string };
 }): string;
+// biome-ignore lint/suspicious/noExplicitAny: overload union
 export function getPostUrl(post: any): string {
 	// 如果文章有自定义 permalink，优先使用（在根目录下）
 	if (post.data.permalink) {

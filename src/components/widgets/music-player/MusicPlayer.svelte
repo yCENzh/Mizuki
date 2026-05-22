@@ -179,7 +179,7 @@ function hideError() {
 	musicPlayerStore.hideError();
 }
 
-function volumeBarRef(node: HTMLElement) {}
+function volumeBarRef(_node: HTMLElement) {}
 
 function canSkip(): boolean {
 	return musicPlayerStore.canSkip();

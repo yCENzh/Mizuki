@@ -12,7 +12,7 @@ interface Props {
 const { monthNames, currentYear, currentMonth, stats, onMonthSelect }: Props =
 	$props();
 
-function getMonthClass(index: number, hasPost: boolean): string {
+function getMonthClass(index: number, _hasPost: boolean): string {
 	const isCurrentMonth = index === currentMonth;
 	let baseClass =
 		"cursor-pointer rounded-lg flex flex-col items-center justify-center p-2 transition-all hover:bg-[var(--btn-plain-bg-hover)] relative border border-transparent";

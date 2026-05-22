@@ -19,7 +19,8 @@ const merged = {
 	hideAboutMenu: config?.hideAboutMenu ?? pioConfig.hideAboutMenu ?? true,
 };
 
-let widgetInstance: any = null;
+let widgetInstance: { destroy: () => Promise<void>; sleep: () => void } | null =
+	null;
 
 async function initWidget() {
 	if (typeof window === "undefined") return;
@@ -70,10 +71,13 @@ async function initWidget() {
 		// Map menus config
 		const menusConfig = merged.menus;
 		if (menusConfig?.items && menusConfig.items.length > 0) {
-			const menuActions: Record<string, (widget: any) => void> = {
+			const menuActions: Record<
+				string,
+				(widget: { sleep: () => void }) => void
+			> = {
 				home: () => (window.location.href = "/"),
 				scrollToTop: () => window.scrollTo({ top: 0, behavior: "smooth" }),
-				sleep: (w: any) => w.sleep(),
+				sleep: (w) => w.sleep(),
 			};
 
 			options.menus = {
@@ -113,7 +117,9 @@ onMount(() => {
 
 	// Lazy load via requestIdleCallback
 	if ("requestIdleCallback" in window) {
-		(window as any).requestIdleCallback(() => initWidget(), { timeout: 5000 });
+		(
+			window as unknown as { requestIdleCallback: typeof requestIdleCallback }
+		).requestIdleCallback(() => initWidget(), { timeout: 5000 });
 	} else {
 		setTimeout(initWidget, 2000);
 	}
