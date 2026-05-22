@@ -24,7 +24,7 @@ export function extractHeadings(
 	return Array.from(headings).map((h) => ({
 		id: h.id,
 		text: (h.textContent || "").replace(/#+\s*$/, ""),
-		level: parseInt(h.tagName[1]),
+		level: Number.parseInt(h.tagName[1]),
 	}));
 }
 

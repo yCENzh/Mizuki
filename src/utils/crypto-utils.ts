@@ -14,10 +14,7 @@ export const CRYPTO_CONSTANTS = {
  * 使用 HMAC-SHA256 派生确定性字节
  */
 function deriveBytes(key: string, context: string, length: number): Buffer {
-	return createHmac("sha256", key)
-		.update(context)
-		.digest()
-		.subarray(0, length);
+	return createHmac("sha256", key).update(context).digest().subarray(0, length);
 }
 
 /**

@@ -127,8 +127,8 @@ export function processPostsData(
 
 	posts.forEach((post) => {
 		const [yStr, mStr] = post.date.split("-");
-		const year = parseInt(yStr);
-		const month = parseInt(mStr);
+		const year = Number.parseInt(yStr);
+		const month = Number.parseInt(mStr);
 		stats.hasPostInYear[year] = true;
 		stats.hasPostInMonth[`${year}-${month}`] = true;
 		if (year < stats.minYear) {

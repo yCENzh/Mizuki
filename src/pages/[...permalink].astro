@@ -1,4 +1,6 @@
 ---
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
 /**
  * 处理 permalink 的文章（包括全局 permalink 和自定义 permalink）
  * 全局 permalink 启用时，所有文章链接在根目录下生成
@@ -27,8 +29,6 @@ import {
 } from "@utils/permalink-utils";
 import { getPostPublicDescription } from "@utils/post-card-content";
 import { getFileDirFromPath } from "@utils/url-utils";
-import type { CollectionEntry } from "astro:content";
-import { render } from "astro:content";
 import { Icon } from "astro-icon/components";
 import { licenseConfig } from "src/config";
 
@@ -53,9 +53,7 @@ export async function getStaticPaths() {
 
 		// 优先使用自定义 permalink
 		if (hasCustomPermalink(entry)) {
-			permalink = entry.data
-				.permalink!.replace(/^\/+/, "")
-				.replace(/\/+$/, "");
+			permalink = entry.data.permalink!.replace(/^\/+/, "").replace(/\/+$/, "");
 		}
 		// 其次使用全局 permalink（如果启用）
 		else if (permalinkConfig.enable) {

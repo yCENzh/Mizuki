@@ -22,9 +22,7 @@ export function remarkContent() {
 		if (tree.children && Array.isArray(tree.children)) {
 			moreTagIndex = tree.children.findIndex(
 				(node) =>
-					node.type === "html" &&
-					node.value &&
-					moreTagRegex.test(node.value),
+					node.type === "html" && node.value && moreTagRegex.test(node.value),
 			);
 		}
 

@@ -21,8 +21,8 @@ export function loadVolumeFromStorage(state: AudioPlayerState) {
 	try {
 		if (typeof localStorage !== "undefined") {
 			const savedVolume = localStorage.getItem(STORAGE_KEY_VOLUME);
-			if (savedVolume !== null && !isNaN(parseFloat(savedVolume))) {
-				state.volume = parseFloat(savedVolume);
+			if (savedVolume !== null && !isNaN(Number.parseFloat(savedVolume))) {
+				state.volume = Number.parseFloat(savedVolume);
 			}
 		}
 	} catch (e) {
@@ -52,10 +52,7 @@ function updateVolumeLogic(
 	}
 
 	const rect = dragState.volumeBarRect || volumeBar.getBoundingClientRect();
-	const percent = Math.max(
-		0,
-		Math.min(1, (clientX - rect.left) / rect.width),
-	);
+	const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
 	audioPlayerState.volume = percent;
 }
 

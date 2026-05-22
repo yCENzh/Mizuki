@@ -175,15 +175,14 @@ export interface SiteConfig {
 	card?: {
 		border: boolean; // 是否开启卡片边框和微阴影立体效果
 		followTheme?: boolean; // 是否让卡片风格跟随主题色相
+	};
 
-		};
-
-		// 图片优化配置
-		imageOptimization?: {
-			formats?: "avif" | "webp" | "both"; // 图片输出格式：avif、webp 或 both（avif+webp）
-			quality?: number; // 图片质量 1-100，推荐 70-85
-			noReferrerDomains?: string[]; // 需要添加 no-referrer 的域名（支持通配符，如 "*.hdslb.com"）
-		};
+	// 图片优化配置
+	imageOptimization?: {
+		formats?: "avif" | "webp" | "both"; // 图片输出格式：avif、webp 或 both（avif+webp）
+		quality?: number; // 图片质量 1-100，推荐 70-85
+		noReferrerDomains?: string[]; // 需要添加 no-referrer 的域名（支持通配符，如 "*.hdslb.com"）
+	};
 }
 
 // 图片格式类型

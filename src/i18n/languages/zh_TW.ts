@@ -178,8 +178,7 @@ export const zh_TW: Translation = {
 	[Key.rssBenefit2]: "在一個地方管理多個網站的訂閱",
 	[Key.rssBenefit3]: "避免錯過重要更新和文章",
 	[Key.rssBenefit4]: "享受無廣告的純淨閱讀經驗",
-	[Key.rssHowToUse]:
-		"推薦使用 Feedly、Inoreader 或其他 RSS 閱讀器來訂閱本站。",
+	[Key.rssHowToUse]: "推薦使用 Feedly、Inoreader 或其他 RSS 閱讀器來訂閱本站。",
 	[Key.rssCopied]: "RSS 鏈接已複製到剪貼板！",
 	[Key.rssCopyFailed]: "複製失敗，請手動複製鏈接",
 
@@ -331,8 +330,7 @@ export const zh_TW: Translation = {
 	[Key.savePoster]: "儲存海報",
 	[Key.scanToRead]: "來源網站",
 	[Key.shareOnSocial]: "分享",
-	[Key.shareOnSocialDescription]:
-		"如果這篇文章對你有幫助，歡迎分享給更多人！",
+	[Key.shareOnSocialDescription]: "如果這篇文章對你有幫助，歡迎分享給更多人！",
 
 	// 個人資料統計
 	[Key.profileStatsLoading]: "統計載入中...",

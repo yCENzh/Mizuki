@@ -50,54 +50,46 @@
  * 以上三种方式都会自动解析到此 index.ts 文件。
  */
 
-// ─── 站点核心 ───────────────────────────────────────────────
-export { siteConfig, SITE_LANG } from "./siteConfig";
+export { announcementConfig } from "./announcementConfig";
 
 // ─── 外观与壁纸 ─────────────────────────────────────────────
 export { fullscreenWallpaperConfig } from "./backgroundWallpaper";
-
-// ─── 导航栏 ─────────────────────────────────────────────────
-export { navBarConfig } from "./navBarConfig";
-
-// ─── 个人资料 ───────────────────────────────────────────────
-export { profileConfig } from "./profileConfig";
-
-// ─── 内容与版权 ─────────────────────────────────────────────
-export { licenseConfig } from "./licenseConfig";
-export { permalinkConfig } from "./permalinkConfig";
-
-// ─── 代码块 ─────────────────────────────────────────────────
-export { expressiveCodeConfig } from "./expressiveCodeConfig";
-
 // ─── 互动功能 ───────────────────────────────────────────────
 export { commentConfig } from "./commentConfig";
-export { shareConfig } from "./shareConfig";
-export { announcementConfig } from "./announcementConfig";
-
+export { sakuraConfig } from "./effectsConfig";
+// ─── 代码块 ─────────────────────────────────────────────────
+export { expressiveCodeConfig } from "./expressiveCodeConfig";
+export { footerConfig } from "./footerConfig";
+// ─── 内容与版权 ─────────────────────────────────────────────
+export { licenseConfig } from "./licenseConfig";
 // ─── 多媒体 ─────────────────────────────────────────────────
 export { musicPlayerConfig } from "./musicConfig";
+// ─── 导航栏 ─────────────────────────────────────────────────
+export { navBarConfig } from "./navBarConfig";
+export { permalinkConfig } from "./permalinkConfig";
 export { pioConfig } from "./pioConfig";
-export { sakuraConfig } from "./effectsConfig";
-
-// ─── 布局 ───────────────────────────────────────────────────
-export { sidebarLayoutConfig } from "./sidebarConfig";
-export { footerConfig } from "./footerConfig";
-
+// ─── 个人资料 ───────────────────────────────────────────────
+export { profileConfig } from "./profileConfig";
+export { randomPostsConfig } from "./randomPostsConfig";
 // ─── 文章推荐 ───────────────────────────────────────────────
 export { relatedPostsConfig } from "./relatedPostsConfig";
-export { randomPostsConfig } from "./randomPostsConfig";
+export { shareConfig } from "./shareConfig";
+// ─── 布局 ───────────────────────────────────────────────────
+export { sidebarLayoutConfig } from "./sidebarConfig";
+// ─── 站点核心 ───────────────────────────────────────────────
+export { SITE_LANG, siteConfig } from "./siteConfig";
 
+import { announcementConfig } from "./announcementConfig";
+import { fullscreenWallpaperConfig } from "./backgroundWallpaper";
+import { sakuraConfig } from "./effectsConfig";
+import { musicPlayerConfig } from "./musicConfig";
+import { pioConfig } from "./pioConfig";
 // ─── Widget 配置聚合（供 Swup 等运行时使用）────────────────
 import { profileConfig } from "./profileConfig";
-import { announcementConfig } from "./announcementConfig";
-import { musicPlayerConfig } from "./musicConfig";
-import { sidebarLayoutConfig } from "./sidebarConfig";
-import { sakuraConfig } from "./effectsConfig";
-import { fullscreenWallpaperConfig } from "./backgroundWallpaper";
-import { pioConfig } from "./pioConfig";
-import { shareConfig } from "./shareConfig";
-import { relatedPostsConfig } from "./relatedPostsConfig";
 import { randomPostsConfig } from "./randomPostsConfig";
+import { relatedPostsConfig } from "./relatedPostsConfig";
+import { shareConfig } from "./shareConfig";
+import { sidebarLayoutConfig } from "./sidebarConfig";
 
 export const widgetConfigs = {
 	profile: profileConfig,

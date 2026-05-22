@@ -46,9 +46,7 @@ export function shouldAddNoReferrer(urlStr: string): boolean {
 	try {
 		const hostname = new URL(urlStr).hostname;
 		return domains.some((pattern) => {
-			const regexPattern = pattern
-				.replace(/\./g, "\\.")
-				.replace(/\*/g, ".*");
+			const regexPattern = pattern.replace(/\./g, "\\.").replace(/\*/g, ".*");
 			return new RegExp(`^${regexPattern}$`).test(hostname);
 		});
 	} catch {
