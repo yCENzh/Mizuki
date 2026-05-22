@@ -507,6 +507,18 @@ export interface ShareConfig {
 export interface RelatedPostsConfig {
 	enable: boolean; // 是否启用相关文章功能
 	maxCount: number; // 相关文章数量
+	weights?: RelatedPostsWeights; // 评分权重配置
+	freshnessHalfLife?: number; // 新鲜度半衰期（天），默认 180
+}
+
+// 相关文章评分权重配置（所有权重归一化后使用）
+export interface RelatedPostsWeights {
+	tagSimilarity?: number; // 标签相似度权重，默认 1.0
+	titleSimilarity?: number; // 标题相似度权重，默认 0.6
+	descriptionSimilarity?: number; // 描述相似度权重，默认 0.4
+	categoryMatch?: number; // 分类匹配权重，默认 0.3
+	freshness?: number; // 时间新鲜度权重，默认 0.2
+	tagIDF?: boolean; // 是否启用标签 IDF 加权（稀有标签权重更高），默认 true
 }
 
 /**
