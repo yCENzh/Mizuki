@@ -9,6 +9,7 @@ import TypewriterText from "@components/atoms/typewriter-text/TypewriterText.ast
 import Image from "@components/atoms/Image/Image.astro";
 import { Icon } from "astro-icon/components";
 import { siteConfig } from "../../config";
+import { getImageQuality, getImageFormats } from "../../utils/image-utils";
 import { BANNER_HEIGHT_EXTEND } from "../../constants/constants";
 
 interface Props {
@@ -66,6 +67,10 @@ const kbDurationMs = carouselIntervalMs + fadeMs;
 
 const hasBannerCredit = siteConfig.banner.credit.enable;
 const hasBannerLink = !!siteConfig.banner.credit.url;
+
+const bannerQuality = getImageQuality();
+const bannerMobileQuality = Math.round(bannerQuality * 0.9);
+const bannerFormats = getImageFormats();
 ---
 
 <div
@@ -95,6 +100,8 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 						sizes="100vw"
 						loading="eager"
 						fetchpriority="high"
+						quality={bannerMobileQuality}
+						formats={bannerFormats}
 					/>
 				</div>
 			)}
@@ -109,6 +116,8 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 						sizes="100vw"
 						loading="eager"
 						fetchpriority="high"
+						quality={bannerMobileQuality}
+						formats={bannerFormats}
 					/>
 				</template>
 			))}
@@ -126,6 +135,8 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 						sizes="100vw"
 						loading="eager"
 						fetchpriority="high"
+						quality={bannerQuality}
+						formats={bannerFormats}
 					/>
 				</div>
 			)}
@@ -140,6 +151,8 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 						sizes="100vw"
 						loading="eager"
 						fetchpriority="high"
+						quality={bannerQuality}
+						formats={bannerFormats}
 					/>
 				</template>
 			))}

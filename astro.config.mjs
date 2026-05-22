@@ -39,6 +39,10 @@ export default defineConfig({
 
 	output: "static",
 
+	image: {
+		layout: "constrained",
+	},
+
 	server: {
 		port: 3000,
 	},
