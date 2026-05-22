@@ -170,6 +170,12 @@ export interface SiteConfig {
 	showLastModified: boolean; // 控制"上次编辑"卡片显示的开关
 	pageProgressBar?: PageProgressBarConfig; // 页面顶部进度条配置
 	thirdPartyAnalytics?: ThirdPartyAnalyticsConfig; // 第三方统计配置
+
+	// 卡片样式配置
+	card?: {
+		border: boolean; // 是否开启卡片边框和微阴影立体效果
+		followTheme?: boolean; // 是否让卡片风格跟随主题色相
+	};
 }
 
 export interface Favicon {

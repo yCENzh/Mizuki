@@ -39,6 +39,10 @@ export default defineConfig({
 
 	output: "static",
 
+	server: {
+		port: 3000,
+	},
+
 	integrations: [
 		oddmisc({
 			umami: {

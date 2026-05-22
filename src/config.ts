@@ -241,6 +241,11 @@ export const siteConfig: SiteConfig = {
 		enable: false, // 是否启用第三方统计（Microsoft Clarity），默认关闭，启用可能影响 Lighthouse 评分
 		clarityId: "", // Clarity 项目 ID
 	},
+	// 卡片样式配置
+	card: {
+		border: true, // 开启卡片边框和微阴影，让卡片更有立体感
+		followTheme: false, // 卡片背景跟随主题色相
+	},
 };
 export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
 	src: {
