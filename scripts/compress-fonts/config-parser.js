@@ -99,10 +99,12 @@ export function getBangumiUserId() {
 }
 
 /**
- * 获取音乐播放器配置
+ * 获取音乐播放器配置（从 musicConfig.ts 读取）
  */
 export function getMusicConfig() {
-	const content = readSiteConfig();
+	const configPath = path.join(ROOT_DIR, "src/config/musicConfig.ts");
+	if (!fs.existsSync(configPath)) return null;
+	const content = fs.readFileSync(configPath, "utf-8");
 
 	const enableMatch = content.match(
 		/musicPlayerConfig:\s*MusicPlayerConfig\s*=\s*\{[\s\S]*?enable:\s*(true|false)/,
@@ -112,7 +114,7 @@ export function getMusicConfig() {
 	}
 
 	const configMatch = content.match(
-		/musicPlayerConfig:\s*MusicPlayerConfig\s*=\s*\{([\s\S]*?)\}/,
+		/musicPlayerConfig:\s*MusicPlayerConfig\s*=\s*\{([\s\S]*?)\};/,
 	);
 	if (!configMatch) return null;
 

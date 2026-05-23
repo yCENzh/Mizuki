@@ -57,13 +57,20 @@ function collectFromMusicConstants(textSet) {
 }
 
 /**
- * 从 siteConfig.ts 提取字符串
+ * 从 src/config/ 目录下所有配置文件提取字符串
+ * 配置已拆分为多个文件（siteConfig、navBarConfig、profileConfig、musicConfig 等），需全部扫描
  */
 function collectFromConfig(textSet) {
-	const filePath = path.join(ROOT_DIR, "src/config/siteConfig.ts");
-	if (!fs.existsSync(filePath)) return;
-	const content = fs.readFileSync(filePath, "utf-8");
-	extractStringsToSet(content, textSet);
+	const configDir = path.join(ROOT_DIR, "src/config");
+	if (!fs.existsSync(configDir)) return;
+
+	const files = readFilesRecursively(configDir);
+	for (const file of files) {
+		if (file.endsWith(".ts") || file.endsWith(".js")) {
+			const content = fs.readFileSync(file, "utf-8");
+			extractStringsToSet(content, textSet);
+		}
+	}
 }
 
 /**
