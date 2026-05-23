@@ -265,12 +265,14 @@ html {
     background: var(--card-bg-transparent) !important;
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
+    isolation: isolate;
   }
 
   body.wallpaper-transparent .card-base {
     background: var(--card-bg-transparent) !important;
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
+    isolation: isolate;
   }
 
   /* 确保嵌套的卡片元素在全屏壁纸模式下也应用半透明效果 */
@@ -279,6 +281,7 @@ html {
     background: var(--card-bg-transparent) !important;
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
+    isolation: isolate;
   }
 
   .wallpaper-transparent .float-panel {
