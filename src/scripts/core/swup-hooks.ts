@@ -452,7 +452,11 @@ export class SwupHooksManager {
 			mainContentWrapper.style.position = "relative";
 			mainContentWrapper.style.zIndex = "30";
 			mainContentWrapper.style.setProperty("top", "0", "important");
-			mainContentWrapper.style.setProperty("margin-top", "1rem", "important");
+			mainContentWrapper.style.setProperty(
+				"margin-top",
+				isMobile ? "0" : "1rem",
+				"important",
+			);
 			return;
 		}
 
@@ -465,6 +469,13 @@ export class SwupHooksManager {
 				bannerWrapper?.classList.add("mobile-hide-banner");
 				mainContentWrapper.classList.add("mobile-main-no-banner");
 				mainContentWrapper.style.setProperty("top", "5.5rem", "important");
+				return;
+			}
+
+			if (isMobile) {
+				bannerWrapper?.classList.remove("mobile-hide-banner");
+				mainContentWrapper.style.removeProperty("top");
+				mainContentWrapper.style.removeProperty("min-height");
 				return;
 			}
 

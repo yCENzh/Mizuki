@@ -109,6 +109,13 @@ const {
 				return;
 			}
 
+			if (isMobile) {
+				bannerWrapper?.classList.remove("mobile-hide-banner");
+				mainContent.style.removeProperty("top");
+				mainContent.style.removeProperty("min-height");
+				return;
+			}
+
 			bannerWrapper?.classList.remove("mobile-hide-banner");
 			mainContent.style.setProperty("top", `${BANNER_HEIGHT}vh`, "important");
 			return;

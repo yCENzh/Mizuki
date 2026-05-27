@@ -121,7 +121,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 @media (max-width: 479px) {
   /* Banner wrapper 高度优化 */
   body.enable-banner #banner-wrapper:not(.mobile-hide-banner) {
-    height: 70vh !important;
+    height: max(70vh, 450px) !important;
     min-height: 450px;
     max-height: none;
     top: 0 !important;
@@ -129,8 +129,8 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 
   /* 主内容区域位置调整 */
   body.enable-banner .absolute.w-full.z-30:not(.mobile-main-no-banner) {
-    top: 70vh !important;
-    min-height: calc(100vh - 70vh) !important;
+    top: max(70vh, 450px) !important;
+    min-height: calc(100vh - max(70vh, 450px)) !important;
   }
 
   /* 横幅文本覆盖层优化 */
@@ -177,7 +177,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 @media (min-width: 480px) and (max-width: 767px) {
   /* Banner wrapper 高度优化 */
   body.enable-banner #banner-wrapper:not(.mobile-hide-banner) {
-    height: 75vh !important;
+    height: max(75vh, 500px) !important;
     min-height: 500px;
     max-height: none;
     top: 0 !important;
@@ -185,8 +185,8 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 
   /* 主内容区域位置调整 */
   body.enable-banner .absolute.w-full.z-30:not(.mobile-main-no-banner) {
-    top: 75vh !important;
-    min-height: calc(100vh - 75vh) !important;
+    top: max(75vh, 500px) !important;
+    min-height: calc(100vh - max(75vh, 500px)) !important;
   }
 
   /* 横幅文本覆盖层优化 */
@@ -233,15 +233,15 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 @media (min-width: 768px) and (max-width: 1279px) {
   /* Banner wrapper 高度优化 */
   body.enable-banner #banner-wrapper:not(.mobile-hide-banner) {
-    height: 70vh !important;
+    height: max(70vh, 500px) !important;
     min-height: 500px;
     top: 0 !important;
   }
 
   /* 主内容区域位置调整 */
   body.enable-banner .absolute.w-full.z-30:not(.mobile-main-no-banner) {
-    top: 70vh !important;
-    min-height: calc(100vh - 70vh) !important;
+    top: max(70vh, 500px) !important;
+    min-height: calc(100vh - max(70vh, 500px)) !important;
   }
 
   /* 横幅文本覆盖层优化 */
@@ -396,6 +396,12 @@ html[data-banner-title-enabled="false"] .banner-text-overlay {
 }
 
 @media (max-width: 1279px) {
+  body.enable-banner.fullscreen-banner #top-row {
+    height: 0 !important;
+    overflow: visible !important;
+    transition: none !important;
+  }
+
   body.enable-banner.fullscreen-banner #banner-wrapper:not(.mobile-hide-banner) {
     position: relative !important;
     height: 100vh !important;
@@ -408,7 +414,7 @@ html[data-banner-title-enabled="false"] .banner-text-overlay {
   body.enable-banner.fullscreen-banner .absolute.w-full.z-30:not(.mobile-main-no-banner) {
     position: relative !important;
     top: 0 !important;
-    margin-top: 1rem !important;
+    margin-top: 0 !important;
     min-height: 0 !important;
   }
 }
