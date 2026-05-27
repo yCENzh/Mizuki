@@ -16,6 +16,7 @@ import {
 	BANNER_HEIGHT,
 	BANNER_HEIGHT_FULLSCREEN,
 } from "../constants/constants";
+import { formatDateToYYYYMMDD } from "../utils/date-utils";
 import {
 	calculateGridLayout,
 	getBannerImages,
@@ -36,6 +37,9 @@ interface Props {
 	postSlug?: string;
 	headings?: MarkdownHeading[];
 	coverImage?: string;
+	publishedDate?: Date;
+	category?: string;
+	wordCount?: number;
 }
 
 // 获取 banner 图片
@@ -50,6 +54,9 @@ const {
 	postSlug,
 	coverImage,
 	headings = [],
+	publishedDate,
+	category,
+	wordCount,
 } = Astro.props;
 const hasBannerCredit = siteConfig.banner.credit.enable;
 const hasBannerLink = !!siteConfig.banner.credit.url;
@@ -229,8 +236,18 @@ const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
 						id="content-wrapper"
 						class="onload-animation transition-leaving"
 					>
-						<!-- the overflow-hidden here prevent long text break the layout-->
-						<!-- make id different from windows.swup global property -->
+						<div
+							id="page-overlay-data"
+							data-title={title || ""}
+							data-date={publishedDate ? formatDateToYYYYMMDD(publishedDate) : ""}
+							data-category={category || ""}
+							data-words={wordCount ? String(wordCount) : ""}
+							data-is-post={postSlug ? "true" : "false"}
+							data-is-home={isHomePage ? "true" : "false"}
+							data-wallpaper-mode={siteConfig.wallpaperMode.defaultMode}
+							class="hidden"
+						>
+						</div>
 						<slot />
 						<div
 							class="footer col-span-full onload-animation hidden lg:block"

@@ -78,6 +78,7 @@ export class SwupHooksManager {
 		this.registerVisitStartHook();
 		this.registerPageViewHook();
 		this.registerVisitEndHook();
+		this.updatePageOverlay();
 	}
 
 	private registerScrollTopHook(): void {
@@ -169,6 +170,7 @@ export class SwupHooksManager {
 				pathsEqual(window.location.pathname, url("/")),
 			);
 			this.ensureNavbarVisibleForFullscreen();
+			this.updatePageOverlay();
 
 			// 初始化新页面的图片、公式、滚动条和 TOC
 			this.handlers.initFancybox?.();
@@ -220,6 +222,7 @@ export class SwupHooksManager {
 				pathsEqual(window.location.pathname, url("/")),
 			);
 			this.ensureNavbarVisibleForFullscreen();
+			this.updatePageOverlay();
 
 			// 扩展页面高度
 			this.extendPageHeight(false);
@@ -489,6 +492,91 @@ export class SwupHooksManager {
 		if (navbarWrapper) {
 			navbarWrapper.classList.remove("navbar-hidden");
 		}
+	}
+
+	private updatePageOverlay(): void {
+		const overlay = document.getElementById("banner-page-overlay");
+		if (!overlay) {
+			return;
+		}
+
+		const dataEl = document.getElementById("page-overlay-data");
+		if (!dataEl) {
+			this.clearOverlay(overlay);
+			return;
+		}
+
+		const isHome = dataEl.dataset.isHome === "true";
+		const mode = dataEl.dataset.wallpaperMode || "";
+		const isBannerMode = mode === "banner" || mode === "fullscreen";
+
+		if (isHome || !isBannerMode) {
+			this.clearOverlay(overlay);
+			return;
+		}
+
+		const title = dataEl.dataset.title || "";
+		if (!title) {
+			this.clearOverlay(overlay);
+			return;
+		}
+
+		const titleEl = document.getElementById("page-overlay-title");
+		const metaEl = document.getElementById("page-overlay-meta");
+		const dateEl = document.getElementById("page-overlay-date");
+		const categoryEl = document.getElementById("page-overlay-category");
+		const wordsEl = document.getElementById("page-overlay-words");
+		if (!titleEl || !metaEl || !dateEl || !categoryEl || !wordsEl) {
+			return;
+		}
+
+		titleEl.textContent = title;
+		titleEl.classList.remove("anim-in");
+
+		const isPost = dataEl.dataset.isPost === "true";
+		const date = dataEl.dataset.date || "";
+		const category = dataEl.dataset.category || "";
+		const words = dataEl.dataset.words || "";
+
+		if (isPost && (date || category || words)) {
+			dateEl.textContent = date;
+			categoryEl.textContent = category;
+			wordsEl.textContent = words ? `${words} 字` : "";
+			metaEl.classList.remove("hidden");
+			metaEl.classList.remove("anim-in");
+
+			overlay.style.opacity = "1";
+			overlay.style.transform = "";
+			overlay.style.filter = "";
+
+			void titleEl.offsetWidth;
+			titleEl.classList.add("anim-in");
+			void metaEl.offsetWidth;
+			metaEl.classList.add("anim-in");
+		} else {
+			metaEl.classList.add("hidden");
+			overlay.style.opacity = "1";
+			overlay.style.transform = "";
+			overlay.style.filter = "";
+			void titleEl.offsetWidth;
+			titleEl.classList.add("anim-in");
+		}
+	}
+
+	private clearOverlay(overlay: HTMLElement): void {
+		const titleEl = document.getElementById("page-overlay-title");
+		const metaEl = document.getElementById("page-overlay-meta");
+		if (titleEl) {
+			titleEl.textContent = "";
+			titleEl.classList.remove("anim-in");
+		}
+		if (metaEl) {
+			metaEl.classList.add("hidden");
+			metaEl.classList.remove("anim-in");
+		}
+		overlay.style.opacity = "";
+		overlay.style.transform = "";
+		overlay.style.filter = "";
 	}
 
 	/**
