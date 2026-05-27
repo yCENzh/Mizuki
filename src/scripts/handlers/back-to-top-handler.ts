@@ -147,10 +147,7 @@ export class BackToTopHandler {
 			return;
 		}
 
-		const isHome =
-			document.body.classList.contains("lg:is-home") &&
-			window.innerWidth >= 1280;
-		const currentBannerHeight = isHome ? BANNER_HEIGHT_HOME : BANNER_HEIGHT;
+		const currentBannerHeight = BANNER_HEIGHT_HOME;
 
 		const threshold =
 			window.innerHeight * (currentBannerHeight / 100) -

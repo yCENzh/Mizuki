@@ -190,7 +190,7 @@ export class SwupHooksManager {
 	 */
 	private handleNavbarHideOnLinkClick(): void {
 		const navbar = this.getCachedElement(SWUP_SELECTORS.navbarWrapper);
-		if (navbar && document.body.classList.contains("lg:is-home")) {
+		if (navbar) {
 			const threshold = window.innerHeight * (BANNER_HEIGHT / 100) - 88;
 			if (document.documentElement.scrollTop >= threshold) {
 				navbar.classList.add("navbar-hidden");
@@ -250,15 +250,8 @@ export class SwupHooksManager {
 	/**
 	 * 处理 body class
 	 */
-	private handleBodyClass(isHomePage: boolean): void {
-		const bodyElement = this.getCachedElement("body");
-		if (bodyElement) {
-			if (isHomePage) {
-				bodyElement.classList.add("lg:is-home");
-			} else {
-				bodyElement.classList.remove("lg:is-home");
-			}
-		}
+	private handleBodyClass(_isHomePage: boolean): void {
+		// body class 统一由 CSS 处理，无需区分首页/非首页
 	}
 
 	/**

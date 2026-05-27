@@ -12,7 +12,10 @@ import type { MarkdownHeading } from "astro";
 import { Icon } from "astro-icon/components";
 
 import { fullscreenWallpaperConfig, siteConfig } from "../config";
-import { BANNER_HEIGHT } from "../constants/constants";
+import {
+	BANNER_HEIGHT,
+	BANNER_HEIGHT_FULLSCREEN,
+} from "../constants/constants";
 import {
 	calculateGridLayout,
 	getBannerImages,
@@ -60,6 +63,7 @@ const mobileNonHomeBannerClass = !isHomePage ? "mobile-hide-banner" : "";
 const finalMainPanelTop = getMainPanelTop(
 	siteConfig.wallpaperMode.defaultMode,
 	BANNER_HEIGHT,
+	BANNER_HEIGHT_FULLSCREEN,
 );
 
 // 计算网格布局
@@ -105,7 +109,12 @@ const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
 		defaultWallpaperMode={siteConfig.wallpaperMode.defaultMode}
 		defaultPostListLayout={siteConfig.postListLayout?.defaultMode || "list"}
 		BANNER_HEIGHT={BANNER_HEIGHT}
+		BANNER_HEIGHT_FULLSCREEN={BANNER_HEIGHT_FULLSCREEN}
 		pageScaling={siteConfig.pageScaling}
+		wavesEnabled={siteConfig.banner?.waves?.enable ?? true}
+		bannerTitleEnabled={siteConfig.banner?.homeText?.enable ?? true}
+		wallpaperEnabled={fullscreenWallpaperConfig.enable ?? true}
+		postListLayoutEnabled={siteConfig.postListLayout?.enable ?? true}
 	/>
 
 	<!-- 全屏壁纸 - 始终渲染，通过 JS 控制显示隐藏 -->

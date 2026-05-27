@@ -345,6 +345,57 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 }
 
 /* ==========================================================================
+   Banner 运行时开关控制
+   ========================================================================== */
+html[data-waves-enabled="false"] #header-waves {
+	display: none !important;
+}
+html[data-banner-title-enabled="false"] .banner-text-overlay {
+	display: none !important;
+}
+
+/* ==========================================================================
+   全屏 Banner 模式 - 复用 Banner 设计，仅改变高度
+   ========================================================================== */
+@media (min-width: 1280px) {
+  body.enable-banner.fullscreen-banner #banner-wrapper {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+    top: 0 !important;
+    transform: translateY(0) !important;
+  }
+
+  body.enable-banner.fullscreen-banner #banner {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    transform: translateY(0) !important;
+  }
+
+  body.enable-banner.fullscreen-banner .absolute.w-full.z-30 {
+    top: 100vh !important;
+  }
+
+  body.enable-banner.fullscreen-banner #main-grid {
+    transform: translateY(0) !important;
+  }
+}
+
+@media (max-width: 1279px) {
+  body.enable-banner.fullscreen-banner #banner-wrapper:not(.mobile-hide-banner) {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    max-height: none;
+    top: 0 !important;
+  }
+
+  body.enable-banner.fullscreen-banner .absolute.w-full.z-30:not(.mobile-main-no-banner) {
+    top: 100vh !important;
+    min-height: 0 !important;
+  }
+}
+
+/* ==========================================================================
    移动端图片优化
    ========================================================================== */
 @media (max-width: 1279px) {
