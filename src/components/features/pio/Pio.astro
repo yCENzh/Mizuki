@@ -1,0 +1,152 @@
+---
+import type { PioConfig } from "@/types/config";
+
+interface Props {
+	config: PioConfig;
+}
+
+const { config } = Astro.props;
+
+const modelPaths = config.models ?? ["/pio/models/NOIR/noir.model3.json"];
+const modelConfigs = modelPaths.map((p) => ({ path: p }));
+
+const position = config.position === "right" ? "bottom-right" : "bottom-left";
+
+const tipsData: Record<string, unknown> = {};
+if (config.tips) {
+	if (config.tips.welcomeMessage)
+		tipsData.welcomeMessage = config.tips.welcomeMessage;
+	if (config.tips.messages) tipsData.messages = config.tips.messages;
+	if (config.tips.duration) tipsData.duration = config.tips.duration;
+	if (config.tips.interval) tipsData.interval = tipsData.interval;
+} else if (config.dialog?.welcome || config.dialog?.touch) {
+	const welcome = config.dialog.welcome;
+	const touch = config.dialog.touch;
+	if (welcome)
+		tipsData.welcomeMessage = Array.isArray(welcome) ? welcome : [welcome];
+	if (touch) tipsData.messages = Array.isArray(touch) ? touch : [touch];
+}
+
+const widgetConfig: Record<string, unknown> = {
+	model: modelConfigs.length === 1 ? modelConfigs[0] : modelConfigs,
+	position,
+	size: config.width ?? 280,
+	transitionDuration: 1500,
+	transitionType: "slide",
+	_hideAbout: config.hideAboutMenu ?? true,
+};
+
+if (config.menus?.items && config.menus.items.length > 0) {
+	widgetConfig.menus = {
+		items: config.menus.items.map(({ icon, label, action }) => ({
+			icon,
+			label,
+			action,
+		})),
+		...(config.menus.align && { align: config.menus.align }),
+	};
+}
+
+if (Object.keys(tipsData).length > 0) {
+	if (!Array.isArray(widgetConfig.model)) {
+		(widgetConfig.model as Record<string, unknown>).tips = tipsData;
+	}
+}
+
+const widgetWidth = config.width ?? 280;
+const hiddenOnMobile = config.hiddenOnMobile ?? true;
+const isRight = config.position === "right";
+---
+
+<iframe
+	id="l2d-iframe"
+	src="/pio/live2d-host.html"
+	allowtransparency="true"
+	style={"position: fixed; z-index: 999; pointer-events: none; border: none; bottom: 0;"
+		+ (isRight ? " right: 0;" : " left: 0;")
+		+ " width: " + widgetWidth + "px;"
+		+ " height: 600px;"
+		+ " opacity: 0;"}
+	data-config={JSON.stringify(widgetConfig)}
+	data-hidden-on-mobile={hiddenOnMobile ? "true" : "false"}
+	data-width={widgetWidth}
+></iframe>
+
+<script>
+	const el = document.getElementById("l2d-iframe") as HTMLIFrameElement;
+	if (!el) throw new Error("l2d-iframe not found");
+
+	const menuActions: Record<string, () => void> = {
+		home: () => (window.location.href = "/"),
+		scrollToTop: () => window.scrollTo({ top: 0, behavior: "smooth" }),
+	};
+
+	const config = JSON.parse(el.dataset.config || "{}");
+	const hiddenOnMobile = el.dataset.hiddenOnMobile === "true";
+	let isTransitioning = false;
+
+	function applyVisibility() {
+		if (hiddenOnMobile && window.innerWidth <= 1280) {
+			el.style.display = "none";
+		} else {
+			el.style.display = "";
+		}
+	}
+
+	function sendInit() {
+		if (isTransitioning) return;
+		if (hiddenOnMobile && window.innerWidth <= 1280) return;
+		el.contentWindow?.postMessage({ type: "l2d-init", config }, "*");
+	}
+
+	function handleMessage(e: MessageEvent) {
+		if (e.source !== el.contentWindow) return;
+
+		if (e.data.type === "l2d-loaded") {
+			const h = e.data.contentHeight || 500;
+			el.style.height = h + "px";
+			el.style.opacity = "1";
+			el.style.pointerEvents = "auto";
+		}
+
+		if (e.data.type === "l2d-action") {
+			menuActions[e.data.action]?.();
+		}
+	}
+
+	window.addEventListener("message", handleMessage);
+
+	if (el.contentDocument?.readyState === "complete") {
+		sendInit();
+	} else {
+		el.addEventListener("load", sendInit);
+	}
+
+	function setupSwupHooks() {
+		if (!window.swup?.hooks) return;
+
+		const hooks = window.swup as unknown as {
+			hooks: { on: (event: string, handler: (...args: unknown[]) => void) => void };
+		};
+
+		hooks.hooks.on("link:click", () => {
+			isTransitioning = true;
+		});
+
+		hooks.hooks.on("visit:end", () => {
+			isTransitioning = false;
+		});
+	}
+
+	if (window.swup) {
+		setupSwupHooks();
+	} else {
+		document.addEventListener("swup:enable", setupSwupHooks);
+	}
+
+	applyVisibility();
+
+	window.addEventListener("resize", () => {
+		applyVisibility();
+	});
+</script>
