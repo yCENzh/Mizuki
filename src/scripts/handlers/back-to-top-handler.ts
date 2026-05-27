@@ -147,6 +147,11 @@ export class BackToTopHandler {
 			return;
 		}
 
+		if (document.body.classList.contains("fullscreen-banner")) {
+			this.navbar.classList.remove("navbar-hidden");
+			return;
+		}
+
 		const currentBannerHeight = BANNER_HEIGHT_HOME;
 
 		const threshold =

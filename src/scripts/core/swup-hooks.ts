@@ -168,6 +168,7 @@ export class SwupHooksManager {
 			this.syncMainContentPosition(
 				pathsEqual(window.location.pathname, url("/")),
 			);
+			this.ensureNavbarVisibleForFullscreen();
 
 			// 初始化新页面的图片、公式、滚动条和 TOC
 			this.handlers.initFancybox?.();
@@ -199,6 +200,7 @@ export class SwupHooksManager {
 			this.handleNavbarState(isHomePage);
 			this.handleMobileBannerVisibility(isHomePage);
 			this.syncMainContentPosition(isHomePage);
+			this.ensureNavbarVisibleForFullscreen();
 
 			// 扩展页面高度防止滚动动画跳跃
 			this.extendPageHeight(false);
@@ -217,6 +219,7 @@ export class SwupHooksManager {
 			this.syncMainContentPosition(
 				pathsEqual(window.location.pathname, url("/")),
 			);
+			this.ensureNavbarVisibleForFullscreen();
 
 			// 扩展页面高度
 			this.extendPageHeight(false);
@@ -474,6 +477,18 @@ export class SwupHooksManager {
 		bannerWrapper?.classList.remove("mobile-hide-banner");
 		mainContentWrapper.classList.add("no-banner-layout");
 		mainContentWrapper.style.setProperty("top", "5.5rem", "important");
+	}
+
+	private ensureNavbarVisibleForFullscreen(): void {
+		if (this.getCurrentWallpaperMode() !== "fullscreen") {
+			return;
+		}
+		const navbarWrapper = this.getCachedElement(
+			SWUP_SELECTORS.navbarWrapper,
+		) as HTMLElement | null;
+		if (navbarWrapper) {
+			navbarWrapper.classList.remove("navbar-hidden");
+		}
 	}
 
 	/**
