@@ -358,22 +358,32 @@ html[data-banner-title-enabled="false"] .banner-text-overlay {
    全屏 Banner 模式 - 复用 Banner 设计，仅改变高度
    ========================================================================== */
 @media (min-width: 1280px) {
+  body.enable-banner.fullscreen-banner #top-row {
+    height: 0 !important;
+    overflow: visible !important;
+    transition: none !important;
+  }
+
   body.enable-banner.fullscreen-banner #banner-wrapper {
+    position: relative !important;
     height: 100vh !important;
     min-height: 100vh !important;
     max-height: none !important;
     top: 0 !important;
-    transform: translateY(0) !important;
+    transform: none !important;
+    overflow: hidden !important;
   }
 
   body.enable-banner.fullscreen-banner #banner {
     height: 100vh !important;
     min-height: 100vh !important;
-    transform: translateY(0) !important;
+    transform: none !important;
   }
 
   body.enable-banner.fullscreen-banner .absolute.w-full.z-30 {
-    top: 100vh !important;
+    position: relative !important;
+    top: 0 !important;
+    margin-top: 1rem !important;
   }
 
   body.enable-banner.fullscreen-banner #main-grid {
@@ -383,16 +393,28 @@ html[data-banner-title-enabled="false"] .banner-text-overlay {
 
 @media (max-width: 1279px) {
   body.enable-banner.fullscreen-banner #banner-wrapper:not(.mobile-hide-banner) {
+    position: relative !important;
     height: 100vh !important;
     min-height: 100vh !important;
     max-height: none;
     top: 0 !important;
+    transform: none !important;
   }
 
   body.enable-banner.fullscreen-banner .absolute.w-full.z-30:not(.mobile-main-no-banner) {
-    top: 100vh !important;
+    position: relative !important;
+    top: 0 !important;
+    margin-top: 1rem !important;
     min-height: 0 !important;
   }
+}
+
+html.is-page-transitioning .banner-text-overlay {
+	display: none !important;
+}
+
+html.is-page-transitioning #header-waves {
+	contain: layout style paint;
 }
 
 /* ==========================================================================

@@ -72,6 +72,7 @@ export class SwupHooksManager {
 		if (!window.swup) {
 			return;
 		}
+		this.registerScrollTopHook();
 		this.registerLinkClickHook();
 		this.registerContentReplaceHook();
 		this.registerVisitStartHook();
@@ -79,23 +80,82 @@ export class SwupHooksManager {
 		this.registerVisitEndHook();
 	}
 
+	private registerScrollTopHook(): void {
+		const hooks = window.swup!.hooks as {
+			on: (event: string, handler: (...args: unknown[]) => void) => void;
+			off: (event: string, handler: (...args: unknown[]) => void) => void;
+			replace?: (
+				event: string,
+				handler: (
+					visit: VisitObject,
+					args: { options?: ScrollIntoViewOptions },
+				) => boolean,
+			) => void;
+		};
+
+		if (typeof hooks.replace !== "function") {
+			return;
+		}
+
+		hooks.replace(
+			"scroll:top",
+			(visit: VisitObject, args: { options?: ScrollIntoViewOptions }) => {
+				const isFullscreen = this.getCurrentWallpaperMode() === "fullscreen";
+				const isHomePage = pathsEqual(visit.to.url, url("/"));
+				if (isFullscreen && !isHomePage) {
+					const mainGrid = this.getCachedElement("#main-grid") as HTMLElement | null;
+					if (mainGrid) {
+						mainGrid.scrollIntoView({
+							behavior: args.options?.behavior ?? "auto",
+						});
+						return true;
+					}
+				}
+
+				window.scrollTo({
+					top: 0,
+					left: 0,
+					...args.options,
+				});
+				return true;
+			},
+		);
+	}
+
 	/**
 	 * link:click 钩子
 	 * 处理链接点击时的初始状态
 	 */
 	private registerLinkClickHook(): void {
-		window.swup!.hooks.on("link:click", () => {
+		window.swup!.hooks.on("link:click", ((...args: unknown[]) => {
+			const hookArgs = args[1] as { el?: HTMLAnchorElement } | undefined;
+			const href = hookArgs?.el?.getAttribute("href") || "";
+			const targetPathname = (() => {
+				try {
+					return new URL(href, window.location.href).pathname;
+				} catch {
+					return href;
+				}
+			})();
+			const isSamePage = pathsEqual(targetPathname, window.location.pathname);
+
 			// 移除首次页面加载的延迟
 			document.documentElement.style.setProperty(
 				"--content-delay",
 				"0ms",
 			);
 
+			if (isSamePage) {
+				document.documentElement.classList.remove("is-page-transitioning");
+			} else {
+				document.documentElement.classList.add("is-page-transitioning");
+			}
+
 			// 处理 navbar 隐藏
 			if (this.bannerEnabled) {
 				this.handleNavbarHideOnLinkClick();
 			}
-		});
+		}) as (...args: unknown[]) => void);
 	}
 
 	/**
@@ -105,6 +165,9 @@ export class SwupHooksManager {
 	private registerContentReplaceHook(): void {
 		window.swup!.hooks.on("content:replace", () => {
 			this.clearCache();
+			this.syncMainContentPosition(
+				pathsEqual(window.location.pathname, url("/")),
+			);
 
 			// 初始化新页面的图片、公式、滚动条和 TOC
 			this.handlers.initFancybox?.();
@@ -135,6 +198,7 @@ export class SwupHooksManager {
 			this.handleBannerTextVisibility(isHomePage);
 			this.handleNavbarState(isHomePage);
 			this.handleMobileBannerVisibility(isHomePage);
+			this.syncMainContentPosition(isHomePage);
 
 			// 扩展页面高度防止滚动动画跳跃
 			this.extendPageHeight(false);
@@ -150,14 +214,12 @@ export class SwupHooksManager {
 	 */
 	private registerPageViewHook(): void {
 		window.swup!.hooks.on("page:view", () => {
+			this.syncMainContentPosition(
+				pathsEqual(window.location.pathname, url("/")),
+			);
+
 			// 扩展页面高度
 			this.extendPageHeight(false);
-
-			// 滚动到页面顶部
-			window.scrollTo({
-				top: 0,
-				behavior: "instant",
-			});
 
 			// 同步主题状态
 			this.syncThemeState();
@@ -179,6 +241,7 @@ export class SwupHooksManager {
 
 				// 显示 TOC
 				this.showTOC();
+				document.documentElement.classList.remove("is-page-transitioning");
 			}, ANIMATION_CONFIG.heightExtendDelay);
 		}) as (...args: unknown[]) => void);
 	}
@@ -297,6 +360,11 @@ export class SwupHooksManager {
 	 * 处理移动端 Banner 可见性
 	 */
 	private handleMobileBannerVisibility(isHomePage: boolean): void {
+		const mode = this.getCurrentWallpaperMode();
+		if (mode !== "banner" && mode !== "fullscreen") {
+			return;
+		}
+
 		const bannerWrapper = this.getCachedElement(
 			SWUP_SELECTORS.bannerWrapper,
 		);
@@ -323,6 +391,89 @@ export class SwupHooksManager {
 				}, ANIMATION_CONFIG.mobileBannerDelay);
 			}
 		}
+	}
+
+	private getCurrentWallpaperMode():
+		| "banner"
+		| "fullscreen"
+		| "overlay"
+		| "none" {
+		const body = document.body;
+		if (
+			body.classList.contains("enable-banner") &&
+			body.classList.contains("fullscreen-banner")
+		) {
+			return "fullscreen";
+		}
+		if (body.classList.contains("enable-banner")) {
+			return "banner";
+		}
+		if (body.classList.contains("wallpaper-transparent")) {
+			return "overlay";
+		}
+		return "none";
+	}
+
+	private syncMainContentPosition(isHomePage: boolean): void {
+		const mode = this.getCurrentWallpaperMode();
+		const mainContentWrapper = this.getCachedElement(
+			".absolute.w-full.z-30.pointer-events-none",
+		) as HTMLElement | null;
+		const bannerWrapper = this.getCachedElement(
+			SWUP_SELECTORS.bannerWrapper,
+		) as HTMLElement | null;
+		if (!mainContentWrapper) {
+			return;
+		}
+
+		const isMobile = window.innerWidth < 1280;
+		mainContentWrapper.classList.remove("mobile-main-no-banner", "no-banner-layout");
+		mainContentWrapper.style.removeProperty("min-height");
+
+		if (mode === "fullscreen") {
+			if (isMobile && !isHomePage) {
+				bannerWrapper?.classList.add("mobile-hide-banner");
+				mainContentWrapper.classList.add("mobile-main-no-banner", "no-banner-layout");
+				mainContentWrapper.style.position = "";
+				mainContentWrapper.style.zIndex = "";
+				mainContentWrapper.style.setProperty("top", "5.5rem", "important");
+				mainContentWrapper.style.setProperty("margin-top", "0", "important");
+				return;
+			}
+
+			bannerWrapper?.classList.remove("mobile-hide-banner");
+			mainContentWrapper.classList.add("no-banner-layout");
+			mainContentWrapper.style.position = "relative";
+			mainContentWrapper.style.zIndex = "30";
+			mainContentWrapper.style.setProperty("top", "0", "important");
+			mainContentWrapper.style.setProperty("margin-top", "1rem", "important");
+			return;
+		}
+
+		mainContentWrapper.style.position = "";
+		mainContentWrapper.style.zIndex = "";
+		mainContentWrapper.style.setProperty("margin-top", "0", "important");
+
+		if (mode === "banner") {
+			if (isMobile && !isHomePage) {
+				bannerWrapper?.classList.add("mobile-hide-banner");
+				mainContentWrapper.classList.add("mobile-main-no-banner");
+				mainContentWrapper.style.setProperty("top", "5.5rem", "important");
+				return;
+			}
+
+			bannerWrapper?.classList.remove("mobile-hide-banner");
+			mainContentWrapper.style.setProperty(
+				"top",
+				`${BANNER_HEIGHT}vh`,
+				"important",
+			);
+			return;
+		}
+
+		bannerWrapper?.classList.remove("mobile-hide-banner");
+		mainContentWrapper.classList.add("no-banner-layout");
+		mainContentWrapper.style.setProperty("top", "5.5rem", "important");
 	}
 
 	/**

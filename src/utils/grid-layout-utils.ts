@@ -261,13 +261,13 @@ export function getTransparencyClass(shouldEnable: boolean): string {
 export function getMainPanelTop(
 	defaultWallpaperMode: string,
 	bannerHeightVh: number,
-	fullscreenBannerHeightVh = 100,
+	_fullscreenBannerHeightVh = 100,
 ): string {
 	if (defaultWallpaperMode === "banner") {
 		return `${bannerHeightVh}vh`;
 	}
 	if (defaultWallpaperMode === "fullscreen") {
-		return `${fullscreenBannerHeightVh}vh`;
+		return "0";
 	}
 	return "5.5rem";
 }
