@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: transparent; }
+</style>
+</head>
+<body>
+<script src="/pio/l2d-widget.min.js"></script>
+<script>
+  var menuActions = {
+    home: function() { parent.postMessage({ type: 'l2d-action', action: 'home' }, '*'); },
+    scrollToTop: function() { parent.postMessage({ type: 'l2d-action', action: 'scrollToTop' }, '*'); },
+    sleep: function(w) { w.sleep(); },
+  };
+
+  window.addEventListener('message', function(e) {
+    if (e.data.type !== 'l2d-init') return;
+    var config = e.data.config;
+
+    if (config.menus && config.menus.items) {
+      config.menus.items = config.menus.items.map(function(item) {
+        return {
+          icon: item.icon,
+          label: item.label,
+          onClick: menuActions[item.action] || function() {}
+        };
+      });
+    }
+
+    L2D_WIDGET.createWidget(config);
+
+    if (config._hideAbout) {
+      var style = document.createElement('style');
+      style.textContent = 'button[title="About"] { display: none !important; }';
+      document.head.appendChild(style);
+    }
+
+    var notified = false;
+    function notifyLoaded() {
+      if (notified) return;
+      notified = true;
+
+      var maxBottom = 0;
+      document.querySelectorAll('*').forEach(function(el) {
+        if (el.getBoundingClientRect) {
+          var r = el.getBoundingClientRect();
+          if (r.width > 0 && r.height > 0 && r.bottom > maxBottom) {
+            maxBottom = r.bottom;
+          }
+        }
+      });
+
+      parent.postMessage({ type: 'l2d-loaded', contentHeight: Math.ceil(maxBottom) || 500 }, '*');
+    }
+
+    var checkInterval = setInterval(function() {
+      var canvas = document.querySelector('canvas');
+      if (canvas && canvas.width > 0 && canvas.height > 0) {
+        clearInterval(checkInterval);
+        setTimeout(notifyLoaded, 300);
+      }
+    }, 200);
+
+    setTimeout(function() {
+      clearInterval(checkInterval);
+      notifyLoaded();
+    }, 15000);
+  });
+</script>
+</body>
+</html>
