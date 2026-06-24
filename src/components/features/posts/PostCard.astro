@@ -27,7 +27,6 @@ const {
 	pinned,
 	encrypted,
 	password,
-	postDateFormat,
 } = entry.data;
 
 const url = getPostUrl(entry);
@@ -97,7 +96,6 @@ const homeContent = getPostHomeContent(
 		<PostMetadata
 			published={published}
 			updated={updated}
-			dateFormat={postDateFormat}
 			tags={tags}
 			category={category || ""}
 			hideTagsForMobile={true}

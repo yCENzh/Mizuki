@@ -2,7 +2,7 @@
 import { Icon } from "astro-icon/components";
 
 import type { PostForList } from "@/utils/content-utils";
-import { formatDateForDisplay, formatDateToYYYYMMDD } from "@/utils/date-utils";
+import { formatDateToYYYYMMDD } from "@/utils/date-utils";
 import { getPostPublicDescription } from "@/utils/post-card-content";
 import { getPostUrlBySlug } from "@/utils/url-utils";
 
@@ -24,10 +24,10 @@ const {
 
 const displayDate =
 	dateFormat === "iso"
-		? formatDateToYYYYMMDD(post.data.published)
+		? post.data.published.toISOString().substring(0, 10)
 		: getPostPublicDescription(
 				post.data,
-				formatDateForDisplay(post.data.published, post.data.postDateFormat),
+				formatDateToYYYYMMDD(post.data.published),
 			);
 ---
 

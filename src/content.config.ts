@@ -21,7 +21,6 @@ const postsCollection = defineCollection({
 		sourceLink: z.string().optional().default(""),
 		licenseName: z.string().optional().default(""),
 		licenseUrl: z.string().optional().default(""),
-		postDateFormat: z.enum(["date", "datetime"]).optional(),
 
 		/* Page encryption fields */
 		encrypted: z.boolean().optional().default(false),

@@ -3,10 +3,7 @@ import { Icon } from "astro-icon/components";
 
 import I18nKey from "../../../i18n/i18nKey";
 import { i18n } from "../../../i18n/translation";
-import {
-	formatDateForDisplay,
-	type PostDateFormat,
-} from "../../../utils/date-utils";
+import { formatDateToYYYYMMDD } from "../../../utils/date-utils";
 import { getTagUrl } from "../../../utils/url-utils";
 import {
 	Category,
@@ -19,7 +16,6 @@ import {
 interface Props {
 	published: Date;
 	updated?: Date;
-	dateFormat?: PostDateFormat;
 	category?: string;
 	tags?: string[];
 	hideUpdateDate?: boolean;
@@ -38,7 +34,6 @@ interface Props {
 const {
 	published,
 	updated,
-	dateFormat,
 	category,
 	tags,
 	hideUpdateDate,
@@ -56,14 +51,14 @@ const {
 ---
 
 <div class:list={["flex flex-wrap text-neutral-500 dark:text-neutral-400 items-center gap-4 gap-x-4 gap-y-2", className]}>
-    <PublishedDate date={published} dateFormat={dateFormat} />
+    <PublishedDate date={published} />
 
     {!hideUpdateDate && updated && updated.getTime() !== published.getTime() && (
         <div class="flex items-center">
             <div class="meta-icon">
                 <Icon name="material-symbols:edit-calendar-outline-rounded" class="text-xl"></Icon>
             </div>
-            <span class="text-50 text-sm font-medium">{formatDateForDisplay(updated, dateFormat)}</span>
+            <span class="text-50 text-sm font-medium">{formatDateToYYYYMMDD(updated)}</span>
         </div>
     )}
 

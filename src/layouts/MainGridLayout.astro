@@ -16,7 +16,7 @@ import {
 	BANNER_HEIGHT,
 	BANNER_HEIGHT_FULLSCREEN,
 } from "../constants/constants";
-import { formatDateForDisplay, type PostDateFormat } from "../utils/date-utils";
+import { formatDateToYYYYMMDD } from "../utils/date-utils";
 import {
 	calculateGridLayout,
 	getBannerImages,
@@ -38,7 +38,6 @@ interface Props {
 	headings?: MarkdownHeading[];
 	coverImage?: string;
 	publishedDate?: Date;
-	postDateFormat?: PostDateFormat;
 	category?: string;
 	wordCount?: number;
 }
@@ -56,7 +55,6 @@ const {
 	coverImage,
 	headings = [],
 	publishedDate,
-	postDateFormat,
 	category,
 	wordCount,
 } = Astro.props;
@@ -241,7 +239,7 @@ const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
 						<div
 							id="page-overlay-data"
 							data-title={title || ""}
-							data-date={publishedDate ? formatDateForDisplay(publishedDate, postDateFormat) : ""}
+							data-date={publishedDate ? formatDateToYYYYMMDD(publishedDate) : ""}
 							data-category={category || ""}
 							data-words={wordCount ? String(wordCount) : ""}
 							data-is-post={postSlug ? "true" : "false"}
