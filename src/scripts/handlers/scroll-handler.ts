@@ -80,7 +80,11 @@ export class ScrollHandler {
 	 */
 	checkKatex(): void {
 		if (document.querySelector(".katex")) {
-			import("katex/dist/katex.css");
+				import("katex/dist/katex.css?inline").then((m) => {
+					const s = document.createElement("style");
+					s.textContent = m.default;
+					document.head.appendChild(s);
+				});
 		}
 	}
 

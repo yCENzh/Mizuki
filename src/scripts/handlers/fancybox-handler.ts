@@ -61,10 +61,19 @@ export class FancyboxHandler {
 	 * 加载 Fancybox 模块和样式
 	 */
 	private async loadFancybox(): Promise<void> {
-		const mod = await import("@fancyapps/ui");
+		const [mod, libCss, customCss] = await Promise.all([
+			import("@fancyapps/ui"),
+			import("@fancyapps/ui/dist/fancybox/fancybox.css?inline"),
+			import("../../styles/fancybox-custom.css?inline"),
+		]);
 		this.Fancybox = mod.Fancybox;
-		await import("@fancyapps/ui/dist/fancybox/fancybox.css");
-		await import("../../styles/fancybox-custom.css");
+		const inject = (css: string) => {
+			const s = document.createElement("style");
+			s.textContent = css;
+			document.head.appendChild(s);
+		};
+		inject(libCss.default);
+		inject(customCss.default);
 	}
 
 	/**
